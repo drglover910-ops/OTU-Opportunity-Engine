@@ -1,5 +1,12 @@
 # Release history
 
+## 0.3.0 — 2026-10-14
+- Guided setup: career files, optional AI writing, Gmail sign-in.
+- Plain-language progress labels and message actions; technical settings collapsed.
+- Direct ZIP-upload instructions, file counts and upload progress.
+- Actionable connection buttons, mobile setup layout and clearer saving status.
+- No new paid provider calls, automatic spending or outbound sending.
+
 ## 0.2.1 — 2026-10-14
 - Add database and file storage markers for automated first-launch restart validation.
 - Report production opportunity counts and actual source-check results.

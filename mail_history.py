@@ -54,8 +54,8 @@ def parse_messages(raw,owner):
 def gmail_read(url,headers):
     for attempt in range(4):
         try:return fetch_json(url,headers=headers)
-        except ValueError:
-            if attempt==3:raise
+        except ValueError as e:
+            if attempt==3 or re.search(r'HTTP (?:400|401|403|404)',str(e)):raise
             time.sleep(2**attempt)
 
 def study(engine):
@@ -77,31 +77,35 @@ def study(engine):
                 page=listing.get('nextPageToken')
                 if not page:break
             if page:limited=True
-        reviewed=0
+        reviewed=0;errors=[]
         for tid,label in cases.items():
-            raw=gmail_read(api+'/threads/'+tid+'?format=full',headers=headers);messages=[]
-            messages=parse_messages(raw,owner)
-            outgoing=[m for m in messages if m['direction']=='sent']
-            if not outgoing:continue
-            summary=summarize(messages);first=outgoing[0]
-            recipient=next((address for _,address in getaddresses([first['recipient']]) if address.lower()!=owner),'')
-            text=' '.join(m['subject']+' '+m['body']+' '+' '.join(m['attachments']) for m in messages)
-            company=label if label=='Buffalo Stallions' else next((name for name in ['Kids Choice Sports','Public Flower','Toke Lane','KushMart','STIIIZY','Healthy Buffalo','Upwork','Contra','Yelp','Seneca'] if name.lower().replace(' ','') in re.sub(r'\s+','',text.lower())),None)
-            company=company or (recipient.split('@')[-1] if '@' in recipient else 'Outreach conversation')
-            category='Coaching' if company in ('Buffalo Stallions','Kids Choice Sports','Healthy Buffalo') else choose_category(text)
-            url='https://mail.google.com/mail/u/0/#all/'+tid
-            result=engine.add({'company':company,'title':first['subject'].strip() or 'Opportunity conversation','url':url,'category':category,'description':'Imported Gmail correspondence. Open the thread for original opportunity context.','source':'Gmail history','relationship':summary['relationship']})
-            oid=result['id']
-            if result['added']:
-                with engine.connect() as c:
-                    c.execute('UPDATE opportunities SET stage=?,contact=?,notes=?,followup=? WHERE id=?',(summary['stage'],recipient,'History: '+summary['status']+'. Hiring/payment outcomes are not inferred.',(datetime.now(timezone.utc)+timedelta(days=1)).date().isoformat() if summary['stage'] not in ('Parked','Offer / contract') and datetime.fromisoformat(summary['latest_date'])>datetime.now(timezone.utc)-timedelta(days=60) else '',oid))
-            with engine.lock,engine.connect() as c:
-                c.execute('INSERT OR REPLACE INTO email_threads(thread_id,opportunity_id,company,subject,summary,messages,reviewed) VALUES(?,?,?,?,?,?,?)',(tid,oid,company,first['subject'],json.dumps(summary),json.dumps(messages),now()))
-                engine.log(c,oid,'Sent conversation studied',summary['status'])
-            reviewed+=1
-            engine.set_setting('history_study',{'status':'running','threads_reviewed':reviewed,'threads_found':len(cases),'limited':limited})
+            try:
+                raw=gmail_read(api+'/threads/'+tid+'?format=full',headers=headers);messages=[]
+                messages=parse_messages(raw,owner)
+                outgoing=[m for m in messages if m['direction']=='sent']
+                if not outgoing:continue
+                summary=summarize(messages);first=outgoing[0]
+                recipient=next((address for _,address in getaddresses([first['recipient']]) if address.lower()!=owner),'')
+                text=' '.join(m['subject']+' '+m['body']+' '+' '.join(m['attachments']) for m in messages)
+                company=label if label=='Buffalo Stallions' else next((name for name in ['Kids Choice Sports','Public Flower','Toke Lane','KushMart','STIIIZY','Healthy Buffalo','Upwork','Contra','Yelp','Seneca'] if name.lower().replace(' ','') in re.sub(r'\s+','',text.lower())),None)
+                company=company or (recipient.split('@')[-1] if '@' in recipient else 'Outreach conversation')
+                category='Coaching' if company in ('Buffalo Stallions','Kids Choice Sports','Healthy Buffalo') else choose_category(text)
+                url='https://mail.google.com/mail/u/0/#all/'+tid
+                result=engine.add({'company':company,'title':first['subject'].strip() or 'Opportunity conversation','url':url,'category':category,'description':'Imported Gmail correspondence. Open the thread for original opportunity context.','source':'Gmail history','relationship':summary['relationship']})
+                oid=result['id']
+                if result['added']:
+                    with engine.connect() as c:
+                        c.execute('UPDATE opportunities SET stage=?,contact=?,notes=?,followup=? WHERE id=?',(summary['stage'],recipient,'History: '+summary['status']+'. Hiring/payment outcomes are not inferred.',(datetime.now(timezone.utc)+timedelta(days=1)).date().isoformat() if summary['stage'] not in ('Parked','Offer / contract') and datetime.fromisoformat(summary['latest_date'])>datetime.now(timezone.utc)-timedelta(days=60) else '',oid))
+                with engine.lock,engine.connect() as c:
+                    c.execute('INSERT OR REPLACE INTO email_threads(thread_id,opportunity_id,company,subject,summary,messages,reviewed) VALUES(?,?,?,?,?,?,?)',(tid,oid,company,first['subject'],json.dumps(summary),json.dumps(messages),now()))
+                    engine.log(c,oid,'Sent conversation studied',summary['status'])
+                reviewed+=1
+                engine.set_setting('history_study',{'status':'running','threads_reviewed':reviewed,'threads_found':len(cases),'limited':limited})
+            except Exception as e:
+                detail=str(e) if isinstance(e,ValueError) and str(e).startswith(('Service returned HTTP','Service could not be reached','Add both','Unknown category')) else type(e).__name__
+                errors.append(detail)
         learn(engine)
-        engine.set_setting('history_study',{'status':'complete','threads_reviewed':reviewed,'threads_found':len(cases),'limited':limited,'finished':now(),'scope':'Sent-folder career/contract queries plus all messages in matching threads. Up to 10 pages per query; no attachment bodies downloaded.'})
+        engine.set_setting('history_study',{'status':'partial' if errors else 'complete','threads_skipped':len(errors),'read_errors':list(dict.fromkeys(errors)),'threads_reviewed':reviewed,'threads_found':len(cases),'limited':limited,'finished':now(),'scope':'Sent-folder career/contract queries plus all messages in matching threads. Up to 10 pages per query; no attachment bodies downloaded.'})
     except Exception as e:
         current=engine.setting('history_study',{});current.update({'status':'failed','error':'Gmail history read failed: '+type(e).__name__,'finished':now()});engine.set_setting('history_study',current)
 

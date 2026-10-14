@@ -1,5 +1,10 @@
 # Release history
 
+## 0.5.2 — 2026-10-14
+
+- Include recent conversation context in AI drafts and clarify offer terms without accepting them.
+- Continue past unreadable threads and report partial review accurately.
+
 ## 0.5.1 — 2026-10-14
 
 - Keep separate Gmail threads as distinct leads, retry temporary read failures, refresh known conversations, and recover interrupted reviews.

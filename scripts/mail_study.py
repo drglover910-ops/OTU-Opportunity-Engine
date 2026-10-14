@@ -25,7 +25,7 @@ try:
  for _ in range(180):
   status=request('/api/status');study=status.get('history_study',{})
   if study.get('status')=='interrupted':request('/api/gmail/history',{})
-  if study.get('status') in ('complete','failed'):break
+  if study.get('status') in ('complete','partial','failed'):break
   time.sleep(10)
  report['study']=study
  style=status.get('outreach_style',{});report['style']={k:v for k,v in style.items() if k!='examples'};report['professional_outreach_examples']=[redact(x) for x in style.get('examples',[])[:8]]

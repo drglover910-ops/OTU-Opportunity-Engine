@@ -5,7 +5,7 @@ from pathlib import Path
 from email.message import EmailMessage
 from email import policy
 from html.parser import HTMLParser
-VERSION = '0.5.1'
+VERSION = '0.5.2'
 STAGES = ['New','Researching','Ready to contact','Contacted','Interview / meeting','Offer / contract','Won','Parked']
 CATEGORIES = ['CRM / GoHighLevel','AI / business automation','Sales / operations','Coaching','Contract']
 FILES_LIMIT=25*1024*1024
@@ -353,6 +353,18 @@ class Engine:
         if row['relationship']=='Requested paperwork':body='Hello,\n\nThank you for speaking with me. Here are the documents you requested. Please let me know if anything else is needed.\n\nBest,\nDesmond Glover'
         elif row['relationship']=='Follow-up':body=f'Hello,\n\nI’m following up on our conversation about {row["title"]}. I’m still interested and would welcome an update on the next step.\n\nBest,\nDesmond Glover'
         else:body=f'Hello,\n\nI’m interested in your {row["title"]} opportunity. My background includes {strengths}. I’d welcome a conversation about your priorities and how I can contribute.\n\nBest,\nDesmond Glover'
+        with self.connect() as c:historic=c.execute('SELECT thread_id FROM email_threads WHERE opportunity_id=?',(row['id'],)).fetchone()
+        if historic:
+            case=self.email_case(historic['thread_id'])
+            context=[]
+            for message in case['messages'][-3:]:
+                text=message['body']
+                if re.search(r'password|api.?key|access.?token|client.?secret',text,re.I):continue
+                text=re.sub(r'[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}','[email omitted]',text)
+                context.append({'direction':message['direction'],'text':text[:1500]})
+            evidence.append({'name':'Current conversation context','text':json.dumps({'status':case['summary']['status'],'messages':context})})
+            if case['summary'].get('stage')=='Offer / contract' and row['relationship']!='Requested paperwork':
+                body='Hello,\n\nThank you for outlining the opportunity. Could you please confirm the responsibilities, compensation terms, and next steps so I can review everything together?\n\nBest,\nDesmond Glover'
         style=self.setting('outreach_style',{})
         if style:evidence.append({'name':'Private outreach style guidance','text':json.dumps({'rules':style.get('rules',[]),'examples':style.get('examples',[])[:4]})})
         if mode=='ai':

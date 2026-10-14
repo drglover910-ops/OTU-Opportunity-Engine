@@ -98,7 +98,7 @@ class HTTP(unittest.TestCase):
         req=urllib.request.Request(self.base+path,data=json.dumps(data).encode() if data is not None else None,headers={'Content-Type':'application/json',**(headers or {})})
         with urllib.request.urlopen(req) as r:return json.load(r)
     def test_health_and_status(self):
-        self.assertEqual(self.request('/health')['version'],'0.3.0');self.assertIn('storage',self.request('/api/status'))
+        self.assertEqual(self.request('/health')['version'],'0.3.1');self.assertIn('storage',self.request('/api/status'))
     def test_workflow(self):
         result=self.request('/api/add',{'company':'HTTP client','title':'CRM project','url':'https://example.com/http'})
         self.request('/api/update',{'id':result['id'],'contact':'a@example.com'})
@@ -106,5 +106,13 @@ class HTTP(unittest.TestCase):
     def test_cross_origin_refused(self):
         with self.assertRaises(urllib.error.HTTPError) as e:self.request('/api/add',{},headers={'Origin':'https://evil.example'})
         self.assertEqual(e.exception.code,403)
+    def test_google_signin_direct_redirect(self):
+        class NoRedirect(urllib.request.HTTPRedirectHandler):
+            def redirect_request(self,*args,**kwargs):return None
+        with patch.object(app.engine,'oauth_url',return_value='https://accounts.google.com/o/oauth2/v2/auth?state=test'):
+            opener=urllib.request.build_opener(NoRedirect)
+            with self.assertRaises(urllib.error.HTTPError) as e:opener.open(self.base+'/oauth/google/start')
+            self.assertEqual(e.exception.code,303)
+            self.assertEqual(e.exception.headers['Location'],'https://accounts.google.com/o/oauth2/v2/auth?state=test')
     def test_static_ui(self):
         with urllib.request.urlopen(self.base+'/') as r:self.assertIn(b'Career library',r.read())

@@ -1,5 +1,9 @@
 # Release history
 
+## 0.3.1 — 2026-10-14
+- Replace blank-tab JavaScript OAuth flow with a direct server redirect to Google.
+- Existing Gmail credentials and required redirect URI remain valid.
+
 ## 0.3.0 — 2026-10-14
 - Guided setup: career files, optional AI writing, Gmail sign-in.
 - Plain-language progress labels and message actions; technical settings collapsed.

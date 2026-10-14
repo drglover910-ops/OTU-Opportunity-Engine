@@ -35,6 +35,11 @@ class Handler(BaseHTTPRequestHandler):
                 name=d['name'].replace('"','').replace('\r','').replace('\n','')
                 return self.output(Path(d['path']).read_bytes(),'application/octet-stream',download=name)
             if path=='/api/export':return self.output(engine.backup(),'application/zip',download='OTU-private-backup-'+VERSION+'.zip')
+            if path=='/oauth/google/start':
+                url=engine.oauth_url()
+                self.send_response(303);self.send_header('Location',url)
+                self.send_header('Cache-Control','no-store');self.send_header('Referrer-Policy','no-referrer')
+                self.end_headers();return
             if path=='/oauth/google/callback':
                 engine.oauth_callback(query.get('state',[''])[0],query.get('code',[''])[0])
                 return self.output(b'<html><body><p>Gmail connected. Close this window and refresh your Opportunity Engine.</p></body></html>','text/html; charset=utf-8')

@@ -1,5 +1,16 @@
 # Release history
 
+## 0.2.0 — 2026-10-14
+- Private career-file ingestion and retrieval; original documents preserved.
+- Persistent storage checks, record migration, backup and merge recovery with delivery history.
+- Ranked public-source discovery and Contra official-help playbook.
+- Editable proposal templates and optional Hugging Face inference.
+- Exact-message approval, attachment checks, duplicate controls, Gmail OAuth and reply matching.
+- Responsive Matrix dashboard with next actions, stage tracking and activity history.
+- Awake-only background discovery; no automatic outreach.
+- Deployment workflow validates app dependencies, UI syntax and runtime separately.
+- Gmail, inference, production career import and restart persistence require one-time connection/validation. Contra account automation remains unimplemented.
+
 ## 0.1.1 — 2026-10-14
 - Add visible release version to the app footer and health response.
 - Add VERSION, release checksums, and a numbered download package.

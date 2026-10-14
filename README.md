@@ -7,20 +7,30 @@ sdk: docker
 app_port: 7860
 ---
 
-# OTU Opportunity Engine
+# OTU Opportunity Engine — v0.2.0
 
-Release: **0.1.1** (2026-10-14). See CHANGELOG.md.
+A private opportunity workspace for Desmond Glover. Matrix-inspired responsive dashboard for discovery, fit ranking, career retrieval, draft preparation, approved email, replies and follow-ups. Contra-first contract workflow; coaching and employment alongside it.
 
-Private opportunity workspace for Desmond Glover. Matrix-inspired, high-contrast UI with a saved opportunity board, stages, contact records, follow-up dates, outreach templates, and on-demand Remotive discovery. Contra is the first contract-platform shortcut; account automation is not implemented.
+## Start
 
-Run with Python 3.12: `python app.py`. No external packages required. Check `/health` and exercise the board. Run `python -m unittest discover -s tests` for persistence and API checks.
+Python 3.12. `python -m venv .venv`, `.venv/bin/pip install -r requirements.txt`, `.venv/bin/python app.py`. HTTP `/health` reports version. `.venv/bin/python -m unittest discover -s tests` exercises persistence, migration, retrieval, approvals, duplicate prevention, recovery and API behavior. `node --check ui.js` validates browser syntax. Existing v0.1.1 records are migrated in place.
 
-## Hugging Face setup
+## Private storage
 
-Create a **private Docker Space** and upload app.py, Dockerfile and this README. The app has no built-in login: do not deploy it publicly with personal records. Connect private writable storage to this Space. If Hugging Face confirms its mount path is `/opportunity-data`, set the Space variable `OTU_DATA_DIR=/opportunity-data/otu-engine`. Use the actual mount path shown by Hugging Face; setting a variable alone does not mount a bucket. Default `/tmp` storage is temporary and can disappear on restart/rebuild. Free Spaces may sleep; this is not an always-on autonomous service.
+Keep the Space **Private**: Hugging Face access controls supply authentication; this app has no separate login and serves one owner. Connect private bucket `Dezz-9-10/otu-opportunity-data` with Read & Write access at `/opportunity-data`. Set `OTU_DATA_DIR=/opportunity-data/otu-engine`. A mount-path variable alone does not attach storage. If the mount exists the app selects this path automatically. Otherwise the default `/tmp/otu-data` is temporary and the UI warns you. A configured but missing /opportunity-data mount stops startup instead of silently storing records elsewhere.
 
-Keep résumés and career archives in private storage, not a public repository. No email, AI provider or platform credentials are required for this first version. It prepares drafts and opens your email app; it does not send messages or attach documents. Check recipient, original listing, prior outreach and attachments yourself. No applications are auto-submitted. No invented outcomes or sample leads are seeded.
+Import the original master archive and designed résumés through **Career library**. Files are stored in the private bucket, not GitHub. Originals are preserved and indexed. Reference dossiers cannot be sent as attachments. Selected originals with internal verification notes are blocked from sending. AI receives selected, scrubbed career text only when requested; review its output for accuracy.
 
-## Next connections
+Use Connections → Download private backup before major changes. Exports include records, originals and delivery history, but exclude Google OAuth tokens. Restore merges records, preserves sent/unresolved delivery history and resets unsent approvals. Reconnect Gmail after recovery. Run only one app instance against this SQLite store; do not share the database with another bot. Verify a saved lead survives a Space restart before relying on storage.
 
-Contra discovery/proposals require an authorized account workflow and verification of supported access. Dedicated inbox recommended (e.g. opportunities@your-domain): connect through provider OAuth in a future iteration for reply tracking and approved sending. Never paste passwords into chat. Portfolio assets, career-document retrieval, AI-assisted proposal tailoring, scheduled discovery, activity history and income reporting remain implementation work.
+## Connections
+
+- **Contra:** official help playbook included. Job feed → Apply is the documented route. DMs are for networking, not service pitches. Account/browser automation is not connected. Co-Agent/MCP access is account-dependent and remains to investigate.
+- **Public feeds:** We Work Remotely RSS response verified in research. Remotive returned 403 in research and is supplementary. The UI shows actual success/error status. A score is a keyword-based relevance aid, not a hiring prediction. Location, pay and required credentials need checking against originals.
+- **Background checks:** enabled by default, at most every 12 hours while the app is awake; disable in Connections. Free Spaces can sleep. No always-on guarantee and no background sending.
+- **AI:** add separate `HF_INFERENCE_TOKEN` Space secret with Inference Providers permission. Optional `HF_MODEL` variable; default `Qwen/Qwen3-235B-A22B-Instruct-2507:scaleway`, whose provider availability was checked 2026-10-14. Provider access and credits must be verified by a successful draft. Calls may incur costs; 700 output tokens maximum, 10 attempts/day. No AI calls occur until you click Tailor with AI.
+- **Gmail:** see docs/CONNECTIONS.md in the GitHub repository. Configure OAuth, then authorize from the app. Exact draft approval and an explicit Send click are required. Sender account is the account you authorize. Gmail acceptance is not proof of recipient delivery. Uncertain sends are locked, never automatically retried. Inbox sync matches recent messages by saved contact address; do not assume all replies are classified correctly.
+
+## Deployment
+
+GitHub `work`/`main` changes trigger deployment to the existing private Space through Actions secret `HF_TOKEN`. Runtime files are explicitly allowlisted; no career archives or databases are uploaded by this workflow. Health verification is recorded separately from successful upload. See docs/DEPLOYMENT.md and CHANGELOG.md.

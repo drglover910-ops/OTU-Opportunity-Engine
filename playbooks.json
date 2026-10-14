@@ -1,0 +1,95 @@
+[
+  {
+    "platform": "Contra",
+    "status": "Official help reviewed 2026-10-14",
+    "summary": "Contra supports a filtered job feed and an Apply action. Its help center says DMs are for networking, not service pitches. Co-Agent supports MCP connectors but account access is being rolled out; this app has no verified outbound Contra API.",
+    "steps": [
+      "Complete the independent profile: cover image/video, four pieces of work, rate, social link, identity verification and wallet setup.",
+      "Position your services around CRM/GoHighLevel and automation, with truthful case studies and your actual role in each project.",
+      "Filter the Job feed by tools, skills and budgets; save suitable listings here.",
+      "Use the listing Apply action for tailored applications; avoid service pitches through Contra DMs.",
+      "Review scope, timeline and payment structure; fixed, hourly and milestone escrow differ from invoice billing.",
+      "Check platform, processing and payout fees at checkout; a free account does not mean every transaction is free.",
+      "Record submitted proposals, client replies, contracts and payments. Check whether your account has Co-Agent and its Connectors tab."
+    ],
+    "sources": [
+      {
+        "url": "https://help.contra.com/en/articles/9322973-applying-to-jobs-on-contra",
+        "label": "Applying to jobs",
+        "checked": "Read 2026-10-14"
+      },
+      {
+        "url": "https://help.contra.com/en/articles/9322381-onboarding-and-completing-your-profile",
+        "label": "Profile completion",
+        "checked": "Read 2026-10-14"
+      },
+      {
+        "url": "https://help.contra.com/en/articles/11908737-direct-message-dm-faq-s",
+        "label": "DM restrictions",
+        "checked": "Read 2026-10-14"
+      },
+      {
+        "url": "https://help.contra.com/en/articles/9322934-fees-overview",
+        "label": "Fees overview",
+        "checked": "Read 2026-10-14"
+      },
+      {
+        "url": "https://help.contra.com/en/articles/14757117-using-co-agent-on-contra",
+        "label": "Co-Agent and MCP connectors",
+        "checked": "Read 2026-10-14"
+      }
+    ]
+  },
+  {
+    "platform": "Remotive",
+    "status": "Adapter implemented; source returned HTTP 403 in research",
+    "summary": "Supplementary remote employment source. Remotive jobs are not necessarily freelance contracts. Verify original listings and candidate location restrictions.",
+    "steps": [
+      "Check CRM, automation, customer-success and coaching queries.",
+      "Keep original source links and posted dates.",
+      "Review location, requirements and compensation before pursuing.",
+      "Follow the employer's required application route; a contact email is not a substitute for required forms."
+    ],
+    "sources": [
+      {
+        "url": "https://github.com/remotive-com/remote-jobs-api",
+        "label": "Remotive public API documentation",
+        "checked": "Pending review"
+      }
+    ]
+  },
+  {
+    "platform": "PeoplePerHour",
+    "status": "Manual link only",
+    "summary": "Alternative marketplace to investigate after Contra. Costs, proposal allowances and account requirements have not been verified.",
+    "steps": [
+      "Read current official help and fee details before purchasing credits or bidding.",
+      "Save suitable projects and prepare proposals here.",
+      "Keep submission and payment activity recorded."
+    ],
+    "sources": [
+      {
+        "url": "https://www.peopleperhour.com/freelance-jobs",
+        "label": "Project listings",
+        "checked": "Not verified"
+      }
+    ]
+  },
+  {
+    "platform": "We Work Remotely",
+    "status": "Public RSS response verified 2026-10-14",
+    "summary": "Live public RSS discovery. Every lead keeps its source link. Feed access does not verify an employer, listing eligibility, or an offer.",
+    "steps": [
+      "Check the original posting and employer.",
+      "Review requirements, location and compensation.",
+      "Follow the listing application instructions."
+    ],
+    "sources": [
+      {
+        "url": "https://weworkremotely.com/remote-jobs.rss",
+        "label": "Official public RSS feed",
+        "checked": "Response read 2026-10-14"
+      }
+    ]
+  }
+]

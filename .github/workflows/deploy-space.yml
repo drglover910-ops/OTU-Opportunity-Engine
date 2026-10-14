@@ -5,6 +5,13 @@ on:
     branches: [main, work]
     paths:
       - app.py
+      - engine.py
+      - ui.html
+      - ui.js
+      - ui.css
+      - playbooks.json
+      - requirements.txt
+      - scripts/check_space.py
       - Dockerfile
       - README.md
       - VERSION
@@ -12,7 +19,7 @@ on:
       - scripts/deploy_space.py
       - .github/workflows/deploy-space.yml
 permissions:
-  contents: read
+  contents: write
 concurrency:
   group: otu-hugging-face-deploy
   cancel-in-progress: false
@@ -25,6 +32,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install app dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Validate browser JavaScript
+        run: node --check ui.js
       - name: Validate app
         run: python -m unittest discover -s tests
       - name: Install deployment client
@@ -33,3 +44,16 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: python scripts/deploy_space.py
+      - name: Verify deployed runtime
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/check_space.py
+      - name: Record deployment verification
+        run: |
+          git config user.name 'OTU deployment workflow'
+          git config user.email 'otu-deploy@users.noreply.github.com'
+          git add docs/LATEST_DEPLOYMENT.json
+          git diff --cached --quiet && exit 0
+          git commit -m 'Record deployed Space health and connection checks'
+          git pull --rebase origin work
+          git push origin HEAD:work

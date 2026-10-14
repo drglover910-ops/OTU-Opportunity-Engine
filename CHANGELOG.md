@@ -1,5 +1,9 @@
 # Release history
 
+## 0.6.1 — 2026-10-14
+
+- Keep account tools under one menu, show successful AI checks plainly, explain service failures without backend jargon, and include reviewed Contra help in its assistant context.
+
 ## 0.6.0 — 2026-10-14
 
 - Simple daily navigation, plain-language Help, and honest connection cards.

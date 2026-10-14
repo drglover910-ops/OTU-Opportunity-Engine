@@ -3,15 +3,39 @@
   "paid_ai_calls": 0,
   "private_message_storage": "Hugging Face private database only",
   "study": {
-    "status": "failed",
-    "threads_reviewed": 51,
+    "status": "partial",
+    "threads_skipped": 42,
+    "read_errors": [
+      "Service returned HTTP 403. Check the connection and permissions."
+    ],
+    "threads_reviewed": 53,
     "threads_found": 95,
     "limited": false,
-    "error": "Gmail history read failed: ValueError",
-    "finished": "2026-10-14T19:21:28.852037+00:00"
+    "finished": "2026-10-14T19:27:35.684801+00:00",
+    "scope": "Sent-folder career/contract queries plus all messages in matching threads. Up to 10 pages per query; no attachment bodies downloaded."
   },
-  "style": {},
-  "professional_outreach_examples": [],
+  "style": {
+    "sent_messages_reviewed": 65,
+    "threads_with_human_replies": 40,
+    "rules": [
+      "Short, confident introduction tied to the actual opportunity.",
+      "Requested-paperwork replies should just provide the requested documents.",
+      "Follow-ups should reference prior contact and ask for the next step.",
+      "Never infer a hire or payment from a positive reply.",
+      "Check historical correspondence before sending duplicate outreach."
+    ],
+    "learned_at": "2026-10-14T19:27:35.683365+00:00"
+  },
+  "professional_outreach_examples": [
+    "Attached are my tailored r\u00e9sum\u00e9, cover letter, and first 90-day plan. I\u2019ve also included the three professional references requested below.",
+    "Thank you for following up and giving me the opportunity to clarify that part of my background.",
+    "I\u2019m looking forward to sitting down with you both, learning more about the plans for Junior Stallions, and discussing how we can help develop and grow the program.",
+    "I'm still very excited about the opportunity and looking forward to hearing your thoughts whenever you get a chance.",
+    "I\u2019ve attached my tailored r\u00e9sum\u00e9 and cover letter for your review. I\u2019m particularly interested in contributing to CRM and automation systems involving pipelines, workflows, lead management, follow-up, calendars, forms, and operational process improvement.",
+    "I\u2019ve attached my tailored r\u00e9sum\u00e9 and cover letter, along with my professional brand profile. I\u2019d be glad to discuss the project scope and determine the best implementation plan and timeline.",
+    "I\u2019ve attached my r\u00e9sum\u00e9 and cover letter for review. I\u2019d welcome the opportunity to learn more about the client\u2019s current GHL environment, priorities, and the type of builds or ongoing support they need.",
+    "I\u2019ve attached my r\u00e9sum\u00e9 and cover letter for review. I\u2019d welcome the opportunity to learn more about your current automation environment, priorities, and the systems you need supported."
+  ],
   "cases_imported": 54,
   "case_overview": [
     {
@@ -38,6 +62,24 @@
       "sent": 2,
       "human_replies": 2,
       "latest_date": "2026-10-08T19:11:10+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "Outreach conversation",
+      "status": "No reply found",
+      "sent": 1,
+      "human_replies": 0,
+      "latest_date": "2026-09-18T19:10:44+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "gmail.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
       "next_context": "Follow-up",
       "paid_outcome_verified": false
     },
@@ -214,24 +256,6 @@
     },
     {
       "company": "healthclickaway.com",
-      "status": "Reply received",
-      "sent": 1,
-      "human_replies": 1,
-      "latest_date": "2026-09-22T08:00:00+00:00",
-      "next_context": "Follow-up",
-      "paid_outcome_verified": false
-    },
-    {
-      "company": "arvenda.com",
-      "status": "Reply received",
-      "sent": 1,
-      "human_replies": 1,
-      "latest_date": "2026-09-22T08:00:00+00:00",
-      "next_context": "Follow-up",
-      "paid_outcome_verified": false
-    },
-    {
-      "company": "ghlva.com",
       "status": "Reply received",
       "sent": 1,
       "human_replies": 1,

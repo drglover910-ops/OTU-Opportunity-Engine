@@ -1,7 +1,7 @@
 {
-  "commit": "3ae78dc31f5f3ed40482372e8b20af4872f11cab",
-  "version": "0.7.1",
-  "checked_at": "2026-10-14T23:33:57.358758+00:00",
+  "commit": "0be8c6ded4b8012474021ef3f9b18aa562c6e01b",
+  "version": "0.7.2",
+  "checked_at": "2026-10-14T23:39:47.497423+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -27,7 +27,7 @@
   "gmail_connected": true,
   "ai_configured": true,
   "connections": {
-    "checked_at": "2026-10-14T23:34:28.548726+00:00",
+    "checked_at": "2026-10-14T23:40:18.088502+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."

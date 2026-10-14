@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "checked_at": "2026-10-14T15:25:48.424528+00:00",
+  "upload": "completed",
+  "health": "verified",
+  "runtime_stage": "RUNNING",
+  "storage": {
+    "path": "/opportunity-data/otu-engine",
+    "writable": true,
+    "mount_detected": true,
+    "restart_verified": false,
+    "message": "Mounted storage detected; verify a saved record survives a restart."
+  },
+  "documents": 0,
+  "gmail_connected": false,
+  "ai_configured": false,
+  "discovery": {
+    "added": 0,
+    "cached": true,
+    "message": "Feed checked within 12 hours. Open the saved results; avoid repeated requests."
+  }
+}

@@ -53,6 +53,10 @@ for url in ['https://weworkremotely.com/remote-jobs.rss','https://www.arbeitnow.
             parsed=json.loads(raw);entries=parsed.get('data',[]) if isinstance(parsed,dict) else parsed[1:];examples=[{'title':x.get('title') or x.get('position'),'company':x.get('company_name') or x.get('company'),'url':x.get('url'),'location':x.get('location')} for x in entries[:5]]
         out.append({'source':url,'status':'verified response','examples':examples})
     except Exception as e:out.append({'source':url,'status':type(e).__name__,'http_status':getattr(e,'code',None)})
+for url in ['https://help.contra.com/en/articles/14757117-using-co-agent-on-contra','https://help.contra.com/en/articles/16275340-how-to-change-your-name-email-and-profile-information-on-contra','https://help.contra.com/en/?q=API','https://help.contra.com/en/?q=integration']:
+    try:
+        page=fetch(url);out.append({'source':url,'status':'read','text':'\n'.join(page.text)[:30000],'integration_links':[urllib.parse.urljoin(url,link) for link in page.links if any(word in link.lower() for word in ['connector','integrat','api','oauth','mcp','developers','share-profile'])]})
+    except Exception as e:out.append({'source':url,'status':type(e).__name__,'http_status':getattr(e,'code',None)})
 # Only non-secret Space configuration is recorded.
 try:
     from huggingface_hub import HfApi

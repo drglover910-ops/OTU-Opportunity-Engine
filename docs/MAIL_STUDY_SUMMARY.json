@@ -4,11 +4,11 @@
   "private_message_storage": "Hugging Face private database only",
   "study": {
     "status": "failed",
-    "threads_reviewed": 54,
+    "threads_reviewed": 52,
     "threads_found": 95,
     "limited": false,
     "error": "Gmail history read failed: ValueError",
-    "finished": "2026-10-14T19:15:09.193630+00:00"
+    "finished": "2026-10-14T19:19:12.127633+00:00"
   },
   "style": {},
   "professional_outreach_examples": [],
@@ -38,24 +38,6 @@
       "sent": 2,
       "human_replies": 2,
       "latest_date": "2026-10-08T19:11:10+00:00",
-      "next_context": "Follow-up",
-      "paid_outcome_verified": false
-    },
-    {
-      "company": "Outreach conversation",
-      "status": "No reply found",
-      "sent": 1,
-      "human_replies": 0,
-      "latest_date": "2026-09-18T19:08:08+00:00",
-      "next_context": "Follow-up",
-      "paid_outcome_verified": false
-    },
-    {
-      "company": "Outreach conversation",
-      "status": "No reply found",
-      "sent": 1,
-      "human_replies": 0,
-      "latest_date": "2026-09-18T19:10:44+00:00",
       "next_context": "Follow-up",
       "paid_outcome_verified": false
     },
@@ -232,6 +214,24 @@
     },
     {
       "company": "roamfurther.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "healthclickaway.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "arvenda.com",
       "status": "Reply received",
       "sent": 1,
       "human_replies": 1,

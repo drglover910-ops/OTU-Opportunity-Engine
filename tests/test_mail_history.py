@@ -36,3 +36,10 @@ class MailHistory(unittest.TestCase):
   b=safe_url("https://mail.google.com/mail/u/0/#all/abc456")
   self.assertNotEqual(a,b)
   self.assertEqual(safe_url("https://example.com/listing#tracking"),"https://example.com/listing")
+
+ def test_revised_offer_is_tracked_without_claiming_a_win(self):
+  r=summarize([self.message('sent','Following up'),self.message('received','We increased the offer from 25% to 35% of net operating profit.')])
+  self.assertEqual(r['stage'],'Offer / contract');self.assertFalse(r['paid_outcome_verified'])
+ def test_newer_rejection_supersedes_old_interview(self):
+  r=summarize([self.message('received','Let us schedule an interview'),self.message('sent','Thank you'),self.message('received','We are not moving forward.')])
+  self.assertEqual(r['stage'],'Parked')

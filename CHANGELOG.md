@@ -1,5 +1,12 @@
 # Release history
 
+## 0.7.0 — 2026-10-14
+
+- Add career-based platform profiles and future-platform registration.
+- Add sandbox-required assisted browsing, visible-page listing extraction, reviewed profile/message filling, and employer-ready file attachment.
+- Keep automatic discovery limited to verified public feeds; account creation, applications, consent and login challenges require owner interaction.
+- Browser login sessions are not persisted; production availability must pass the live runtime check.
+
 ## 0.6.1 — 2026-10-14
 
 - Keep account tools under one menu, show successful AI checks plainly, explain service failures without backend jargon, and include reviewed Contra help in its assistant context.

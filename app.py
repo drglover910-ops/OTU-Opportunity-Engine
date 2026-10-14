@@ -22,6 +22,9 @@ class Handler(BaseHTTPRequestHandler):
             if path in ['/', '/ui.js','/ui.css']:
                 name={'/':'ui.html','/ui.js':'ui.js','/ui.css':'ui.css'}[path];ctype={'/':'text/html; charset=utf-8','/ui.js':'text/javascript; charset=utf-8','/ui.css':'text/css; charset=utf-8'}[path]
                 return self.output((ROOT/name).read_bytes(),ctype)
+            if path=='/api/platforms':return self.output(engine.platforms())
+            if path=='/api/platform-profile':return self.output(engine.platform_profile(query['id'][0]))
+            if path=='/api/browser/frame':return self.output(engine.browser_action({'action':'frame'}),'image/jpeg')
             if path=='/api/workspaces':return self.output(engine.workspaces())
             if path=='/api/conversation':return self.output(engine.conversation({k:v[0] for k,v in query.items()}))
             if path=='/api/status':return self.output(engine.status())
@@ -75,6 +78,9 @@ class Handler(BaseHTTPRequestHandler):
             if self.path=='/api/developer/lock':
                 self.developer_sessions.pop(self.headers.get('X-Developer-Key',''),None);return self.output({'locked':True})
             if self.path in ('/api/settings','/api/restore') and self.developer_sessions.get(self.headers.get('X-Developer-Key',''),0)<time.time():return self.output({'error':'Open developer tools before changing technical settings.'},status=403)
+            if self.path=='/api/platforms':return self.output(engine.add_platform(d))
+            if self.path=='/api/platform-profile':return self.output(engine.save_platform_profile(d))
+            if self.path=='/api/browser':return self.output(engine.browser_action(d))
             if self.path=='/api/connections/check':return self.output(engine.check_connections())
             if self.path=='/api/workspaces':return self.output(engine.add_workspace(d))
             if self.path=='/api/conversation/ask':return self.output(engine.ask_workspace(d))

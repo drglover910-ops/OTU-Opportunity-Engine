@@ -5,7 +5,7 @@ from pathlib import Path
 from email.message import EmailMessage
 from email import policy
 from html.parser import HTMLParser
-VERSION = '0.6.1'
+VERSION = '0.7.0'
 STAGES = ['New','Researching','Ready to contact','Contacted','Interview / meeting','Offer / contract','Won','Parked']
 CATEGORIES = ['CRM / GoHighLevel','AI / business automation','Sales / operations','Coaching','Contract']
 FILES_LIMIT=25*1024*1024
@@ -97,12 +97,20 @@ class Engine:
             c.execute('CREATE TABLE IF NOT EXISTS packages(id INTEGER PRIMARY KEY,opportunity_id INTEGER,master_digest TEXT,files TEXT,checks TEXT,draft_id INTEGER,created TEXT)')
             c.execute('CREATE TABLE IF NOT EXISTS messages(id TEXT PRIMARY KEY,thread_id TEXT,sender TEXT,subject TEXT,snippet TEXT,opportunity_id INTEGER,received TEXT)')
             c.execute('CREATE TABLE IF NOT EXISTS workspaces(id TEXT PRIMARY KEY,name TEXT UNIQUE,created TEXT)')
+            c.execute('CREATE TABLE IF NOT EXISTS platforms(id TEXT PRIMARY KEY,name TEXT,url TEXT,workspace TEXT,created TEXT)')
+            c.execute('CREATE TABLE IF NOT EXISTS platform_profiles(platform TEXT PRIMARY KEY,data TEXT,updated TEXT)')
+
             c.execute('CREATE TABLE IF NOT EXISTS work_notes(id INTEGER PRIMARY KEY,workspace TEXT,opportunity_id INTEGER,text TEXT,created TEXT)')
             if 'role' not in {r[1] for r in c.execute('PRAGMA table_info(work_notes)')}:c.execute('ALTER TABLE work_notes ADD COLUMN role TEXT DEFAULT "note"')
             for key,name in [('contra','Contra'),('public','Public opportunities'),('gmail','Past email outreach'),('other','Other opportunities')]:
                 c.execute('INSERT OR IGNORE INTO workspaces VALUES(?,?,?)',(key,name,now()))
             if 'workspace' not in cols:c.execute('ALTER TABLE opportunities ADD COLUMN workspace TEXT DEFAULT ""')
 
+        for key,name,url in [('contra','Contra','https://contra.com'),('peopleperhour','PeoplePerHour','https://www.peopleperhour.com'),('upwork','Upwork','https://www.upwork.com'),('indeed','Indeed','https://www.indeed.com'),('linkedin','LinkedIn','https://www.linkedin.com'),('remotive','Remotive','https://remotive.com'),('wwr','We Work Remotely','https://weworkremotely.com')]:
+            with self.connect() as c:exists=c.execute('SELECT id FROM platforms WHERE id=?',(key,)).fetchone()
+            if not exists:
+                workspace='contra' if key=='contra' else 'public' if key in ('wwr','remotive') else self.add_workspace({'name':name})['id']
+                with self.connect() as c:c.execute('INSERT OR IGNORE INTO platforms VALUES(?,?,?,?,?)',(key,name,url,workspace,now()))
         previous=self.setting('history_study',{})
         if previous.get('status')=='running':
             previous['status']='interrupted';self.set_setting('history_study',previous)
@@ -272,6 +280,60 @@ class Engine:
         if not isinstance(answer,str) or not answer.strip():raise ValueError('The writing provider returned an empty answer. Your question is saved.')
         with self.lock,self.connect() as c:c.execute('INSERT INTO work_notes(workspace,opportunity_id,text,created,role) VALUES(?,?,?,?,?)',(workspace,oid,answer[:8000],now(),'assistant'))
         self.set_setting('last_ai_success',now());return {'answered':True}
+    def platforms(self):
+        with self.connect() as c:rows=[dict(r) for r in c.execute('SELECT * FROM platforms ORDER BY created')]
+        for row in rows:row['automatic_discovery']=row['id'] in ('wwr','remotive');row['account_access']='Not verified'
+        return rows
+    def add_platform(self,d):
+        from platform_browser import public_url
+        url=safe_url(str(d.get('url','')));public_url(url)
+        name=str(d.get('name','')).strip()[:80]
+        if not name:raise ValueError('Give this platform a name.')
+        with self.connect() as c:old=c.execute('SELECT id FROM platforms WHERE url=?',(url,)).fetchone()
+        if old:return {'id':old['id'],'added':False}
+        key=secrets.token_hex(8);workspace=self.add_workspace({'name':name})['id']
+        with self.lock,self.connect() as c:c.execute('INSERT INTO platforms VALUES(?,?,?,?,?)',(key,name,url,workspace,now()))
+        return {'id':key,'added':True}
+    def platform_profile(self,key):
+        if not any(p['id']==key for p in self.platforms()):raise ValueError('Platform not found.')
+        with self.connect() as c:row=c.execute('SELECT data FROM platform_profiles WHERE platform=?',(key,)).fetchone()
+        if row:return json.loads(row['data'])
+        from applications import profile
+        master=self.master_record();data=profile(master['baseline'],'CRM / GoHighLevel',master['updates'])
+        name=data['name'].split();email=re.search(r'[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}',data['contact'])
+        return {'full_name':data['name'],'first_name':name[0],'last_name':' '.join(name[1:]),'email':email.group(0) if email else '', 'headline':'CRM / GoHighLevel & Business Automation','bio':data['summary'],'skills':', '.join(data['skills'])}
+    def save_platform_profile(self,d):
+        key=str(d.get('platform',''));self.platform_profile(key)
+        fields={k:str(d.get('fields',{}).get(k,''))[:4000] for k in ('full_name','first_name','last_name','email','headline','bio','skills')}
+        if not fields['full_name']:raise ValueError('Add your name before saving the profile.')
+        with self.lock,self.connect() as c:c.execute('INSERT OR REPLACE INTO platform_profiles VALUES(?,?,?)',(key,json.dumps(fields),now()))
+        return {'saved':True,'message':'Profile saved privately. No platform account has been created.'}
+    def browser_action(self,d):
+        from platform_browser import PlatformBrowser
+        with self.lock:
+            if not hasattr(self,'browser_manager'):self.browser_manager=PlatformBrowser()
+        action=d.get('action','');platform=next((p for p in self.platforms() if p['id']==d.get('platform')),None)
+        hosts=[urllib.parse.urlsplit(p['url']).hostname.removeprefix('www.') for p in self.platforms()]
+        payload=dict(d)
+        if action=='start':
+            if not platform:raise ValueError('Choose a platform first.')
+            payload['url']=d.get('url') or platform['url']
+        if action=='fill':
+            if not d.get('confirmed'):raise ValueError('Review and confirm the profile details before filling the page.')
+            payload['fields']=self.platform_profile(d['platform'])
+        if action=='fill_message':
+            if not d.get('confirmed'):raise ValueError('Review the message before filling the page.')
+            draft=self.draft(d['draft_id']);payload['fields']={'message':draft['body']};action='fill'
+        if action=='upload':
+            if not d.get('confirmed'):raise ValueError('Review the document before attaching it.')
+            with self.connect() as c:doc=c.execute('SELECT * FROM documents WHERE id=?',(int(d['document_id']),)).fetchone()
+            if not doc or doc['kind'] not in ('resume','cover_letter','portfolio'):raise ValueError('Choose an employer-ready document, not your master archive.')
+            if any(t in doc['text'].lower() for t in ('internal verification section','verify current status before use','confirm measurement period')):raise ValueError('Choose a document without internal notes.')
+            payload['path']=doc['path']
+        result=self.browser_manager.call(action,payload,hosts)
+        if action=='read':
+            result['candidates']=[x for x in result['candidates'] if urllib.parse.urlsplit(x['url']).scheme=='https']
+        return result
     def check_connections(self):
         result={'checked_at':now(),'gmail':{'status':'not_connected','message':'Sign in to connect your inbox.'},'writing':{'status':'not_connected','message':'Basic writing works without AI.'},'saving':{'status':'connected' if self.storage()['writable'] and self.storage()['mount_detected'] else 'needs_attention'},'contra':{'status':'not_connected','message':'Open Contra to browse and sign in. Account access from this bot is not verified.'}}
         if self.setting('gmail_tokens'):
@@ -593,7 +655,7 @@ class Engine:
     def backup(self):
         # OAuth tokens are deliberately excluded from every export.
         with self.lock,self.connect() as c:
-            data={table:[dict(r) for r in c.execute('SELECT * FROM '+table)] for table in ['opportunities','documents','activity','drafts','messages','career_updates','packages','email_threads','workspaces','work_notes']}
+            data={table:[dict(r) for r in c.execute('SELECT * FROM '+table)] for table in ['opportunities','documents','activity','drafts','messages','career_updates','packages','email_threads','workspaces','work_notes','platforms','platform_profiles']}
         for doc in data['documents']:doc['path']=Path(doc['path']).name
         data['version']=VERSION;data['exported']=now()
         out=io.BytesIO()
@@ -620,6 +682,12 @@ class Engine:
                 assets.append((d,content))
             for row in data.get('opportunities',[]):safe_url(row.get('url'))
         with self.lock,self.connect() as c:
+            for platform in data.get('platforms',[]):
+                url=safe_url(platform['url'])
+                if urllib.parse.urlsplit(url).scheme!='https':raise ValueError('Invalid platform address in backup.')
+                c.execute('INSERT OR IGNORE INTO platforms VALUES(?,?,?,?,?)',(platform['id'],platform['name'],url,platform['workspace'],platform['created']))
+            for saved in data.get('platform_profiles',[]):
+                c.execute('INSERT OR IGNORE INTO platform_profiles VALUES(?,?,?)',(saved['platform'],saved['data'],saved['updated']))
             for w in data.get('workspaces',[]):
                 if re.fullmatch(r'[a-z0-9]{1,32}',str(w.get('id',''))):c.execute('INSERT OR IGNORE INTO workspaces VALUES(?,?,?)',(w['id'],w['name'],w['created']))
         leadmap={};docmap={};added=0;docs=0

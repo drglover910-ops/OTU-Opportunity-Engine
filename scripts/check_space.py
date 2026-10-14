@@ -10,8 +10,8 @@ base='https://dezz-9-10-otu-opportunity-engine.hf.space'
 headers={'Authorization':'Bearer '+os.environ['HF_TOKEN'],'User-Agent':'OTU deployment smoke check'}
 def request(path,data=None):
     req=urllib.request.Request(base+path,data=json.dumps(data).encode() if data is not None else None,headers={**headers,'Content-Type':'application/json'})
-    with urllib.request.urlopen(req,timeout=30) as r:return json.load(r)
-for attempt in range(24):
+    with urllib.request.urlopen(req,timeout=65 if path=='/api/browser' else 30) as r:return json.load(r)
+for attempt in range(48):
     try:
         info=api.space_info(SPACE);stage=str(info.runtime.stage);report['runtime_stage']=stage
         if stage in ('BUILD_ERROR','RUNTIME_ERROR'):break
@@ -33,6 +33,23 @@ for attempt in range(24):
                             except Exception:report['ai_live_check']='not verified; inspect writing connection'
                         else:report['ai_live_check']='previous attempt recorded; no repeated paid check'
                     else:report['ai_live_check']='previous successful request recorded' if status.get('last_ai_success') else 'not configured'
+                    report['platforms']=len(request('/api/platforms'))
+                    report['browser']='not checked'
+                    try:
+                        existing=request('/api/browser',{'action':'status'})
+                        if existing.get('open'):report['browser']='already open; left unchanged'
+                        else:
+                            opened=request('/api/browser',{'action':'start','platform':'contra','url':'https://contra.com/opportunities'})
+                            page=request('/api/browser',{'action':'read'})
+                            report['browser']='runtime verified; platform login still needed' if opened.get('http_status')==200 and not any(t in page['text'].lower() for t in ('verify you are human','access denied','unusual traffic','just a moment')) else 'runtime started; platform access restricted or unverified'
+                            report['browser_http_status']=opened.get('http_status')
+                            request('/api/browser',{'action':'stop'})
+                    except urllib.error.HTTPError as e:
+                        try:detail=json.load(e).get('error','')
+                        except Exception:detail='Browser check failed.'
+                        report['browser']='hosting configuration needed' if 'sandbox' in detail.lower() else 'not verified'
+                        report['browser_detail']=detail[:260]
+                    except Exception:report['browser']='not verified'
                     report['discovery']=request('/api/discover',{});break
             except urllib.error.HTTPError as e:
                 report['app_http_status']=e.code
@@ -46,7 +63,7 @@ if report['health']=='verified' and report.get('storage',{}).get('mount_detected
         api.restart_space(SPACE)
         report['restart_test']='started'
         time.sleep(10)
-        for attempt in range(24):
+        for attempt in range(48):
             try:
                 health=request('/health')
                 if health.get('version')==VERSION:

@@ -97,7 +97,13 @@ def cover_paragraphs(data,row):
         if term.lower() in row.get('description','').lower() and term.lower() in (' '.join(data['skills'])+' '+background).lower():requirements.append(term)
     fit=('Your emphasis on '+', '.join(requirements[:3])+' aligns with the work I have done in these areas. ') if requirements else ''
     close=fit+'I would welcome a conversation about your priorities and how my experience could support the role. Thank you for your consideration.'
-    return [date,row['company'],'Re: '+row['title'],'Dear Hiring Team,',intro,background,close,'Sincerely,',data['name']]
+    paragraphs=[date,row['company'],'Re: '+row['title'],'Dear Hiring Team,',intro,background]
+    if data['roles'] and data['roles'][0]['bullets']:
+        proof=data['roles'][0]['bullets'][0]
+        if re.match(r'^(Built|Managed|Led|Designed|Conducted|Maintained|Supported|Coordinated)\b',proof):
+            employer=data['roles'][0]['heading'].split('|')[-1].split('—')[0].strip()
+            paragraphs.append('At '+employer+', I '+proof[0].lower()+proof[1:])
+    return paragraphs+[close,'Sincerely,',data['name']]
 def pdf_document(data,sections,is_cover=False):
     out=io.BytesIO();styles=getSampleStyleSheet()
     styles.add(ParagraphStyle(name='NameOTU',fontName='OTUBold',fontSize=23,leading=27,textColor=colors.HexColor(NAVY),spaceAfter=7))

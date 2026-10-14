@@ -4,7 +4,7 @@ Open your private Space and refresh. Get set up guides you through the steps bel
 
 ## 1. Career files
 
-Career library → Choose your ZIP or résumé files → Add my career files. Select your original JOAT_Professional_Career_Archive_FIXED.zip as-is. Select the designed résumé PDFs/DOCXs separately if they are not in that archive. Multiple files can be selected together. Wait for the uploaded-file count. Originals are preserved. ZIP members are opened by the app, not by you.
+Career library → Choose your ZIP or résumé files → Add my career files. Select your original JOAT_Professional_Career_Archive_FIXED.zip as-is. The master ZIP is sufficient for generating finished résumés and cover letters. Older designed PDFs/DOCXs are optional examples. Multiple files can be selected together. Wait for the uploaded-file count. Originals are preserved. ZIP members are opened by the app, not by you.
 
 ## 2. Optional AI writing
 
@@ -26,4 +26,4 @@ After that, daily use is sign-in-free while consent remains valid. Google can ex
 
 ## Daily work
 
-Today → Review an opportunity → Read the original listing → Write a basic message or Write with AI → Save my edits → Approve this message → Send approved email. For Contra, copy the reviewed proposal and submit it through the platform's Apply workflow. Set your follow-up date and review replies. Preparing or approving a message does not send it.
+Today → Review an opportunity → Read the original listing → Create finished application → Save my edits → Approve this message → Send approved email. For Contra, copy the reviewed proposal and submit it through the platform's Apply workflow. Set your follow-up date and review replies. Preparing or approving a message does not send it.

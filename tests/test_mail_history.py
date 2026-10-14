@@ -1,7 +1,7 @@
 import base64,unittest,json,tempfile
 from unittest.mock import patch
 from engine import Engine,safe_url
-from mail_history import body,summarize,study
+from mail_history import body,summarize,study,refresh_known_thread
 class MailHistory(unittest.TestCase):
  def message(self,direction,text,automated=False):return {'direction':direction,'body':text,'automated':automated,'date':'2026-10-14T10:00:00+00:00'}
  def test_mime_text_and_quote_removal(self):
@@ -43,3 +43,16 @@ class MailHistory(unittest.TestCase):
  def test_newer_rejection_supersedes_old_interview(self):
   r=summarize([self.message('received','Let us schedule an interview'),self.message('sent','Thank you'),self.message('received','We are not moving forward.')])
   self.assertEqual(r['stage'],'Parked')
+
+ def test_refresh_updates_thread_but_preserves_manual_outcome(self):
+  e=Engine(tempfile.mkdtemp());oid=e.add({'company':'X','title':'Coaching','source':'Gmail history'})['id']
+  e.update({'id':oid,'stage':'Contacted'})
+  with e.connect() as c:c.execute('INSERT INTO email_threads VALUES(?,?,?,?,?,?,?)',('t',oid,'X','Coaching',json.dumps({'stage':'Contacted'}),'[]','2026-10-14'))
+  raw={'id':'t','messages':[{'id':'m','threadId':'t','internalDate':'1791972000000','payload':{'mimeType':'text/plain','headers':[{'name':'From','value':'employer@example.com'}],'body':{'data':base64.urlsafe_b64encode(b'We are pleased to offer you this role.').decode()}}}]}
+  refresh_known_thread(e,'t',raw)
+  self.assertEqual(e.get(oid)['stage'],'Offer / contract')
+  e.update({'id':oid,'stage':'Won'})
+  raw['messages'][0]['payload']['body']['data']=base64.urlsafe_b64encode(b'We are not moving forward.').decode()
+  refresh_known_thread(e,'t',raw)
+  self.assertEqual(e.get(oid)['stage'],'Won')
+  self.assertEqual(e.email_case('t')['summary']['stage'],'Parked')

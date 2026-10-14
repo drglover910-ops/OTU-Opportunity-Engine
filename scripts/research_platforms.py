@@ -43,6 +43,16 @@ for url in ['https://help.contra.com/en/','https://remotive.com/api/remote-jobs?
                     article=fetch(link);out.append({'source':link,'status':'read','text':'\n'.join(article.text)[:30000]})
                 except Exception as e:out.append({'source':link,'status':type(e).__name__})
     except Exception as e:out.append({'source':url,'status':type(e).__name__,'http_status':getattr(e,'code',None)})
+for url in ['https://weworkremotely.com/remote-jobs.rss','https://www.arbeitnow.com/api/job-board-api','https://remoteok.com/api']:
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'OTUOpportunityEngine/0.2'}),timeout=30) as r:raw=r.read(5000000)
+        if url.endswith('.rss'):
+            import xml.etree.ElementTree as ET
+            root=ET.fromstring(raw);examples=[{'title':x.findtext('title'),'url':x.findtext('link'),'description':x.findtext('description','')[:2000]} for x in root.findall('.//item')[:5]]
+        else:
+            parsed=json.loads(raw);entries=parsed.get('data',[]) if isinstance(parsed,dict) else parsed[1:];examples=[{'title':x.get('title') or x.get('position'),'company':x.get('company_name') or x.get('company'),'url':x.get('url'),'location':x.get('location')} for x in entries[:5]]
+        out.append({'source':url,'status':'verified response','examples':examples})
+    except Exception as e:out.append({'source':url,'status':type(e).__name__,'http_status':getattr(e,'code',None)})
 # Only non-secret Space configuration is recorded.
 try:
     from huggingface_hub import HfApi

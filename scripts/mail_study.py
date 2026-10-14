@@ -21,7 +21,8 @@ try:
   except Exception:pass
   time.sleep(10)
  else:raise RuntimeError('Deployment not ready')
- request('/api/gmail/history',{})
+ report['version']=expected
+ if request('/api/status').get('history_study',{}).get('status')!='complete':request('/api/gmail/history',{})
  for _ in range(180):
   status=request('/api/status');study=status.get('history_study',{})
   if study.get('status')=='interrupted':request('/api/gmail/history',{})
@@ -30,6 +31,16 @@ try:
  report['study']=study
  style=status.get('outreach_style',{});report['style']={k:v for k,v in style.items() if k!='examples'};report['professional_outreach_examples']=[redact(x) for x in style.get('examples',[])[:8]]
  cases=request('/api/email-cases');report['cases_imported']=len(cases)
+ report['threads_without_reply']=sum(c['summary']['status']=='No reply found' for c in cases)
+ # Archive only the unlinked combined record left by the original fragment-canonicalization defect.
+ case_ids={c['opportunity_id'] for c in cases}
+ drafts=request('/api/drafts')
+ protected={d['opportunity_id'] for d in drafts if d['status'] in ('Approved','Sent','Sending','Delivery unknown')}
+ archived=0
+ for lead in request('/api/opportunities'):
+  if lead['source']=='Gmail history' and lead.get('url')=='https://mail.google.com/mail/u/0/' and lead['id'] not in case_ids|protected and lead['stage']!='Won':
+   request('/api/update',{'id':lead['id'],'stage':'Parked','followup':'','notes':lead.get('notes','')+' Archived combined import record; original conversations are now tracked separately.'});archived+=1
+ report['combined_import_records_archived']=archived
  report['case_overview']=[{'company':c['company'],'status':c['summary']['status'],'sent':c['summary']['sent'],'human_replies':c['summary']['human_replies'],'latest_date':c['summary']['latest_date'],'next_context':c['summary']['relationship'],'paid_outcome_verified':False} for c in cases[:25]]
  report['buffalo_stallions']=[{'status':c['summary']['status'],'sent':c['summary']['sent'],'human_replies':c['summary']['human_replies'],'evidence':[redact(x) for x in c['summary'].get('evidence',[])[:4]]} for c in cases if c['company']=='Buffalo Stallions']
 except Exception as e:report['error']=type(e).__name__

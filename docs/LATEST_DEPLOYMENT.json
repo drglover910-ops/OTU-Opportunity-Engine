@@ -1,6 +1,6 @@
 {
   "version": "0.2.0",
-  "checked_at": "2026-10-14T15:25:48.424528+00:00",
+  "checked_at": "2026-10-14T15:28:16.390352+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -10,6 +10,17 @@
     "mount_detected": true,
     "restart_verified": false,
     "message": "Mounted storage detected; verify a saved record survives a restart."
+  },
+  "opportunities": 49,
+  "last_discovery": {
+    "added": 49,
+    "seen": 50,
+    "errors": [],
+    "sources_ok": [
+      "We Work Remotely RSS",
+      "Remotive"
+    ],
+    "finished": "2026-10-14T15:26:02.387920+00:00"
   },
   "documents": 0,
   "gmail_connected": false,

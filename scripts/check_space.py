@@ -5,7 +5,7 @@ from datetime import datetime,timezone
 from huggingface_hub import HfApi
 SPACE='Dezz-9-10/OTU-Opportunity-Engine'
 VERSION=Path('VERSION').read_text().strip()
-api=HfApi(token=os.environ['HF_TOKEN']);report={'version':VERSION,'checked_at':datetime.now(timezone.utc).isoformat(),'upload':'completed','health':'unverified'}
+api=HfApi(token=os.environ['HF_TOKEN']);report={'commit':os.getenv('GITHUB_SHA',''),'version':VERSION,'checked_at':datetime.now(timezone.utc).isoformat(),'upload':'completed','health':'unverified'}
 base='https://dezz-9-10-otu-opportunity-engine.hf.space'
 headers={'Authorization':'Bearer '+os.environ['HF_TOKEN'],'User-Agent':'OTU deployment smoke check'}
 def request(path,data=None):

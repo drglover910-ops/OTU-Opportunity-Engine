@@ -69,6 +69,7 @@ class Core(unittest.TestCase):
         self.lead();new=Engine(self.engine.data);self.assertEqual(len(new.list()),1)
     def test_storage_probe_reopens_database_and_file(self):
         value=self.engine.storage_probe({'action':'start'})
+        with self.assertRaises(ValueError):self.engine.storage_probe({'action':'verify','nonce':value['nonce']})
         reopened=Engine(self.engine.data)
         with self.assertRaises(ValueError):reopened.storage_probe({'action':'verify','nonce':'wrong'})
         self.assertTrue(reopened.storage_probe({'action':'verify','nonce':value['nonce']})['verified'])

@@ -72,7 +72,7 @@ class Engine:
         if str(self.data).startswith('/opportunity-data/') and not Path('/opportunity-data').exists():raise RuntimeError('Bucket /opportunity-data is not mounted. Connect the bucket before starting.')
         self.data.mkdir(parents=True,exist_ok=True)
         self.assets=self.data/'career';self.assets.mkdir(exist_ok=True)
-        self.db=self.data/'opportunities.sqlite3';self.lock=threading.RLock();self.scan_lock=threading.Lock();self.oauth_states={};self.last_scan=0
+        self.db=self.data/'opportunities.sqlite3';self.instance_id=secrets.token_hex(16);self.lock=threading.RLock();self.scan_lock=threading.Lock();self.oauth_states={};self.last_scan=0
         with self.connect() as c:
             c.execute('CREATE TABLE IF NOT EXISTS opportunities(id INTEGER PRIMARY KEY, company TEXT,title TEXT,url TEXT UNIQUE,category TEXT,stage TEXT DEFAULT "New",contact TEXT DEFAULT "",notes TEXT DEFAULT "",followup TEXT DEFAULT "",created TEXT)')
             cols={r[1] for r in c.execute('PRAGMA table_info(opportunities)')}
@@ -244,12 +244,13 @@ class Engine:
     def storage_probe(self,d):
         path=self.data/'.storage-probe.json'
         if d.get('action')=='start':
-            value={'nonce':secrets.token_hex(24),'started':now()}
+            value={'nonce':secrets.token_hex(24),'started':now(),'instance':self.instance_id}
             path.write_text(json.dumps(value));self.set_setting('storage_probe',value)
             return value
         value=self.setting('storage_probe',{})
         if not value or value.get('nonce')!=d.get('nonce') or not path.exists():raise ValueError('Storage marker did not survive; persistence is not verified.')
         if json.loads(path.read_text())!=value:raise ValueError('Storage marker mismatch')
+        if value.get('instance')==self.instance_id:raise ValueError('The app must restart before persistence can be verified.')
         self.set_setting('storage_verified',True);self.set_setting('storage_verification_time',now());path.unlink();self.set_setting('storage_probe',None)
         return {'verified':True}
     def status(self):

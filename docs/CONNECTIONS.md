@@ -2,7 +2,7 @@
 
 ## Career library
 
-Open the Space app → Career library → Import privately. Upload OTU-Career-Library-v1.zip (prepared separately, never committed here), or upload the original archive and résumé files. Confirm 28 indexed source files. Existing documents are deduplicated by checksum. Inspect originals before attaching them. The full master is an internal source, not a ready-to-submit résumé.
+Open the Space app → Career library → Import privately. Upload OTU-Career-Library-v1.zip (prepared separately, never committed here), or upload the original archive and résumé files. The master archive alone is enough to generate new applications; the designed examples are optional. Generated résumés and cover letters appear in Review & send. Existing documents are deduplicated by checksum. Inspect originals before attaching them. The full master is an internal source, not a ready-to-submit résumé.
 
 ## Hugging Face inference
 
@@ -42,3 +42,5 @@ No token or password field is implemented. Use the account's supported interface
 If your account has **Co-Agent**, open its **Connectors** section and inspect supported connections before assuming an outbound Contra API exists. The help article describes Co-Agent connecting to MCP tools; that is not evidence this app can control Contra. Do not bypass login checks or platform restrictions.
 
 Use the app to save requirements, evaluate fit and prepare proposals; manually apply on Contra and record completion until account automation is verified.
+
+Official Contra connector link: https://contra.com/co-agent/connectors . The public help article confirms inbound MCP tool connections for Co-Agent; it does not establish that this app can read or submit Contra applications. Profile → Share Profile is the documented way to copy a profile link.

@@ -1,5 +1,11 @@
 # Release history
 
+## 0.4.0 — 2026-10-14
+- Generate designed résumé and cover letter in PDF and DOCX directly from the master record.
+- Prepare an unsent email with both PDFs attached; check document length, required names and internal-note exclusion.
+- Preserve the original master and maintain source-labeled confirmed career updates.
+- Add official Contra connector and profile-sharing guidance; no account access is implied.
+
 ## 0.3.1 — 2026-10-14
 - Replace blank-tab JavaScript OAuth flow with a direct server redirect to Google.
 - Existing Gmail credentials and required redirect URI remain valid.

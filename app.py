@@ -24,6 +24,13 @@ class Handler(BaseHTTPRequestHandler):
             if path=='/api/status':return self.output(engine.status())
             if path=='/api/opportunities':return self.output(engine.list())
             if path=='/api/documents':return self.output(engine.documents())
+            if path=='/api/packages':return self.output(engine.packages())
+            if path=='/api/career-updates':return self.output(engine.career_updates())
+            if path=='/api/master-resume':
+                from applications import master_document
+                record=engine.master_record()
+                return self.output(master_document(record),'application/vnd.openxmlformats-officedocument.wordprocessingml.document',download='Desmond_Glover_Master_Career_Record_v'+str(len(record['updates']))+'.docx')
+            if path=='/api/master-record':return self.output(json.dumps(engine.master_record(),indent=2).encode(),'application/json',download='OTU_Master_Record_'+VERSION+'.json')
             if path=='/api/drafts':return self.output(engine.drafts())
             if path=='/api/history':return self.output(engine.history(query.get('id',[None])[0]))
             if path=='/api/messages':return self.output(engine.messages())
@@ -58,6 +65,8 @@ class Handler(BaseHTTPRequestHandler):
             d=json.loads(self.rfile.read(length))
             routes={'/api/add':engine.add,'/api/update':engine.update,'/api/draft':engine.create_draft,'/api/draft/edit':engine.edit_draft,'/api/approve':engine.approve,'/api/send':engine.send}
             if self.path in routes:return self.output(routes[self.path](d))
+            if self.path=='/api/package':return self.output(engine.create_package(d))
+            if self.path=='/api/career-update':return self.output(engine.add_career_update(d))
             if self.path=='/api/storage/probe':return self.output(engine.storage_probe(d))
             if self.path=='/api/discover':return self.output(engine.scan())
             if self.path=='/api/upload':return self.output(engine.import_file(d['name'],base64.b64decode(d['content'],validate=True),d.get('kind','reference')))

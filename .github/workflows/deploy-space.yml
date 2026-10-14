@@ -6,6 +6,7 @@ on:
     paths:
       - app.py
       - engine.py
+      - applications.py
       - ui.html
       - ui.js
       - ui.css

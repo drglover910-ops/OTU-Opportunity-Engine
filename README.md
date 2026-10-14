@@ -7,7 +7,7 @@ sdk: docker
 app_port: 7860
 ---
 
-# OTU Opportunity Engine — v0.3.1
+# OTU Opportunity Engine — v0.4.0
 
 A private opportunity workspace for Desmond Glover. Matrix-inspired responsive dashboard for discovery, fit ranking, career retrieval, draft preparation, approved email, replies and follow-ups. Contra-first contract workflow; coaching and employment alongside it.
 
@@ -34,3 +34,7 @@ Use Connections → Download private backup before major changes. Exports includ
 ## Deployment
 
 GitHub `work`/`main` changes trigger deployment to the existing private Space through Actions secret `HF_TOKEN`. Runtime files are explicitly allowlisted; no career archives or databases are uploaded by this workflow. Health verification is recorded separately from successful upload. See docs/DEPLOYMENT.md and CHANGELOG.md.
+
+## Finished applications
+
+Create finished application generates a source-grounded PDF/DOCX résumé and matching cover letter plus an unsent email from the master record. Earlier designed résumés are optional examples. Checks enforce a two-page résumé limit, one-page cover letter, required names and absence of internal notes. These are automated checks, not independent verification of every career claim. The master is preserved; source-labeled confirmed updates are versioned separately and merged into future applications. Planned projects remain planned, and application activity is never treated as employment or revenue.

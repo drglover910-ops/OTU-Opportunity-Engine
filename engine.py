@@ -5,7 +5,7 @@ from pathlib import Path
 from email.message import EmailMessage
 from email import policy
 from html.parser import HTMLParser
-VERSION = '0.3.1'
+VERSION = '0.4.0'
 STAGES = ['New','Researching','Ready to contact','Contacted','Interview / meeting','Offer / contract','Won','Parked']
 CATEGORIES = ['CRM / GoHighLevel','AI / business automation','Sales / operations','Coaching','Contract']
 FILES_LIMIT=25*1024*1024
@@ -84,6 +84,8 @@ class Engine:
             draft_cols={r[1] for r in c.execute('PRAGMA table_info(drafts)')}
             if 'repeat_authorized' not in draft_cols:c.execute('ALTER TABLE drafts ADD COLUMN repeat_authorized INTEGER DEFAULT 0')
             c.execute('CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT)')
+            c.execute('CREATE TABLE IF NOT EXISTS career_updates(id INTEGER PRIMARY KEY,fact TEXT UNIQUE,type TEXT,category TEXT,source TEXT,created TEXT)')
+            c.execute('CREATE TABLE IF NOT EXISTS packages(id INTEGER PRIMARY KEY,opportunity_id INTEGER,master_digest TEXT,files TEXT,checks TEXT,draft_id INTEGER,created TEXT)')
             c.execute('CREATE TABLE IF NOT EXISTS messages(id TEXT PRIMARY KEY,thread_id TEXT,sender TEXT,subject TEXT,snippet TEXT,opportunity_id INTEGER,received TEXT)')
     def connect(self):
         c=sqlite3.connect(self.db,timeout=20);c.row_factory=sqlite3.Row;c.execute('PRAGMA busy_timeout=20000');return c
@@ -161,7 +163,7 @@ class Engine:
         is_internal=(any(s in name.lower() for s in ['master_career','handoff','manual','index','readme']) or bool(re.match(r'^\d{2}_',name)))
         if is_internal:kind='reference'
         elif 'resume' in name.lower():kind='resume'
-        else:kind='portfolio' if kind=='portfolio' else 'reference'
+        else:kind=kind if kind in ('portfolio','cover_letter') else 'reference'
         label=name.lower()
         category=choose_category(name.replace('_',' ')+' '+text[:500])
         if any(term in label for term in ['sales','leadership','operations','kushmart','seneca','employment']):category='Sales / operations'
@@ -174,9 +176,56 @@ class Engine:
             cur=c.execute('INSERT OR IGNORE INTO documents(name,digest,path,text,kind,category,imported) VALUES(?,?,?,?,?,?,?)',(name,digest,str(path),text[:500000],kind,category,now()))
             self.log(c,None,'Career document imported',name)
         return {'id':cur.lastrowid,'added':True,'name':name}
+    def career_updates(self):
+        with self.connect() as c:return [dict(r) for r in c.execute('SELECT * FROM career_updates ORDER BY id DESC')]
+    def add_career_update(self,d):
+        fact=str(d.get('fact','')).strip()
+        if not fact or len(fact)>2000:raise ValueError('Enter a short factual career update.')
+        if d.get('confirmed') is not True:raise ValueError('Confirm this update is accurate before adding it to your master record.')
+        category=d.get('category','All')
+        if category not in CATEGORIES+['All']:raise ValueError('Choose a career category')
+        with self.lock,self.connect() as c:
+            c.execute('INSERT OR IGNORE INTO career_updates(fact,type,category,source,created) VALUES(?,?,?,?,?)',(fact,'user_fact',category,'Confirmed by owner',now()))
+            self.log(c,None,'Master record updated',category)
+        return {'saved':True}
+    def master_record(self):
+        with self.connect() as c:
+            master=c.execute('SELECT * FROM documents WHERE name LIKE "%Master_Career_Resume%" AND kind="reference" ORDER BY id DESC LIMIT 1').fetchone()
+        if not master:raise ValueError('Import the complete master career archive first. Earlier résumé examples are not required.')
+        # This records a working private product, not a paid client result or public launch.
+        milestone='Directed AI-assisted development of OTU Opportunity Engine, a private opportunity-management application with career retrieval, source-based discovery, document preparation and approval controls; private beta deployment.'
+        with self.lock,self.connect() as c:
+            c.execute('INSERT OR IGNORE INTO career_updates(fact,type,category,source,created) VALUES(?,?,?,?,?)',(milestone,'app_milestone','AI / business automation','Current running OTU app and owner-directed project history',now()))
+        updates=self.career_updates();source=master['text']
+        record={'source_file':master['name'],'source_digest':master['digest'],'baseline':source,'updates':updates,'generated_at':now(),'rule':'Original record preserved. Additions are source-labeled; opportunity targets, sent applications and planned products are not employment or income.'}
+        return record
+    def packages(self):
+        with self.connect() as c:return [dict(r) for r in c.execute('SELECT * FROM packages ORDER BY id DESC LIMIT 100')]
+    def create_package(self,d):
+        from applications import build_package
+        row=self.get(d['id'])
+        if not row['description']:raise ValueError('Add the listing requirements before generating a tailored application.')
+        record=self.master_record();files,checks=build_package(record['baseline'],row,record['updates'])
+        slug=re.sub(r'[^a-zA-Z0-9]+','_',row['company'])[:50]
+        revision=str(len(record['updates']))+'_'+datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')
+        ids={}
+        for key,content in files.items():
+            is_resume=key.startswith('resume');extension='pdf' if key.endswith('pdf') else 'docx'
+            name=f'Desmond_Glover_{slug}_{"Resume" if is_resume else "Cover_Letter"}_v{revision}.{extension}'
+            result=self.import_file(name,content,'resume' if is_resume else 'cover_letter');ids[key]=result['id']
+            with self.connect() as c:c.execute('UPDATE documents SET category=? WHERE id=?',(row['category'],result['id']))
+        draft=self.create_draft({'id':row['id'],'mode':'template'})
+        r=self.draft(draft['id']);r['attachments']=[ids['resume_pdf'],ids['cover_pdf']]
+        r['body']=f'Hello,\n\nI’m interested in the {row["title"]} opportunity. Please find my résumé and cover letter attached for your consideration. I would welcome a conversation about how I can contribute.\n\nBest,\nDesmond Glover'
+        self.edit_draft(r)
+        master_digest=hashlib.sha256(json.dumps(record,sort_keys=True).encode()).hexdigest()
+        with self.lock,self.connect() as c:
+            cur=c.execute('INSERT INTO packages(opportunity_id,master_digest,files,checks,draft_id,created) VALUES(?,?,?,?,?,?)',(row['id'],master_digest,json.dumps(ids),json.dumps(checks),draft['id'],now()))
+            self.log(c,row['id'],'Finished application generated','Résumé and cover letter; source and document checks passed; not sent')
+        return {'id':cur.lastrowid,'files':ids,'checks':checks,'draft_id':draft['id'],'message':'Résumé, cover letter and email prepared. Nothing has been sent.'}
     def retrieve(self,category,query=''):
         words=set(re.findall(r'[a-z]{4,}',query.lower()))
-        with self.connect() as c:docs=[dict(r) for r in c.execute('SELECT * FROM documents')]
+        with self.connect() as c:docs=[dict(r) for r in c.execute('SELECT * FROM documents ORDER BY id DESC')]
         scored=[]
         for d in docs:
             score=(40 if d['category']==category else 0)+(30 if 'master_career' in d['name'].lower() else 0)+sum(1 for w in words if w in d['text'].lower())
@@ -274,6 +323,8 @@ class Engine:
                 line=re.sub(r'(?:\+?1[-. ]?)?\(?\d{3}\)?[-. ]?\d{3}[-. ]?\d{4}', '[phone omitted]', line)
                 lines.append(line)
             evidence.append({'name':x['name'],'text':'\n'.join(lines)[:9000]})
+        updates=[u['fact'] for u in self.career_updates() if u['category'] in ('All',row['category'])]
+        if updates:evidence.append({'name':'Confirmed master updates','text':'\n'.join(updates)[:6000]})
         strengths={'CRM / GoHighLevel':'GoHighLevel CRM, pipeline design, customer follow-up, and workflow testing','AI / business automation':'AI-assisted product development, workflow design, testing, and troubleshooting','Sales / operations':'sales, customer communication, CRM follow-up, and business operations','Coaching':'coaching, athlete development, and youth program leadership','Contract':'business operations, customer workflows, and project coordination'}[row['category']]
         subject='Interest in '+row['title']
         if row['relationship']=='Requested paperwork':body='Hello,\n\nThank you for speaking with me. Here are the documents you requested. Please let me know if anything else is needed.\n\nBest,\nDesmond Glover'
@@ -321,7 +372,7 @@ class Engine:
         ids=json.loads(r['attachments'])
         for did in ids:
             with self.connect() as c:doc=c.execute('SELECT * FROM documents WHERE id=?',(did,)).fetchone()
-            if not doc or doc['kind'] not in ('resume','portfolio') or not Path(doc['path']).exists():warnings.append('Attachment is missing or is an internal reference document')
+            if not doc or doc['kind'] not in ('resume','portfolio','cover_letter') or not Path(doc['path']).exists():warnings.append('Attachment is missing or is an internal reference document')
             elif any(s in doc['text'].lower() for s in ['verify current status before use','internal verification section','confirm measurement period']):warnings.append('Attachment contains an internal verification note; choose a clean document')
         with self.connect() as c:
             duplicate=c.execute('SELECT id FROM drafts WHERE id<>? AND digest=? AND status IN ("Sent","Sending","Delivery unknown")',(r['id'],r['digest'])).fetchone()
@@ -404,7 +455,7 @@ class Engine:
     def backup(self):
         # OAuth tokens are deliberately excluded from every export.
         with self.lock,self.connect() as c:
-            data={table:[dict(r) for r in c.execute('SELECT * FROM '+table)] for table in ['opportunities','documents','activity','drafts','messages']}
+            data={table:[dict(r) for r in c.execute('SELECT * FROM '+table)] for table in ['opportunities','documents','activity','drafts','messages','career_updates','packages']}
         for doc in data['documents']:doc['path']=Path(doc['path']).name
         data['version']=VERSION;data['exported']=now()
         out=io.BytesIO()
@@ -438,14 +489,16 @@ class Engine:
                     copy=dict(row);copy['id']=result['id'];self.update(copy);added+=1
             for d,content in assets:
                 result=self.import_file(d['name'],content,d['kind']);docmap[d['id']]=result['id'];docs+=int(result.get('added',False))
+            draftmap={}
             with self.connect() as c:
                 for d in data.get('drafts',[]):
                     if d['opportunity_id'] not in leadmap:continue
                     ids=[docmap[x] for x in json.loads(d['attachments']) if x in docmap]
                     status=d['status'] if d['status'] in ('Sent','Delivery unknown') else 'Delivery unknown' if d['status']=='Sending' else 'Draft'
                     digest=self.draft_digest(d['recipient'],d['subject'],d['body'],ids)
-                    if c.execute('SELECT id FROM drafts WHERE digest=? AND status=?',(digest,status)).fetchone():continue
-                    c.execute('INSERT INTO drafts(opportunity_id,recipient,subject,body,attachments,status,digest,message_id,created,repeat_authorized) VALUES(?,?,?,?,?,?,?,?,?,?)',(leadmap[d['opportunity_id']],d['recipient'],d['subject'],d['body'],json.dumps(ids),status,digest,d.get('message_id',''),d['created'],0))
+                    existing=c.execute('SELECT id FROM drafts WHERE digest=? AND status=?',(digest,status)).fetchone()
+                    if existing:draftmap[d['id']]=existing['id'];continue
+                    saved=c.execute('INSERT INTO drafts(opportunity_id,recipient,subject,body,attachments,status,digest,message_id,created,repeat_authorized) VALUES(?,?,?,?,?,?,?,?,?,?)',(leadmap[d['opportunity_id']],d['recipient'],d['subject'],d['body'],json.dumps(ids),status,digest,d.get('message_id',''),d['created'],0));draftmap[d['id']]=saved.lastrowid
                 for m in data.get('messages',[]):
                     if m['opportunity_id'] not in leadmap:continue
                     c.execute('INSERT OR IGNORE INTO messages(id,thread_id,sender,subject,snippet,opportunity_id,received) VALUES(?,?,?,?,?,?,?)',(m['id'],m['thread_id'],m['sender'],m['subject'],m['snippet'],leadmap[m['opportunity_id']],m['received']))
@@ -453,6 +506,13 @@ class Engine:
                     oid=leadmap.get(event['opportunity_id'])
                     if not c.execute('SELECT id FROM activity WHERE opportunity_id IS ? AND action=? AND detail=? AND created=?',(oid,event['action'],event['detail'],event['created'])).fetchone():
                         c.execute('INSERT INTO activity(opportunity_id,action,detail,created) VALUES(?,?,?,?)',(oid,event['action'],event['detail'],event['created']))
+                for u in data.get('career_updates',[]):
+                    c.execute('INSERT OR IGNORE INTO career_updates(fact,type,category,source,created) VALUES(?,?,?,?,?)',(u['fact'],u['type'],u['category'],u['source'],u['created']))
+                for package in data.get('packages',[]):
+                    if package['opportunity_id'] not in leadmap or package['draft_id'] not in draftmap:continue
+                    if c.execute('SELECT id FROM packages WHERE opportunity_id=? AND master_digest=?',(leadmap[package['opportunity_id']],package['master_digest'])).fetchone():continue
+                    files={k:docmap[v] for k,v in json.loads(package['files']).items() if v in docmap}
+                    c.execute('INSERT INTO packages(opportunity_id,master_digest,files,checks,draft_id,created) VALUES(?,?,?,?,?,?)',(leadmap[package['opportunity_id']],package['master_digest'],json.dumps(files),package['checks'],draftmap[package['draft_id']],package['created']))
                 self.log(c,None,'Backup merged','Delivery history preserved; approvals reset; Gmail requires reconnection')
         return {'leads_added':added,'documents_added':docs,'message':'Merged records and delivery history. Approvals reset; reconnect Gmail separately. Existing records preserved.'}
     def schedule_loop(self):

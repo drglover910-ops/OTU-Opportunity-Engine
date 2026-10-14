@@ -1,7 +1,7 @@
 {
-  "commit": "0aee6051a8dd4a393d1c5cfd33b8965d29a4a793",
-  "version": "0.6.0",
-  "checked_at": "2026-10-14T22:03:18.965730+00:00",
+  "commit": "06fd2989a32d0fb3a601ba2d87051a6d081abeac",
+  "version": "0.6.1",
+  "checked_at": "2026-10-14T22:05:18.993389+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -27,14 +27,15 @@
   "gmail_connected": true,
   "ai_configured": true,
   "connections": {
-    "checked_at": "2026-10-14T22:03:39.623935+00:00",
+    "checked_at": "2026-10-14T22:05:40.001900+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
     },
     "writing": {
       "status": "configured",
-      "message": "AI settings are saved. A paid writing request has not been made by this connection check."
+      "message": "AI settings are saved. A paid writing request has not been made by this connection check.",
+      "last_success": "2026-10-14T22:03:40.958663+00:00"
     },
     "saving": {
       "status": "connected"
@@ -45,7 +46,7 @@
     }
   },
   "workspaces": 4,
-  "ai_live_check": "passed",
+  "ai_live_check": "previous successful request recorded",
   "discovery": {
     "added": 0,
     "cached": true,

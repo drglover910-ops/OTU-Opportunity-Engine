@@ -1,4 +1,4 @@
-# Your email conversations — v0.5.2
+# Your email conversations — v0.5.3
 
 Open **Activity & replies** to see **Study my sent outreach** and the reviewed conversations. Buffalo Stallions appears first. Select **Read conversation** to see the original messages in your private app.
 

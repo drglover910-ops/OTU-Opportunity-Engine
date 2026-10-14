@@ -5,7 +5,7 @@ from pathlib import Path
 from email.message import EmailMessage
 from email import policy
 from html.parser import HTMLParser
-VERSION = '0.5.2'
+VERSION = '0.5.3'
 STAGES = ['New','Researching','Ready to contact','Contacted','Interview / meeting','Offer / contract','Won','Parked']
 CATEGORIES = ['CRM / GoHighLevel','AI / business automation','Sales / operations','Coaching','Contract']
 FILES_LIMIT=25*1024*1024
@@ -25,7 +25,14 @@ def fetch_json(url, data=None, headers=None, method=None):
     req=urllib.request.Request(url,data=json.dumps(data).encode() if data is not None else None,headers={'Content-Type':'application/json',**(headers or {})},method=method)
     try:
         with urllib.request.urlopen(req,timeout=35) as response:return json.load(response)
-    except urllib.error.HTTPError as e:raise ValueError(f'Service returned HTTP {e.code}. Check the connection and permissions.') from None
+    except urllib.error.HTTPError as e:
+        reason=''
+        if urllib.parse.urlsplit(url).hostname=='gmail.googleapis.com':
+            try:
+                detail=json.load(e);candidate=detail.get('error',{}).get('errors',[{}])[0].get('reason','')
+                if re.fullmatch(r'[A-Za-z]{1,80}',candidate):reason=' ('+candidate+')'
+            except Exception:pass
+        raise ValueError(f'Service returned HTTP {e.code}{reason}. Check the connection and permissions.') from None
     except urllib.error.URLError:raise ValueError('Service could not be reached. Check network access and try later.') from None
 def form_json(url,data):
     req=urllib.request.Request(url,data=urllib.parse.urlencode(data).encode(),headers={'Content-Type':'application/x-www-form-urlencoded'})

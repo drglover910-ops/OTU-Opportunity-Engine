@@ -1,5 +1,9 @@
 # Release history
 
+## 0.5.3 — 2026-10-14
+
+- Pace Gmail history reads, retry rate-limit responses, exclude legacy chat entries, and expose safe API denial reasons.
+
 ## 0.5.2 — 2026-10-14
 
 - Include recent conversation context in AI drafts and clarify offer terms without accepting them.

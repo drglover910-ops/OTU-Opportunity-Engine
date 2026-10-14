@@ -55,7 +55,7 @@ def gmail_read(url,headers):
     for attempt in range(4):
         try:return fetch_json(url,headers=headers)
         except ValueError as e:
-            if attempt==3 or re.search(r'HTTP (?:400|401|403|404)',str(e)):raise
+            if attempt==3 or (re.search(r'HTTP (?:400|401|403|404)',str(e)) and not re.search(r'(?:userRateLimitExceeded|rateLimitExceeded)',str(e))):raise
             time.sleep(2**attempt)
 
 def study(engine):
@@ -64,7 +64,7 @@ def study(engine):
         engine.set_setting('history_study',{'status':'running','started':now(),'threads_reviewed':0})
         profile=gmail_read(api+'/profile',headers=headers);owner=profile['emailAddress'].lower();engine.set_setting('gmail_owner',owner)
         cases={};limited=False
-        queries=[('Buffalo Stallions','in:sent stallions'),('Relevant outreach','in:sent {resume résumé "cover letter" application coaching "job opportunity" "GoHighLevel" "Contra" proposal contract opportunity sales marketing}')]
+        queries=[('Buffalo Stallions','in:sent -in:chats stallions'),('Relevant outreach','in:sent -in:chats {resume résumé "cover letter" application coaching "job opportunity" "GoHighLevel" "Contra" proposal contract opportunity sales marketing}')]
         for label,query in queries:
             page=None
             for index in range(10):
@@ -80,6 +80,7 @@ def study(engine):
         reviewed=0;errors=[]
         for tid,label in cases.items():
             try:
+                time.sleep(0.25)
                 raw=gmail_read(api+'/threads/'+tid+'?format=full',headers=headers);messages=[]
                 messages=parse_messages(raw,owner)
                 outgoing=[m for m in messages if m['direction']=='sent']

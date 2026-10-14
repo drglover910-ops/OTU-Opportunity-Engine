@@ -1,7 +1,7 @@
 import base64,unittest,json,tempfile
 from unittest.mock import patch
 from engine import Engine,safe_url
-from mail_history import body,summarize,study,refresh_known_thread
+from mail_history import body,summarize,study,refresh_known_thread,gmail_read
 class MailHistory(unittest.TestCase):
  def message(self,direction,text,automated=False):return {'direction':direction,'body':text,'automated':automated,'date':'2026-10-14T10:00:00+00:00'}
  def test_mime_text_and_quote_removal(self):
@@ -26,6 +26,9 @@ class MailHistory(unittest.TestCase):
   oid=e.list()[0]['id'];did=e.create_draft({'id':oid})['id'];self.assertTrue(e.draft(did)['subject'].startswith('Re:'))
   with self.assertRaises(ValueError):e.approve({'id':did,'confirmation':'I reviewed recipient, content, attachments and history'})
   e.approve({'id':did,'confirmation':'I reviewed recipient, content, attachments and history','repeat_confirmed':True})
+  with patch.object(e,'gmail_token',return_value='test'),patch('mail_history.fetch_json',side_effect=response) as api:study(e,resume=True)
+  self.assertEqual(e.setting('history_study')['cached_threads_reused'],1)
+  self.assertTrue(all('/threads/' not in c.args[0] for c in api.call_args_list))
  def test_threads_survive_backup(self):
   e=Engine(tempfile.mkdtemp());oid=e.add({'company':'X','title':'Conversation'})['id']
   with e.connect() as c:c.execute('INSERT INTO email_threads VALUES(?,?,?,?,?,?,?)',('t',oid,'X','Subject',json.dumps({'status':'No reply found'}),'[]','2026-10-14'))
@@ -56,3 +59,11 @@ class MailHistory(unittest.TestCase):
   refresh_known_thread(e,'t',raw)
   self.assertEqual(e.get(oid)['stage'],'Won')
   self.assertEqual(e.email_case('t')['summary']['stage'],'Parked')
+
+ def test_rate_limit_backoff_and_permission_denial_are_distinct(self):
+  with patch('mail_history.fetch_json',side_effect=[ValueError('Service returned HTTP 403 (rateLimitExceeded).'),{'ok':True}]) as api,patch('mail_history.time.sleep') as pause:
+   self.assertEqual(gmail_read('https://gmail.googleapis.com/test',{}),{'ok':True})
+   pause.assert_called_once_with(5);self.assertEqual(api.call_count,2)
+  with patch('mail_history.fetch_json',side_effect=ValueError('Service returned HTTP 403 (insufficientPermissions).')) as api,patch('mail_history.time.sleep') as pause:
+   with self.assertRaises(ValueError):gmail_read('https://gmail.googleapis.com/test',{})
+   self.assertEqual(api.call_count,1);pause.assert_not_called()

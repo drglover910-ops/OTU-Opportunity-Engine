@@ -29,11 +29,20 @@ for url in ['https://help.contra.com/en/','https://remotive.com/api/remote-jobs?
             for href in p.links:
                 full=urllib.parse.urljoin(url,href)
                 if urllib.parse.urlparse(full).hostname=='help.contra.com' and any(s in full.lower() for s in ['article','collection']) and full not in links:links.append(full)
-            for link in links[:12]:
+            article_links=[]
+            for link in links[:8]:
                 try:
                     article=fetch(link);out.append({'source':link,'status':'read','text':'\n'.join(article.text)[:25000]})
+                    for href in article.links:
+                        full=urllib.parse.urljoin(link,href)
+                        if urllib.parse.urlparse(full).hostname=='help.contra.com' and '/articles/' in full and any(term in full.lower() for term in ['applying-to-jobs','direct-message','fees-overview','case-study','one-liner','services','paid-projects','first-client','spam','discovery-score','profile','co-agent']):
+                            if full not in article_links:article_links.append(full)
                 except Exception as e:out.append({'source':link,'status':type(e).__name__})
-    except Exception as e:out.append({'source':url,'status':type(e).__name__})
+            for link in article_links[:18]:
+                try:
+                    article=fetch(link);out.append({'source':link,'status':'read','text':'\n'.join(article.text)[:30000]})
+                except Exception as e:out.append({'source':link,'status':type(e).__name__})
+    except Exception as e:out.append({'source':url,'status':type(e).__name__,'http_status':getattr(e,'code',None)})
 # Only non-secret Space configuration is recorded.
 try:
     from huggingface_hub import HfApi

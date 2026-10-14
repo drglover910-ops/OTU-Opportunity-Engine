@@ -20,7 +20,7 @@ for attempt in range(24):
                 health=request('/health')
                 if health.get('version')==VERSION:
                     report['health']='verified';status=request('/api/status')
-                    report['storage']=status['storage'];report['documents']=status['counts']['documents'];report['gmail_connected']=status['gmail'];report['ai_configured']=status['ai_configured']
+                    report['storage']=status['storage'];report['opportunities']=status['counts']['opportunities'];report['last_discovery']=status.get('last_discovery',{});report['documents']=status['counts']['documents'];report['gmail_connected']=status['gmail'];report['ai_configured']=status['ai_configured']
                     report['discovery']=request('/api/discover',{});break
             except urllib.error.HTTPError as e:
                 report['app_http_status']=e.code

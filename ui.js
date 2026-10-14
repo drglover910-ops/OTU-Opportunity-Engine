@@ -227,7 +227,7 @@ $('browser-save-form').onsubmit=async e=>{e.preventDefault();try{const p=platfor
 let deviceCapture=null;const deviceProfiles={};
 function readerBookmarklet(){
  const origin=location.origin;
- return 'javascript:('+function(app){
+ return 'javascript:'+encodeURIComponent('('+function(app){
   if([...document.querySelectorAll('input[type=password]')].some(e=>e.getClientRects().length)){alert('Open an opportunity listing before using the page reader.');return}
   const source=new URL(location.href);for(const key of ['code','state','token','access_token','id_token','refresh_token','session','session_id','authorization'])source.searchParams.delete(key);
   const candidates=[...document.querySelectorAll('a[href]')].filter(e=>e.getClientRects().length&&/\/(?:jobs?|opportunities|projects?|viewjob)(?:\/|[?#])/.test(e.href)).map(e=>({title:e.innerText.trim().slice(0,200),url:e.href})).filter(e=>e.title).slice(0,60);
@@ -238,10 +238,10 @@ function readerBookmarklet(){
   function receive(e){if(e.origin===app&&e.source===w&&e.data==='OTU_READER_READY'){w.postMessage({type:'OTU_PAGE_CAPTURE',page:data},app);clearInterval(timer);removeEventListener('message',receive)}}
   addEventListener('message',receive);
   const timer=setInterval(()=>{if(++attempts>120){clearInterval(timer);removeEventListener('message',receive);alert('The bot did not receive this page. Open Find opportunities in OTU and paste the listing link and requirements instead.');return}w.postMessage('OTU_READER_HELLO',app)},1000);
- }.toString()+')('+JSON.stringify(origin)+')';
+ }.toString()+')('+JSON.stringify(origin)+')');
 }
 function profileBookmarklet(fields){
- return 'javascript:('+function(fields){
+ return 'javascript:'+encodeURIComponent('('+function(fields){
   if(!confirm('Fill your reviewed profile details on this page? Nothing will be submitted.'))return;
   const patterns={first_name:/first.?name|given.?name/i,last_name:/last.?name|family.?name|surname/i,full_name:/full.?name|display.?name|^name name/i,email:/\bemail\b/i,headline:/headline|professional.?title/i,bio:/\bbio\b|about.?me|professional.?summary/i,skills:/\bskills\b/i};let count=0;
   for(const e of document.querySelectorAll('input,textarea')){
@@ -251,7 +251,7 @@ function profileBookmarklet(fields){
    for(const key of Object.keys(patterns)){if(fields[key]&&patterns[key].test(descriptor)){const setter=Object.getOwnPropertyDescriptor(e.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype,'value').set;setter.call(e,fields[key]);e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}));count++;break}}
   }
   alert(count+' fields filled. Review the page. No account was created and nothing was submitted.');
- }.toString()+')('+JSON.stringify(fields)+')';
+ }.toString()+')('+JSON.stringify(fields)+')');
 }
 function registeredPage(origin){try{const u=new URL(origin);return u.protocol==='https:'&&platforms.find(p=>{const h=new URL(p.url).hostname.replace(/^www\./,'');return u.hostname===h||u.hostname.endsWith('.'+h)})}catch(e){return null}}
 window.addEventListener('message',e=>{

@@ -1,5 +1,9 @@
 # Release history
 
+## 0.7.3 — 2026-10-14
+
+- Encode device bookmarks safely and validate them as actual JavaScript bookmark URLs, including the cross-origin reader workflow.
+
 ## 0.7.2 — 2026-10-14
 
 - Add no-subscription device-browser reader and profile-filler tools, with registered-origin handshakes, explicit capture review, and a Safari setup guide.

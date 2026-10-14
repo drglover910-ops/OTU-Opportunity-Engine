@@ -1,7 +1,7 @@
 {
-  "commit": "2454e9ba7748c64cf57f5f0c1eddbd036aca8bc4",
-  "version": "0.5.0",
-  "checked_at": "2026-10-14T19:20:15.452446+00:00",
+  "commit": "7dc5eb6ed0e708075c600d51388389486950ce50",
+  "version": "0.5.2",
+  "checked_at": "2026-10-14T19:27:07.450657+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -12,7 +12,7 @@
     "restart_verified": true,
     "message": "Mounted storage detected; verify a saved record survives a restart."
   },
-  "opportunities": 50,
+  "opportunities": 101,
   "last_discovery": {
     "added": 49,
     "seen": 50,

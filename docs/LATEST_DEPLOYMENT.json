@@ -1,7 +1,7 @@
 {
-  "commit": "dcef7b0ff389bb7a464c9168425847534c39bd9f",
-  "version": "0.5.4",
-  "checked_at": "2026-10-14T19:34:21.759901+00:00",
+  "commit": "0aee6051a8dd4a393d1c5cfd33b8965d29a4a793",
+  "version": "0.6.0",
+  "checked_at": "2026-10-14T22:03:18.965730+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -12,7 +12,7 @@
     "restart_verified": true,
     "message": "Mounted storage detected; verify a saved record survives a restart."
   },
-  "opportunities": 143,
+  "opportunities": 145,
   "last_discovery": {
     "added": 49,
     "seen": 50,
@@ -26,6 +26,26 @@
   "documents": 17,
   "gmail_connected": true,
   "ai_configured": true,
+  "connections": {
+    "checked_at": "2026-10-14T22:03:39.623935+00:00",
+    "gmail": {
+      "status": "connected",
+      "message": "Inbox access passed a live check."
+    },
+    "writing": {
+      "status": "configured",
+      "message": "AI settings are saved. A paid writing request has not been made by this connection check."
+    },
+    "saving": {
+      "status": "connected"
+    },
+    "contra": {
+      "status": "not_connected",
+      "message": "Open Contra to browse and sign in. Account access from this bot is not verified."
+    }
+  },
+  "workspaces": 4,
+  "ai_live_check": "passed",
   "discovery": {
     "added": 0,
     "cached": true,

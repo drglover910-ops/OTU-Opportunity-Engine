@@ -1,7 +1,7 @@
 {
-  "commit": "06fd2989a32d0fb3a601ba2d87051a6d081abeac",
-  "version": "0.6.1",
-  "checked_at": "2026-10-14T22:05:18.993389+00:00",
+  "commit": "3a6fbb9584de63ed0d1fb388f8cb3ff724f4833f",
+  "version": "0.7.0",
+  "checked_at": "2026-10-14T23:31:52.883910+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -27,7 +27,7 @@
   "gmail_connected": true,
   "ai_configured": true,
   "connections": {
-    "checked_at": "2026-10-14T22:05:40.001900+00:00",
+    "checked_at": "2026-10-14T23:32:53.893780+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -45,8 +45,11 @@
       "message": "Open Contra to browse and sign in. Account access from this bot is not verified."
     }
   },
-  "workspaces": 4,
+  "workspaces": 8,
   "ai_live_check": "previous successful request recorded",
+  "platforms": 7,
+  "browser": "hosting configuration needed",
+  "browser_detail": "This host cannot start the required browser sandbox. Do not enter credentials. Use the platform on your own device while browser hosting is configured.",
   "discovery": {
     "added": 0,
     "cached": true,

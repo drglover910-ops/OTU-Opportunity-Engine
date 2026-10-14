@@ -1,0 +1,23 @@
+{
+  "checked_at": "2026-10-14T17:42:33.499296+00:00",
+  "sent_messages": 0,
+  "paid_ai_calls": 0,
+  "version": "0.3.1",
+  "gmail_connected": true,
+  "ai_configured": true,
+  "career_documents": 13,
+  "application_documents": 0,
+  "opportunities": 49,
+  "gmail_read_check": "passed",
+  "new_replies_linked": 0,
+  "review_draft": {
+    "id": 2,
+    "opportunity_id": 42,
+    "title": "Director, Finance Systems & ERP",
+    "company": "Smartsheet",
+    "source": "We Work Remotely",
+    "url": "https://weworkremotely.com/remote-jobs/smartsheet-director-finance-systems-erp",
+    "mode": "basic template",
+    "existing_draft_reused": false
+  }
+}

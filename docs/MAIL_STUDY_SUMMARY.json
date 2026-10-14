@@ -2,20 +2,20 @@
   "sent_messages": 0,
   "paid_ai_calls": 0,
   "private_message_storage": "Hugging Face private database only",
+  "version": "0.5.4",
   "study": {
-    "status": "partial",
-    "threads_skipped": 4,
-    "read_errors": [
-      "Service returned HTTP 403 (rateLimitExceeded). Check the connection and permissions."
-    ],
-    "threads_reviewed": 91,
+    "status": "complete",
+    "cached_threads_reused": 93,
+    "threads_skipped": 0,
+    "read_errors": [],
+    "threads_reviewed": 95,
     "threads_found": 95,
     "limited": false,
-    "finished": "2026-10-14T19:31:44.431351+00:00",
+    "finished": "2026-10-14T19:34:45.863759+00:00",
     "scope": "Sent-folder career/contract queries plus all messages in matching threads. Up to 10 pages per query; no attachment bodies downloaded."
   },
   "style": {
-    "sent_messages_reviewed": 108,
+    "sent_messages_reviewed": 109,
     "threads_with_human_replies": 70,
     "rules": [
       "Short, confident introduction tied to the actual opportunity.",
@@ -24,19 +24,21 @@
       "Never infer a hire or payment from a positive reply.",
       "Check historical correspondence before sending duplicate outreach."
     ],
-    "learned_at": "2026-10-14T19:31:44.429509+00:00"
+    "learned_at": "2026-10-14T19:34:45.861826+00:00"
   },
   "professional_outreach_examples": [
     "Attached are my tailored r\u00e9sum\u00e9, cover letter, and first 90-day plan. I\u2019ve also included the three professional references requested below.",
     "Thank you for following up and giving me the opportunity to clarify that part of my background.",
     "I\u2019m looking forward to sitting down with you both, learning more about the plans for Junior Stallions, and discussing how we can help develop and grow the program.",
     "I'm still very excited about the opportunity and looking forward to hearing your thoughts whenever you get a chance.",
+    "I\u2019ve attached my tailored r\u00e9sum\u00e9 and cover letter for your review. I\u2019m particularly interested in contributing to CRM and automation systems involving pipelines, workflows, lead management, follow-up, calendars, forms, and operational process improvement.",
     "While my primary coaching background is in football and athlete development, I\u2019m interested in opportunities where my experience in *coaching, athlete instruction, program leadership, camps, clinics, and youth development* could be valuable to your organization.",
     "I\u2019m interested in the right *paid coaching, athlete-development, or program opportunity* and would welcome a conversation. I\u2019m available by *phone call, text, or email* at your convenience.",
-    "I\u2019m interested in available *paid opportunities* and would welcome a conversation with the appropriate person. I\u2019m available by *phone call, text, or email* at your convenience.",
-    "I\u2019m interested in the right *paid opportunity* and would welcome a conversation. I\u2019m available by *phone call, text, or email* at your convenience."
+    "I\u2019m interested in available *paid opportunities* and would welcome a conversation with the appropriate person. I\u2019m available by *phone call, text, or email* at your convenience."
   ],
-  "cases_imported": 94,
+  "cases_imported": 95,
+  "threads_without_reply": 22,
+  "combined_import_records_archived": 1,
   "case_overview": [
     {
       "company": "Buffalo Stallions",
@@ -62,6 +64,24 @@
       "sent": 2,
       "human_replies": 2,
       "latest_date": "2026-10-08T19:11:10+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "Outreach conversation",
+      "status": "No reply found",
+      "sent": 1,
+      "human_replies": 0,
+      "latest_date": "2026-09-18T19:01:03+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "Outreach conversation",
+      "status": "No reply found",
+      "sent": 1,
+      "human_replies": 0,
+      "latest_date": "2026-09-18T19:08:08+00:00",
       "next_context": "Follow-up",
       "paid_outcome_verified": false
     },
@@ -238,24 +258,6 @@
     },
     {
       "company": "buffaloschools.org",
-      "status": "Reply received",
-      "sent": 1,
-      "human_replies": 1,
-      "latest_date": "2026-09-21T15:00:00+00:00",
-      "next_context": "Follow-up",
-      "paid_outcome_verified": false
-    },
-    {
-      "company": "buffaloschools.org",
-      "status": "Reply received",
-      "sent": 1,
-      "human_replies": 1,
-      "latest_date": "2026-09-21T15:00:00+00:00",
-      "next_context": "Follow-up",
-      "paid_outcome_verified": false
-    },
-    {
-      "company": "gmail.com",
       "status": "Reply received",
       "sent": 1,
       "human_replies": 1,

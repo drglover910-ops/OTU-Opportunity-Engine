@@ -80,7 +80,7 @@ document.addEventListener('click',async event=>{
  b.disabled=true;
  try{
   if(action==='check-replies'){await api('/api/gmail/sync',{});await refresh();jump('activity');notice('Replies checked. Open the matching opportunity conversation to continue.');return}
-  if(action?.startsWith('browser-')||action==='platform-profile'||action==='platform-open'){await platformAction(action,b);return}
+  if(action?.startsWith('browser-')||action?.startsWith('copy-')&&['copy-page-reader','copy-profile-filler'].includes(action)||action==='device-tools'||action==='platform-profile'||action==='platform-open'){await platformAction(action,b);return}
   if(action==='conversation'){await openConversation(leads.find(l=>l.id===id).workspace,id);return}
   if(action==='workspace-contra'){openWorkspace('contra');return}
   if(action==='open-workspace'){openWorkspace(b.dataset.workspace);return}
@@ -183,7 +183,7 @@ function renderHelp(){
 $('ask-workspace').onclick=async()=>{const b=$('ask-workspace');if(!$('conversation-text').value.trim()){notice('Write your question first.',true);return}b.disabled=true;const payload={workspace:selectedWorkspace,opportunity_id:selectedOpportunity,text:$('conversation-text').value};notice('Preparing an answer for this conversation…');try{await api('/api/conversation/ask',payload);await openConversation(selectedWorkspace,selectedOpportunity);notice('Answer saved in this conversation. Nothing was sent.')}catch(e){notice(e.message,true)}finally{b.disabled=false}};
 
 function renderPlatforms(){
- $('platform-cards').innerHTML=platforms.map(p=>`<article class="panel"><h2>${esc(p.name)}</h2><span class="badge">${p.automatic_discovery?'Public feed available':'Assisted page reading'}</span><p class="small">Account access: not verified. Sign in through the browser when needed.</p><button data-action="platform-profile" data-platform="${esc(p.id)}">Prepare my profile</button><button class="secondary" data-action="platform-open" data-platform="${esc(p.id)}">Open platform browser</button><a href="${esc(p.url)}" target="_blank" rel="noopener">Open on my device instead</a></article>`).join('');
+ $('platform-cards').innerHTML=platforms.map(p=>`<article class="panel"><h2>${esc(p.name)}</h2><span class="badge">${p.automatic_discovery?'Public feed available':'Assisted page reading'}</span><p class="small">Account access: not verified. Sign in through the browser when needed.</p><button data-action="platform-profile" data-platform="${esc(p.id)}">Prepare my profile</button><button class="secondary" data-action="device-tools" data-platform="${esc(p.id)}">Set up Safari tools</button><details><summary>Hosted browser · hosting not verified</summary><p class="small">The current Hugging Face host cannot provide the required browser sandbox. Use Safari tools or your own browser.</p><button class="secondary" data-action="platform-open" data-platform="${esc(p.id)}">Check hosted browser</button></details><a href="${esc(p.url)}" target="_blank" rel="noopener">Open on my device instead</a></article>`).join('');
 }
 async function browserCommand(action,extra={}){const r=await api('/api/browser',{action,platform:activePlatform,...extra});if(r.message)$('browser-status').textContent=r.message;return r}
 function updateBrowserFrame(){if(!browserRunning||document.hidden||frameBusy)return;frameBusy=true;$('browser-screen').src='/api/browser/frame?t='+Date.now()}
@@ -193,6 +193,10 @@ $('browser-screen').onclick=async e=>{const bounds=e.target.getBoundingClientRec
 setInterval(updateBrowserFrame,2000);
 $('browser-sensitive').onchange=()=>{$('browser-text').type=$('browser-sensitive').checked?'password':'text'};
 async function platformAction(action,b){
+ if(action==='device-tools'){activePlatform=b.dataset.platform;try{deviceProfiles[activePlatform]=await api('/api/platform-profile?id='+encodeURIComponent(activePlatform))}catch(e){deviceProfiles[activePlatform]=null}$('device-profile-name').textContent=platforms.find(p=>p.id===activePlatform).name;$('device-profile-reviewed').checked=false;jump('device-tools');return}
+ if(action==='copy-page-reader'){const copied=await copyDeviceTool(readerBookmarklet());notice(copied?'Page reader copied. Follow the bookmark steps below.':'Select and copy the tool text in the window, then follow the bookmark steps.');return}
+ if(action==='copy-profile-filler'){if(!$('device-profile-reviewed').checked)throw Error('Review and confirm your saved platform profile first.');const fields=deviceProfiles[activePlatform];if(!fields)throw Error('Prepare and save your platform profile first.');const copied=await copyDeviceTool(profileBookmarklet(fields));notice(copied?'Profile filler copied. Keep this personal bookmark private.':'Select and copy the tool text in the window. Keep this personal bookmark private.');return}
+
  if(action==='platform-profile'){
   activePlatform=b.dataset.platform;const p=platforms.find(p=>p.id===activePlatform);const fields=await api('/api/platform-profile?id='+encodeURIComponent(activePlatform));
   $('profile-title').textContent=p.name+' · Your prepared profile';$('profile-fields').innerHTML=Object.entries(fields).map(([key,value])=>`<label>${esc({full_name:'Full name',first_name:'First name',last_name:'Last name',email:'Contact email',headline:'Profile headline',bio:'About you',skills:'Skills'}[key]||key)}${key==='bio'?`<textarea name="${key}" rows="5">${esc(value)}</textarea>`:`<input name="${key}" value="${esc(value)}">`}</label>`).join('');$('profile-builder').hidden=false;$('profile-builder').scrollIntoView({block:'start'});return;
@@ -219,3 +223,48 @@ async function platformAction(action,b){
 $('platform-profile-form').onsubmit=async e=>{e.preventDefault();try{await api('/api/platform-profile',{platform:activePlatform,fields:Object.fromEntries(new FormData(e.target))});notice('Profile saved. Open the platform browser to fill supported signup fields.')}catch(err){notice(err.message,true)}};
 $('platform-form').onsubmit=async e=>{e.preventDefault();await run(()=>api('/api/platforms',Object.fromEntries(new FormData(e.target))),'Platform and workspace added. Automatic scraping is not enabled.');};
 $('browser-save-form').onsubmit=async e=>{e.preventDefault();try{const p=platforms.find(p=>p.id===activePlatform);if(!lastBrowserPage)throw Error('Read the opportunity page first.');const result=await api('/api/add',{company:$('capture-company').value,title:$('capture-title').value,description:$('capture-description').value,url:lastBrowserPage.url,source:p.name,workspace:p.workspace});await refresh();notice(result.added?'Opportunity saved with its requirements and source link.':'This opportunity is already saved.');}catch(err){notice(err.message,true)}};
+
+let deviceCapture=null;const deviceProfiles={};
+function readerBookmarklet(){
+ const origin=location.origin;
+ return 'javascript:('+function(app){
+  if([...document.querySelectorAll('input[type=password]')].some(e=>e.getClientRects().length)){alert('Open an opportunity listing before using the page reader.');return}
+  const source=new URL(location.href);for(const key of ['code','state','token','access_token','id_token','refresh_token','session','session_id','authorization'])source.searchParams.delete(key);
+  const candidates=[...document.querySelectorAll('a[href]')].filter(e=>e.getClientRects().length&&/\/(?:jobs?|opportunities|projects?|viewjob)(?:\/|[?#])/.test(e.href)).map(e=>({title:e.innerText.trim().slice(0,200),url:e.href})).filter(e=>e.title).slice(0,60);
+  const data={url:source.href,title:document.title,text:document.body.innerText.slice(0,24000),candidates};
+  const w=window.open(app+'/#reader','otu-opportunity-reader');
+  if(!w){alert('Allow Safari to open the OTU bot, then run this bookmark again.');return}
+  let attempts=0;
+  function receive(e){if(e.origin===app&&e.source===w&&e.data==='OTU_READER_READY'){w.postMessage({type:'OTU_PAGE_CAPTURE',page:data},app);clearInterval(timer);removeEventListener('message',receive)}}
+  addEventListener('message',receive);
+  const timer=setInterval(()=>{if(++attempts>120){clearInterval(timer);removeEventListener('message',receive);alert('The bot did not receive this page. Open Find opportunities in OTU and paste the listing link and requirements instead.');return}w.postMessage('OTU_READER_HELLO',app)},1000);
+ }.toString()+')('+JSON.stringify(origin)+')';
+}
+function profileBookmarklet(fields){
+ return 'javascript:('+function(fields){
+  if(!confirm('Fill your reviewed profile details on this page? Nothing will be submitted.'))return;
+  const patterns={first_name:/first.?name|given.?name/i,last_name:/last.?name|family.?name|surname/i,full_name:/full.?name|display.?name|^name name/i,email:/\bemail\b/i,headline:/headline|professional.?title/i,bio:/\bbio\b|about.?me|professional.?summary/i,skills:/\bskills\b/i};let count=0;
+  for(const e of document.querySelectorAll('input,textarea')){
+   if(!e.getClientRects().length||e.disabled||e.readOnly||['password','hidden','checkbox','radio','file','submit','button'].includes(e.type))continue;
+   const descriptor=[e.name,e.id,e.placeholder,e.getAttribute('aria-label'),e.autocomplete,e.id?document.querySelector('label[for="'+CSS.escape(e.id)+'"]')?.innerText:''].filter(Boolean).join(' ').toLowerCase();
+   if(/password|verification|one-time|credit|card number|social security|birth|tax|rate|salary/.test(descriptor))continue;
+   for(const key of Object.keys(patterns)){if(fields[key]&&patterns[key].test(descriptor)){const setter=Object.getOwnPropertyDescriptor(e.tagName==='TEXTAREA'?HTMLTextAreaElement.prototype:HTMLInputElement.prototype,'value').set;setter.call(e,fields[key]);e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}));count++;break}}
+  }
+  alert(count+' fields filled. Review the page. No account was created and nothing was submitted.');
+ }.toString()+')('+JSON.stringify(fields)+')';
+}
+function registeredPage(origin){try{const u=new URL(origin);return u.protocol==='https:'&&platforms.find(p=>{const h=new URL(p.url).hostname.replace(/^www\./,'');return u.hostname===h||u.hostname.endsWith('.'+h)})}catch(e){return null}}
+window.addEventListener('message',e=>{
+ const platform=registeredPage(e.origin);if(!platform||!e.source)return;
+ if(e.data==='OTU_READER_HELLO'){e.source.postMessage('OTU_READER_READY',e.origin);return}
+ if(e.data?.type!=='OTU_PAGE_CAPTURE')return;
+ const page=e.data.page;if(!page||typeof page.url!=='string'||typeof page.text!=='string'||typeof page.title!=='string')return;
+ let url;try{url=new URL(page.url);if(url.origin!==e.origin)return}catch(err){return}
+ deviceCapture={url:page.url,platform};$('device-import-candidates').innerHTML=(Array.isArray(page.candidates)?page.candidates:[]).slice(0,60).filter(c=>{try{return typeof c.title==='string'&&new URL(c.url).origin===e.origin}catch(err){return false}}).map(c=>`<p><a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.title.slice(0,200))}</a></p>`).join('')||'No candidate links found. Review the current listing below.';$('device-import-title').value=page.title.slice(0,250);$('device-import-company').value='';$('device-import-text').value=page.text.slice(0,24000);$('device-import-source').textContent=platform.name+' · '+page.url;jump('device-import');notice('Page received. Review and save only the opportunity details you need.');
+});
+$('device-import-form').onsubmit=async e=>{e.preventDefault();if(!deviceCapture){notice('Use the page reader on a platform listing first.',true);return}try{const p=deviceCapture.platform;const result=await api('/api/add',{company:$('device-import-company').value,title:$('device-import-title').value,description:$('device-import-text').value,url:deviceCapture.url,source:p.name,workspace:p.workspace});await refresh();await openConversation(p.workspace,result.id);deviceCapture=null;notice(result.added?'Opportunity saved. Its documents and conversation stay here.':'This opportunity was already saved. Its conversation is open.')}catch(err){notice(err.message,true)}};
+
+async function copyDeviceTool(text){
+ try{await navigator.clipboard.writeText(text);return true}catch(e){}
+ const dialog=document.createElement('dialog');dialog.className='copy-tool-dialog';const heading=document.createElement('h2');heading.textContent='Copy your Safari tool';const explanation=document.createElement('p');explanation.textContent='Tap the text, select all, and choose Copy. Then close this window and edit the bookmark address.';const area=document.createElement('textarea');area.readOnly=true;area.value=text;area.rows=8;const close=document.createElement('button');close.textContent='Close';close.onclick=()=>{dialog.close();dialog.remove()};dialog.append(heading,explanation,area,close);document.body.append(dialog);dialog.showModal();area.focus();area.select();area.setSelectionRange(0,text.length);try{if(document.execCommand('copy')){dialog.close();dialog.remove();return true}}catch(e){}return false;
+}

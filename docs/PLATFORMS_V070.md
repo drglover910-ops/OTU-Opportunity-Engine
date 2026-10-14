@@ -11,3 +11,14 @@ Read this page extracts rendered page text and possible listing links for owner 
 The browser can fill supported profile fields, place a prepared application message, and attach employer-ready files. It never fills passwords or identity/payment fields from stored profiles or accepts checkboxes. Review is required before filling or attaching; submission-related buttons require a separate, one-use approval. The app reports attempts rather than claiming account creation or application submission without confirmation.
 
 Tests use a locally fulfilled fixture, without contacting a platform. The fixture explicitly disables the sandbox only because the local test runner is root; production requires it. Deployment tests a fresh anonymous Contra page only if no owner browser session is open, closes its test session, and reports browser/runtime restrictions separately from app health. No account is created and no platform application is submitted by deployment checks.
+
+
+## v0.7.2: device-browser path
+
+The live Hugging Face test confirmed that the current host cannot provide the required Chromium sandbox. Hosted browsing remains blocked. Do not enter credentials into it or disable the sandbox to work around that result.
+
+Platforms & profiles → Set up Safari tools provides a page-reader bookmark and a platform-specific profile-filler bookmark. The reader transfers the current title, link, rendered text, and candidate listing links through a registered-origin postMessage handshake. It does not put page content or credentials in a URL. Auth query keys are removed; visible password forms are excluded. The owner reviews the capture before anything is saved. Browser or platform restrictions may block the tool; manual listing import remains available.
+
+The profile filler carries only reviewed public profile details, asks for confirmation, fills matching visible fields, and does not submit forms or tick legal agreements. Copy a new filler after profile edits. Bookmarks containing personal profile details should stay private. This path uses the owner’s existing device session, not a new hosted-browser subscription.
+
+End-to-end reader transfer, review/save into the correct conversation, and non-submitting profile filling passed in Chromium fixtures. Actual iPad Safari installation and a real Contra listing still require the owner’s device test; do not present that as already verified.

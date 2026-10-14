@@ -1,5 +1,10 @@
 # Release history
 
+## 0.7.2 — 2026-10-14
+
+- Add no-subscription device-browser reader and profile-filler tools, with registered-origin handshakes, explicit capture review, and a Safari setup guide.
+- Keep hosted browsing behind its unverified-hosting notice after the live sandbox check failed.
+
 ## 0.7.1 — 2026-10-14
 
 - Strip application secrets from the browser subprocess environment and reset page approvals when opening a platform.

@@ -27,11 +27,11 @@ def filenames(payload):
 
 def summarize(messages):
     outgoing=[m for m in messages if m['direction']=='sent'];incoming=[m for m in messages if m['direction']=='received'];human=[m for m in incoming if not m['automated']]
-    latest=messages[-1] if messages else {};words='\n'.join(m['body'] for m in human).lower()
+    latest=messages[-1] if messages else {};words='\n'.join(m['body'] for m in human[-2:]).lower()
     status='No reply found' if not incoming else 'Automated acknowledgment only' if not human else 'Reply received'
     stage='Contacted';evidence=[]
     if re.search(r'not moving forward|not selected|cannot offer|can.t offer|unable to offer|position (?:has been )?filled|unfortunately.{0,80}(?:application|position)',words):status='Rejection / closed wording';stage='Parked'
-    elif re.search(r'offer you|pleased to offer|welcome to (?:the|our) team|employment offer|offer letter',words):status='Offer wording — verify terms';stage='Offer / contract'
+    elif re.search(r'offer you|pleased to offer|welcome to (?:the|our) team|employment offer|offer letter|offer from|(?:increase|improve|raise|revised).{0,50}offer',words):status='Offer wording — verify terms';stage='Offer / contract'
     elif re.search(r'\binterview\b|schedule.{0,40}(?:call|meeting)|(?:meet|meeting).{0,30}(?:you|with)',words):status='Interview / meeting discussed';stage='Interview / meeting'
     relationship='Follow-up'
     if latest.get('direction')=='received' and re.search(r'(?:send|provide|need|attach).{0,50}(?:resume|résumé|cover letter)',latest.get('body',''),re.I):relationship='Requested paperwork'

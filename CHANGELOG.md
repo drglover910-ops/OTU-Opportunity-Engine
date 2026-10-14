@@ -1,5 +1,9 @@
 # Release history
 
+## 0.5.1 — 2026-10-14
+
+- Keep separate Gmail threads as distinct leads, retry temporary read failures, refresh known conversations, and recover interrupted reviews.
+
 ## 0.5.0 — 2026-10-14
 - Study sent career outreach and complete reply threads, prioritizing Buffalo Stallions.
 - Private conversation tracking, source-labeled progress evidence and outreach style examples.

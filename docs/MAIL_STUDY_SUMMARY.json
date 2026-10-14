@@ -1,0 +1,278 @@
+{
+  "sent_messages": 0,
+  "paid_ai_calls": 0,
+  "private_message_storage": "Hugging Face private database only",
+  "study": {
+    "status": "failed",
+    "threads_reviewed": 54,
+    "threads_found": 95,
+    "limited": false,
+    "error": "Gmail history read failed: ValueError",
+    "finished": "2026-10-14T19:15:09.193630+00:00"
+  },
+  "style": {},
+  "professional_outreach_examples": [],
+  "cases_imported": 54,
+  "case_overview": [
+    {
+      "company": "Buffalo Stallions",
+      "status": "Interview / meeting discussed",
+      "sent": 6,
+      "human_replies": 5,
+      "latest_date": "2026-10-01T13:54:19+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "Buffalo Stallions",
+      "status": "Interview / meeting discussed",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-10-02T14:49:05+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "Buffalo Stallions",
+      "status": "Interview / meeting discussed",
+      "sent": 2,
+      "human_replies": 2,
+      "latest_date": "2026-10-08T19:11:10+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "Outreach conversation",
+      "status": "No reply found",
+      "sent": 1,
+      "human_replies": 0,
+      "latest_date": "2026-09-18T19:08:08+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "Outreach conversation",
+      "status": "No reply found",
+      "sent": 1,
+      "human_replies": 0,
+      "latest_date": "2026-09-18T19:10:44+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "gmail.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "gmail.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "gmail.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "gothrive.hr",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-21T07:49:24+00:00",
+      "next_context": "Requested paperwork",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "raveintelligence.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "aerosva.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "linkage.ph",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "remotelyx.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "vaplusvip.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "gmail.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "gmail.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "thebluesurge.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "hotprospector.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "gmail.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "gmail.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "gmail.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "vizgou.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "innovatcs.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "midwestglobaloutsourcing.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    },
+    {
+      "company": "roamfurther.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
+    }
+  ],
+  "buffalo_stallions": [
+    {
+      "status": "Interview / meeting discussed",
+      "sent": 6,
+      "human_replies": 5,
+      "evidence": [
+        "of Camps & Community Programs position with Buffalo Stallions.",
+        "Since this position is specifically focused on youth soccer camps,\r",
+        "Your r\u00e9sum\u00e9 references extensive coaching, athlete development, camps,\r",
+        "> Programs position with Buffalo Stallions."
+      ]
+    },
+    {
+      "status": "Interview / meeting discussed",
+      "sent": 1,
+      "human_replies": 1,
+      "evidence": [
+        "*Position Type:* Part-time, administrative stipend plus performance-based\r",
+        "This is more than a coaching position or a set of weekly soccer sessions.",
+        "   Communicate schedules, updates and expectations clearly.",
+        "this position."
+      ]
+    },
+    {
+      "status": "Interview / meeting discussed",
+      "sent": 2,
+      "human_replies": 2,
+      "evidence": [
+        "> program growth, new locations, and how the position itself has\r",
+        "> I genuinely enjoyed meeting with both of you, and I really appreciate\r",
+        "Director and I had the opportunity to discuss the position, your proposal\r",
+        "offer from 25% to 35% of the net operating profit from the Junior Stallions\r"
+      ]
+    }
+  ]
+}

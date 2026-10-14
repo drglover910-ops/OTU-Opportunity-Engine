@@ -1,7 +1,7 @@
 {
-  "commit": "38aa06b9efe61ebb544447c16b61a8c5dd6d3a73",
-  "version": "0.3.1",
-  "checked_at": "2026-10-14T17:35:41.429919+00:00",
+  "commit": "8da71b5c98b3032589a65cc26612ac5810e44c0f",
+  "version": "0.4.0",
+  "checked_at": "2026-10-14T18:31:39.057745+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -24,7 +24,7 @@
     "finished": "2026-10-14T15:26:02.387920+00:00"
   },
   "documents": 13,
-  "gmail_connected": false,
+  "gmail_connected": true,
   "ai_configured": true,
   "discovery": {
     "added": 0,

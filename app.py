@@ -24,6 +24,8 @@ class Handler(BaseHTTPRequestHandler):
             if path=='/api/status':return self.output(engine.status())
             if path=='/api/opportunities':return self.output(engine.list())
             if path=='/api/documents':return self.output(engine.documents())
+            if path=='/api/email-cases':return self.output(engine.email_cases())
+            if path=='/api/email-case':return self.output(engine.email_case(query['id'][0]))
             if path=='/api/packages':return self.output(engine.packages())
             if path=='/api/career-updates':return self.output(engine.career_updates())
             if path=='/api/master-resume':
@@ -65,6 +67,7 @@ class Handler(BaseHTTPRequestHandler):
             d=json.loads(self.rfile.read(length))
             routes={'/api/add':engine.add,'/api/update':engine.update,'/api/draft':engine.create_draft,'/api/draft/edit':engine.edit_draft,'/api/approve':engine.approve,'/api/send':engine.send}
             if self.path in routes:return self.output(routes[self.path](d))
+            if self.path=='/api/gmail/history':return self.output(engine.start_history_study())
             if self.path=='/api/package':return self.output(engine.create_package(d))
             if self.path=='/api/career-update':return self.output(engine.add_career_update(d))
             if self.path=='/api/storage/probe':return self.output(engine.storage_probe(d))

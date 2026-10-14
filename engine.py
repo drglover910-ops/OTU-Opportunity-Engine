@@ -5,7 +5,7 @@ from pathlib import Path
 from email.message import EmailMessage
 from email import policy
 from html.parser import HTMLParser
-VERSION = '0.4.0'
+VERSION = '0.5.0'
 STAGES = ['New','Researching','Ready to contact','Contacted','Interview / meeting','Offer / contract','Won','Parked']
 CATEGORIES = ['CRM / GoHighLevel','AI / business automation','Sales / operations','Coaching','Contract']
 FILES_LIMIT=25*1024*1024
@@ -84,6 +84,7 @@ class Engine:
             draft_cols={r[1] for r in c.execute('PRAGMA table_info(drafts)')}
             if 'repeat_authorized' not in draft_cols:c.execute('ALTER TABLE drafts ADD COLUMN repeat_authorized INTEGER DEFAULT 0')
             c.execute('CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT)')
+            c.execute('CREATE TABLE IF NOT EXISTS email_threads(thread_id TEXT PRIMARY KEY,opportunity_id INTEGER,company TEXT,subject TEXT,summary TEXT,messages TEXT,reviewed TEXT)')
             c.execute('CREATE TABLE IF NOT EXISTS career_updates(id INTEGER PRIMARY KEY,fact TEXT UNIQUE,type TEXT,category TEXT,source TEXT,created TEXT)')
             c.execute('CREATE TABLE IF NOT EXISTS packages(id INTEGER PRIMARY KEY,opportunity_id INTEGER,master_digest TEXT,files TEXT,checks TEXT,draft_id INTEGER,created TEXT)')
             c.execute('CREATE TABLE IF NOT EXISTS messages(id TEXT PRIMARY KEY,thread_id TEXT,sender TEXT,subject TEXT,snippet TEXT,opportunity_id INTEGER,received TEXT)')
@@ -176,6 +177,21 @@ class Engine:
             cur=c.execute('INSERT OR IGNORE INTO documents(name,digest,path,text,kind,category,imported) VALUES(?,?,?,?,?,?,?)',(name,digest,str(path),text[:500000],kind,category,now()))
             self.log(c,None,'Career document imported',name)
         return {'id':cur.lastrowid,'added':True,'name':name}
+    def email_cases(self):
+        with self.connect() as c:rows=[dict(r) for r in c.execute('SELECT thread_id,opportunity_id,company,subject,summary,reviewed FROM email_threads ORDER BY CASE WHEN company="Buffalo Stallions" THEN 0 ELSE 1 END,reviewed DESC')]
+        for r in rows:r['summary']=json.loads(r['summary'])
+        return rows
+    def email_case(self,tid):
+        with self.connect() as c:r=c.execute('SELECT * FROM email_threads WHERE thread_id=?',(tid,)).fetchone()
+        if not r:raise ValueError('Conversation not found')
+        result=dict(r);result['summary']=json.loads(result['summary']);result['messages']=json.loads(result['messages']);return result
+    def start_history_study(self):
+        if self.setting('history_study',{}).get('status')=='running':return {'started':False,'message':'Sent-history review is already running.'}
+        self.gmail_token()
+        from mail_history import study
+        self.set_setting('history_study',{'status':'running','threads_reviewed':0})
+        threading.Thread(target=study,args=(self,),daemon=True).start()
+        return {'started':True,'message':'Reviewing sent outreach and its reply threads. No messages will be sent.'}
     def career_updates(self):
         with self.connect() as c:return [dict(r) for r in c.execute('SELECT * FROM career_updates ORDER BY id DESC')]
     def add_career_update(self,d):
@@ -217,6 +233,8 @@ class Engine:
         draft=self.create_draft({'id':row['id'],'mode':'template'})
         r=self.draft(draft['id']);r['attachments']=[ids['resume_pdf'],ids['cover_pdf']]
         r['body']=f'Hello,\n\nI’m interested in the {row["title"]} opportunity. Please find my résumé and cover letter attached for your consideration. I would welcome a conversation about how I can contribute.\n\nBest,\nDesmond Glover'
+        if row['relationship']=='Requested paperwork':r['body']='Hello,\n\nPlease find the requested résumé and cover letter attached. Please let me know if anything else is needed.\n\nBest,\nDesmond Glover'
+        elif row['relationship']=='Follow-up':r['body']=f'Hello,\n\nI’m following up on our conversation about {row["title"]}. I’ve attached my updated résumé and cover letter. Please let me know the next step.\n\nBest,\nDesmond Glover'
         self.edit_draft(r)
         master_digest=hashlib.sha256(json.dumps(record,sort_keys=True).encode()).hexdigest()
         with self.lock,self.connect() as c:
@@ -305,7 +323,7 @@ class Engine:
     def status(self):
         with self.connect() as c:
             counts={table:c.execute('SELECT count(*) FROM '+table).fetchone()[0] for table in ['opportunities','documents','drafts']}
-        return {'version':VERSION,'storage':self.storage(),'counts':counts,'gmail':bool(self.setting('gmail_tokens')),'gmail_configured':bool(os.getenv('GOOGLE_CLIENT_ID') and os.getenv('GOOGLE_CLIENT_SECRET') and os.getenv('PUBLIC_URL')),'ai_configured':bool(os.getenv('HF_INFERENCE_TOKEN')),'last_ai_success':self.setting('last_ai_success',None),'ai_model':os.getenv('HF_MODEL','Qwen/Qwen3-235B-A22B-Instruct-2507:scaleway'),'scheduler_enabled':self.setting('scheduler_enabled',True),'last_discovery':self.setting('last_discovery',{}),'contra':'Manual listing import; account automation not verified','backup':self.setting('last_backup',None)}
+        return {'version':VERSION,'storage':self.storage(),'counts':counts,'gmail':bool(self.setting('gmail_tokens')),'gmail_configured':bool(os.getenv('GOOGLE_CLIENT_ID') and os.getenv('GOOGLE_CLIENT_SECRET') and os.getenv('PUBLIC_URL')),'ai_configured':bool(os.getenv('HF_INFERENCE_TOKEN')),'last_ai_success':self.setting('last_ai_success',None),'ai_model':os.getenv('HF_MODEL','Qwen/Qwen3-235B-A22B-Instruct-2507:scaleway'),'scheduler_enabled':self.setting('scheduler_enabled',True),'last_discovery':self.setting('last_discovery',{}),'contra':'Manual listing import; account automation not verified','last_mail_check':self.setting('last_mail_check',{}),'history_study':self.setting('history_study',{}),'outreach_style':self.setting('outreach_style',{}),'backup':self.setting('last_backup',None)}
     def history(self,oid=None):
         with self.connect() as c:
             if oid:return [dict(r) for r in c.execute('SELECT * FROM activity WHERE opportunity_id=? ORDER BY id DESC LIMIT 100',(oid,))]
@@ -327,9 +345,12 @@ class Engine:
         if updates:evidence.append({'name':'Confirmed master updates','text':'\n'.join(updates)[:6000]})
         strengths={'CRM / GoHighLevel':'GoHighLevel CRM, pipeline design, customer follow-up, and workflow testing','AI / business automation':'AI-assisted product development, workflow design, testing, and troubleshooting','Sales / operations':'sales, customer communication, CRM follow-up, and business operations','Coaching':'coaching, athlete development, and youth program leadership','Contract':'business operations, customer workflows, and project coordination'}[row['category']]
         subject='Interest in '+row['title']
+        if row['source']=='Gmail history':subject='Re: '+re.sub(r'^(?:Re:|Fwd:)\s*','',row['title'],flags=re.I)
         if row['relationship']=='Requested paperwork':body='Hello,\n\nThank you for speaking with me. Here are the documents you requested. Please let me know if anything else is needed.\n\nBest,\nDesmond Glover'
         elif row['relationship']=='Follow-up':body=f'Hello,\n\nI’m following up on our conversation about {row["title"]}. I’m still interested and would welcome an update on the next step.\n\nBest,\nDesmond Glover'
         else:body=f'Hello,\n\nI’m interested in your {row["title"]} opportunity. My background includes {strengths}. I’d welcome a conversation about your priorities and how I can contribute.\n\nBest,\nDesmond Glover'
+        style=self.setting('outreach_style',{})
+        if style:evidence.append({'name':'Private outreach style guidance','text':json.dumps({'rules':style.get('rules',[]),'examples':style.get('examples',[])[:4]})})
         if mode=='ai':
             token=os.getenv('HF_INFERENCE_TOKEN');model=os.getenv('HF_MODEL','Qwen/Qwen3-235B-A22B-Instruct-2507:scaleway')
             if not token or not model:raise ValueError('Set HF_INFERENCE_TOKEN and HF_MODEL in private Space settings before using AI writing.')
@@ -380,6 +401,8 @@ class Engine:
             prior=c.execute('SELECT id FROM drafts WHERE id<>? AND opportunity_id=? AND lower(recipient)=lower(?) AND status="Sent"',(r['id'],r['opportunity_id'],r['recipient'])).fetchone()
         if duplicate:warnings.append('An identical message was already sent or has unresolved delivery')
         if unresolved:warnings.append('Prior delivery to this recipient is unresolved; check Gmail before sending')
+        with self.connect() as c:historic=c.execute('SELECT messages FROM email_threads WHERE opportunity_id=?',(r['opportunity_id'],)).fetchone()
+        if historic and any(m['direction']=='sent' for m in json.loads(historic['messages'])) and not r.get('repeat_authorized'):warnings.append('Prior sent correspondence exists. Confirm this is an intentional reply or follow-up.')
         if prior and not r.get('repeat_authorized'):warnings.append('Confirm this is an intentional follow-up after reviewing prior outreach')
         return warnings
     def approve(self,d):
@@ -426,9 +449,16 @@ class Engine:
                 with self.connect() as c:doc=c.execute('SELECT * FROM documents WHERE id=?',(did,)).fetchone()
                 suffix=Path(doc['name']).suffix.lower();types={'.pdf':('application','pdf'),'.docx':('application','vnd.openxmlformats-officedocument.wordprocessingml.document')};major,minor=types.get(suffix,('application','octet-stream'))
                 msg.add_attachment(Path(doc['path']).read_bytes(),maintype=major,subtype=minor,filename=doc['name'])
+            thread_id=None
+            with self.connect() as c:historic=c.execute('SELECT * FROM email_threads WHERE opportunity_id=?',(r['opportunity_id'],)).fetchone()
+            if historic and re.sub(r'^(?:Re:|Fwd:)\s*','',r['subject'],flags=re.I).lower()==re.sub(r'^(?:Re:|Fwd:)\s*','',historic['subject'],flags=re.I).lower():
+                thread_id=historic['thread_id']
+                latest=json.loads(historic['messages'])[-1]
+                reference=latest.get('rfc_message_id','')
+                if re.fullmatch(r'<[^<>\r\n]+>',reference):msg['In-Reply-To']=reference;msg['References']=reference
             with self.connect() as c:c.execute('UPDATE drafts SET status="Sending" WHERE id=?',(r['id'],))
             try:
-                response=fetch_json('https://gmail.googleapis.com/gmail/v1/users/me/messages/send',{'raw':base64.urlsafe_b64encode(msg.as_bytes(policy=policy.SMTP)).decode()},headers={'Authorization':'Bearer '+token})
+                response=fetch_json('https://gmail.googleapis.com/gmail/v1/users/me/messages/send',{'raw':base64.urlsafe_b64encode(msg.as_bytes(policy=policy.SMTP)).decode(),**({'threadId':thread_id} if thread_id else {})},headers={'Authorization':'Bearer '+token})
             except Exception:
                 with self.connect() as c:
                     c.execute('UPDATE drafts SET status="Delivery unknown" WHERE id=?',(r['id'],));self.log(c,r['opportunity_id'],'Delivery unresolved','Check Gmail Sent before any retry')
@@ -443,8 +473,10 @@ class Engine:
         for m in data.get('messages',[]):
             item=fetch_json(base+'/'+m['id']+'?format=metadata&metadataHeaders=From&metadataHeaders=Subject',headers=headers)
             hs={h['name'].lower():h['value'] for h in item.get('payload',{}).get('headers',[])};sender=hs.get('from','');subject=hs.get('subject','');oid=None
+            with self.connect() as c:known=c.execute('SELECT opportunity_id FROM email_threads WHERE thread_id=?',(item.get('threadId',''),)).fetchone()
+            if known:oid=known['opportunity_id']
             for lead in leads:
-                if lead['contact'] and re.search(r'(?<![\w.])'+re.escape(lead['contact'])+r'(?![\w.])',sender,re.I):oid=lead['id'];break
+                if not oid and lead['contact'] and re.search(r'(?<![\w.])'+re.escape(lead['contact'])+r'(?![\w.])',sender,re.I):oid=lead['id'];break
             if not oid:continue
             with self.connect() as c:
                 cur=c.execute('INSERT OR IGNORE INTO messages(id,thread_id,sender,subject,snippet,opportunity_id,received) VALUES(?,?,?,?,?,?,?)',(item['id'],item.get('threadId',''),sender,subject,item.get('snippet',''),oid,now()))
@@ -455,7 +487,7 @@ class Engine:
     def backup(self):
         # OAuth tokens are deliberately excluded from every export.
         with self.lock,self.connect() as c:
-            data={table:[dict(r) for r in c.execute('SELECT * FROM '+table)] for table in ['opportunities','documents','activity','drafts','messages','career_updates','packages']}
+            data={table:[dict(r) for r in c.execute('SELECT * FROM '+table)] for table in ['opportunities','documents','activity','drafts','messages','career_updates','packages','email_threads']}
         for doc in data['documents']:doc['path']=Path(doc['path']).name
         data['version']=VERSION;data['exported']=now()
         out=io.BytesIO()
@@ -513,10 +545,18 @@ class Engine:
                     if c.execute('SELECT id FROM packages WHERE opportunity_id=? AND master_digest=?',(leadmap[package['opportunity_id']],package['master_digest'])).fetchone():continue
                     files={k:docmap[v] for k,v in json.loads(package['files']).items() if v in docmap}
                     c.execute('INSERT INTO packages(opportunity_id,master_digest,files,checks,draft_id,created) VALUES(?,?,?,?,?,?)',(leadmap[package['opportunity_id']],package['master_digest'],json.dumps(files),package['checks'],draftmap[package['draft_id']],package['created']))
+                for t in data.get('email_threads',[]):
+                    if t['opportunity_id'] in leadmap:c.execute('INSERT OR IGNORE INTO email_threads(thread_id,opportunity_id,company,subject,summary,messages,reviewed) VALUES(?,?,?,?,?,?,?)',(t['thread_id'],leadmap[t['opportunity_id']],t['company'],t['subject'],t['summary'],t['messages'],t['reviewed']))
                 self.log(c,None,'Backup merged','Delivery history preserved; approvals reset; Gmail requires reconnection')
         return {'leads_added':added,'documents_added':docs,'message':'Merged records and delivery history. Approvals reset; reconnect Gmail separately. Existing records preserved.'}
     def schedule_loop(self):
         while True:
+            if self.setting('gmail_tokens') and self.setting('history_study',{}).get('status')=='complete':
+                last=self.setting('last_mail_check',{})
+                if not last.get('checked') or datetime.fromisoformat(last['checked'])<datetime.now(timezone.utc)-timedelta(hours=1):
+                    try:
+                        result=self.sync_inbox();self.set_setting('last_mail_check',{'checked':now(),'status':'ok','linked':result['linked']})
+                    except Exception:self.set_setting('last_mail_check',{'checked':now(),'status':'needs attention'})
             if self.setting('scheduler_enabled',True):
                 try:self.scan()
                 except Exception:pass

@@ -7,7 +7,7 @@ sdk: docker
 app_port: 7860
 ---
 
-# OTU Opportunity Engine — v0.4.0
+# OTU Opportunity Engine — v0.5.0
 
 A private opportunity workspace for Desmond Glover. Matrix-inspired responsive dashboard for discovery, fit ranking, career retrieval, draft preparation, approved email, replies and follow-ups. Contra-first contract workflow; coaching and employment alongside it.
 
@@ -38,3 +38,5 @@ GitHub `work`/`main` changes trigger deployment to the existing private Space th
 ## Finished applications
 
 Create finished application generates a source-grounded PDF/DOCX résumé and matching cover letter plus an unsent email from the master record. Earlier designed résumés are optional examples. Checks enforce a two-page résumé limit, one-page cover letter, required names and absence of internal notes. These are automated checks, not independent verification of every career claim. The master is preserved; source-labeled confirmed updates are versioned separately and merged into future applications. Planned projects remain planned, and application activity is never treated as employment or revenue.
+
+Sent-history study reads career/contract Sent queries and all messages in matching threads. Full bodies stay in the private database and backups, never source code. Automated replies are distinguished from human replies; detected interview/offer wording is not proof of hiring or payment. Imported threads are tracked with Gmail links. No study action sends messages. Maximum ten query pages; the result reports whether the page limit was reached.

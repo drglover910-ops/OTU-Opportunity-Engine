@@ -1,5 +1,11 @@
 # Release history
 
+## 0.5.0 — 2026-10-14
+- Study sent career outreach and complete reply threads, prioritizing Buffalo Stallions.
+- Private conversation tracking, source-labeled progress evidence and outreach style examples.
+- History-aware follow-ups, paperwork replies, duplicate checks and Gmail reply threading.
+- No automatic sending or inferred paid outcomes.
+
 ## 0.4.0 — 2026-10-14
 - Generate designed résumé and cover letter in PDF and DOCX directly from the master record.
 - Prepare an unsent email with both PDFs attached; check document length, required names and internal-note exclusion.

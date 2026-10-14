@@ -2,7 +2,7 @@
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const stages=['New','Researching','Ready to contact','Contacted','Interview / meeting','Offer / contract','Won','Parked'];
-let leads=[],documents=[],drafts=[],history=[],messages=[],packages=[],careerUpdates=[],state={};
+let leads=[],documents=[],drafts=[],history=[],messages=[],packages=[],careerUpdates=[],emailCases=[],state={};
 function notice(message,error=false){$('status').textContent=message;$('status').classList.toggle('warning',error)}
 async function api(path,data){const r=await fetch(path,{method:data===undefined?'GET':'POST',headers:{'Content-Type':'application/json'},body:data===undefined?undefined:JSON.stringify(data)});const value=await r.json();if(!r.ok)throw Error(value.error||'Request failed');return value}
 async function run(task,success){try{const r=await task();if(success)notice(typeof success==='function'?success(r):success);await refresh();return r}catch(e){notice(e.message,true)}}
@@ -17,7 +17,7 @@ function steps(){return [{done:hasMaster(),label:'Add your career files',text:'A
 function friendlyDocument(name){if(name.includes('Master_Career'))return 'Complete career record';if(name.includes('Master_Coaching'))return 'Master coaching résumé';if(name.includes('Kids_Choice'))return 'Kids Choice Sports résumé';return name.replace(/^Desmond_Glover_/, '').replace(/\.(pdf|docx|txt|md|json)$/i,'').replace(/_Designed_AI_Updated|_Designed|_CURRENT|_UPDATED/g,'').replace(/_/g,' ')}
 function empty(text){return `<p class="small">${esc(text)}</p>`}
 async function refresh(){
- [state,leads,documents,drafts,history,messages,packages,careerUpdates]=await Promise.all(['/api/status','/api/opportunities','/api/documents','/api/drafts','/api/history','/api/messages','/api/packages','/api/career-updates'].map(p=>api(p)));
+ [state,leads,documents,drafts,history,messages,packages,careerUpdates,emailCases]=await Promise.all(['/api/status','/api/opportunities','/api/documents','/api/drafts','/api/history','/api/messages','/api/packages','/api/career-updates','/api/email-cases'].map(p=>api(p)));
  $('version').textContent='v'+state.version;$('footer-version').textContent='v'+state.version;
  $('connection-summary').textContent=`${state.storage.restart_verified?'Your work is saved':state.storage.mount_detected?'Saving is connected':'Saving needs attention'} · Gmail ${state.gmail?'connected':'not connected'}`;
  renderToday();renderBoard();renderDrafts();renderLibrary();renderActivity();renderSettings();
@@ -57,6 +57,8 @@ function renderLibrary(){
  $('document-items').innerHTML=documents.map(d=>`<article class="panel document"><span class="badge">${esc(d.kind==='reference'?'Background information':d.kind==='resume'?'Résumé for applications':d.kind==='cover_letter'?'Cover letter':'Shareable portfolio')}</span><h2>${esc(friendlyDocument(d.name))}</h2><a href="/api/document?id=${d.id}">Download original</a><details><summary>File details</summary><p class="small">${esc(d.name)} · ${esc(d.category)} · Added ${formatDate(d.imported)}</p></details></article>`).join('')||empty('Add your archive and résumé files above. You can select several files at once.');
 }
 function renderActivity(){
+ const study=state.history_study||{};$('study-status').textContent=study.status?`${study.status}: ${study.threads_reviewed||0} conversations reviewed. ${study.limited?'The query page limit was reached; more history may remain.':''}`:'No sent-history review completed yet.';
+ $('email-case-items').innerHTML=emailCases.map(c=>`<details class="panel"><summary>${esc(c.company)} · ${esc(c.summary.status)}</summary><p>${esc(c.subject)}</p><p class="small">${c.summary.sent} sent · ${c.summary.human_replies} human replies · ${esc(c.summary.latest_date||'')}</p><p class="small">Conversation evidence is not proof of a hire or payment.</p><button class="secondary" data-action="load-case" data-case="${esc(c.thread_id)}">Read conversation</button><div id="case-${esc(c.thread_id)}"></div></details>`).join('');
  $('reply-items').innerHTML=messages.map(m=>`<article class="panel"><h2>${esc(m.subject)}</h2><p>${esc(m.sender)}</p><p>${esc(m.snippet)}</p><span class="small">Matched to opportunity #${m.opportunity_id}</span></article>`).join('');
  $('history-items').innerHTML=history.map(h=>`<div class="row"><div><strong>${esc(h.action)}</strong><p class="small">${esc(h.detail)}</p></div><span class="small">${formatDate(h.created)}</span></div>`).join('')||empty('Actions will be recorded here.');
 }
@@ -75,6 +77,7 @@ document.addEventListener('click',async event=>{
  const action=b.dataset.action,id=Number(b.dataset.id);if(!action)return;
  b.disabled=true;
  try{
+  if(action==='load-case'){const c=await api('/api/email-case?id='+encodeURIComponent(b.dataset.case));$('case-'+b.dataset.case).innerHTML=c.messages.map(m=>`<article class="panel"><strong>${m.direction==='sent'?'You sent':'Reply received'}</strong><p class="small">${esc(m.date)} · ${esc(m.subject)}</p><p style="white-space:pre-wrap">${esc(m.body)}</p></article>`).join('');return}
   if(action==='board'){jump('board');return}
   if(action==='setup'){jump('settings');return}
   if(action==='library'){jump('library');return}
@@ -111,6 +114,7 @@ $('lead-form').onsubmit=async e=>{e.preventDefault();await run(()=>api('/api/add
 $('upload-form').onsubmit=async e=>{e.preventDefault();const button=e.target.querySelector('button');button.disabled=true;let imported=0;try{for(const file of $('upload-files').files){notice('Importing '+file.name+'…');const result=await api('/api/upload',{name:file.name,content:await fileData(file),kind:$('upload-kind').value});imported+=result.imported??Number(result.added||0);$('upload-progress').textContent=`${imported} new files added…`;}notice(`${imported} new files added. Your originals are kept intact.`);$('upload-progress').textContent='Upload complete';await refresh()}catch(e){notice(e.message,true)}finally{button.disabled=false}};
 $('restore-form').onsubmit=async e=>{e.preventDefault();if(!confirm('Merge leads and documents from this backup? Existing records will remain.'))return;await run(async()=>api('/api/restore',{content:await fileData($('restore-file').files[0])}),r=>r.message);};
 $('scan').onclick=async()=>{$('scan').disabled=true;notice('Checking public sources…');await run(()=>api('/api/discover',{}),r=>r.cached?r.message:`Added ${r.added} leads.${r.errors?.length?' Some feed checks failed: '+r.errors.join(' '):''}`);$('scan').disabled=false};
+$('study-history').onclick=()=>run(()=>api('/api/gmail/history',{}),r=>r.message);
 $('sync').onclick=()=>run(()=>api('/api/gmail/sync',{}),r=>`${r.linked} new replies linked. ${r.message}`);
 for(const id of ['search','stage-filter','category-filter'])$(id).addEventListener(id==='search'?'input':'change',renderBoard);
 $('stage-filter').innerHTML+=stages.map(s=>option(s,'')).join('');

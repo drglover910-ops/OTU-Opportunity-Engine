@@ -47,7 +47,7 @@ class PlatformBrowser:
             if not self.browser:
                 from playwright.async_api import async_playwright
                 self.playwright=await async_playwright().start()
-                self.browser=await self.playwright.chromium.launch(headless=True,chromium_sandbox=True,args=['--disable-dev-shm-usage'],**({'executable_path':os.environ['OTU_BROWSER_EXECUTABLE']} if os.getenv('OTU_BROWSER_EXECUTABLE') else {}))
+                self.browser=await self.playwright.chromium.launch(headless=True,chromium_sandbox=True,env={'PATH':os.defpath,'LANG':'C.UTF-8'},args=['--disable-dev-shm-usage'],**({'executable_path':os.environ['OTU_BROWSER_EXECUTABLE']} if os.getenv('OTU_BROWSER_EXECUTABLE') else {}))
                 self.context=await self.browser.new_context(viewport={'width':1024,'height':768},accept_downloads=False,service_workers='block')
                 self.page=await self.context.new_page();await self.context.route('**/*',self.route)
                 self.context.on('page',lambda p:setattr(self,'page',p))

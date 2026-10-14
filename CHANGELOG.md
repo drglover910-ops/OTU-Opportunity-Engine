@@ -1,5 +1,9 @@
 # Release history
 
+## 0.7.1 — 2026-10-14
+
+- Strip application secrets from the browser subprocess environment and reset page approvals when opening a platform.
+
 ## 0.7.0 — 2026-10-14
 
 - Add career-based platform profiles and future-platform registration.

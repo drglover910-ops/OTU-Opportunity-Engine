@@ -5,7 +5,7 @@ from pathlib import Path
 from email.message import EmailMessage
 from email import policy
 from html.parser import HTMLParser
-VERSION = '0.7.0'
+VERSION = '0.7.1'
 STAGES = ['New','Researching','Ready to contact','Contacted','Interview / meeting','Offer / contract','Won','Parked']
 CATEGORIES = ['CRM / GoHighLevel','AI / business automation','Sales / operations','Coaching','Contract']
 FILES_LIMIT=25*1024*1024

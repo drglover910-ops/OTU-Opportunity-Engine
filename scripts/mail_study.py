@@ -23,6 +23,7 @@ try:
  request('/api/gmail/history',{})
  for _ in range(180):
   status=request('/api/status');study=status.get('history_study',{})
+  if study.get('status')=='interrupted':request('/api/gmail/history',{})
   if study.get('status') in ('complete','failed'):break
   time.sleep(10)
  report['study']=study

@@ -88,6 +88,9 @@ class Engine:
             c.execute('CREATE TABLE IF NOT EXISTS career_updates(id INTEGER PRIMARY KEY,fact TEXT UNIQUE,type TEXT,category TEXT,source TEXT,created TEXT)')
             c.execute('CREATE TABLE IF NOT EXISTS packages(id INTEGER PRIMARY KEY,opportunity_id INTEGER,master_digest TEXT,files TEXT,checks TEXT,draft_id INTEGER,created TEXT)')
             c.execute('CREATE TABLE IF NOT EXISTS messages(id TEXT PRIMARY KEY,thread_id TEXT,sender TEXT,subject TEXT,snippet TEXT,opportunity_id INTEGER,received TEXT)')
+        previous=self.setting('history_study',{})
+        if previous.get('status')=='running':
+            previous['status']='interrupted';self.set_setting('history_study',previous)
     def connect(self):
         c=sqlite3.connect(self.db,timeout=20);c.row_factory=sqlite3.Row;c.execute('PRAGMA busy_timeout=20000');return c
     def log(self,c,oid,action,detail=''):c.execute('INSERT INTO activity(opportunity_id,action,detail,created) VALUES(?,?,?,?)',(oid,action,detail,now()))
@@ -481,6 +484,10 @@ class Engine:
             with self.connect() as c:
                 cur=c.execute('INSERT OR IGNORE INTO messages(id,thread_id,sender,subject,snippet,opportunity_id,received) VALUES(?,?,?,?,?,?,?)',(item['id'],item.get('threadId',''),sender,subject,item.get('snippet',''),oid,now()))
                 if cur.rowcount:linked+=1;self.log(c,oid,'Inbox reply found',subject[:250])
+            if cur.rowcount and known:
+                from mail_history import refresh_known_thread
+                raw=fetch_json('https://gmail.googleapis.com/gmail/v1/users/me/threads/'+item['threadId']+'?format=full',headers=headers)
+                refresh_known_thread(self,item['threadId'],raw)
         return {'linked':linked,'message':'Matched by contact address. Review replies; no automatic classification or sending.'}
     def messages(self):
         with self.connect() as c:return [dict(r) for r in c.execute('SELECT * FROM messages ORDER BY received DESC LIMIT 100')]

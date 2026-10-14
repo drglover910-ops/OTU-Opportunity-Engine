@@ -40,6 +40,17 @@ def summarize(messages):
             if re.search(r'interview|offer|meeting|resume|résumé|position|schedule',sentence,re.I):evidence.append(sentence[:400])
     return {'status':status,'stage':stage,'relationship':relationship,'sent':len(outgoing),'received':len(incoming),'human_replies':len(human),'evidence':evidence[:8],'latest_direction':latest.get('direction'),'latest_date':latest.get('date'),'paid_outcome_verified':False}
 
+def parse_messages(raw,owner):
+    messages=[]
+    for item in raw.get('messages',[]):
+        if 'DRAFT' in item.get('labelIds',[]):continue
+        payload=item.get('payload',{});h={x['name'].lower():x['value'] for x in payload.get('headers',[])}
+        sent='SENT' in item.get('labelIds',[]) or parseaddr(h.get('from',''))[1].lower()==owner
+        automated=h.get('auto-submitted','no').lower()!='no' or bool(re.search(r'mailer-daemon|postmaster|no.?reply',h.get('from',''),re.I))
+        messages.append({'id':item['id'],'thread_id':item.get('threadId',raw.get('id','')),'direction':'sent' if sent else 'received','sender':h.get('from',''),'recipient':h.get('to',''),'cc':h.get('cc',''),'subject':h.get('subject',''),'body':body(payload),'rfc_message_id':h.get('message-id',''),'attachments':filenames(payload),'automated':automated,'date':datetime.fromtimestamp(int(item.get('internalDate','0'))/1000,timezone.utc).isoformat()})
+    messages.sort(key=lambda m:m['date'])
+    return messages
+
 def study(engine):
     try:
         token=engine.gmail_token();headers={'Authorization':'Bearer '+token};api='https://gmail.googleapis.com/gmail/v1/users/me'
@@ -62,13 +73,7 @@ def study(engine):
         reviewed=0
         for tid,label in cases.items():
             raw=fetch_json(api+'/threads/'+tid+'?format=full',headers=headers);messages=[]
-            for item in raw.get('messages',[]):
-                if 'DRAFT' in item.get('labelIds',[]):continue
-                payload=item.get('payload',{});h={x['name'].lower():x['value'] for x in payload.get('headers',[])}
-                sent='SENT' in item.get('labelIds',[]) or parseaddr(h.get('from',''))[1].lower()==owner
-                automated=h.get('auto-submitted','no').lower()!='no' or bool(re.search(r'mailer-daemon|postmaster|no.?reply',h.get('from',''),re.I))
-                messages.append({'id':item['id'],'thread_id':tid,'direction':'sent' if sent else 'received','sender':h.get('from',''),'recipient':h.get('to',''),'cc':h.get('cc',''),'subject':h.get('subject',''),'body':body(payload),'rfc_message_id':h.get('message-id',''),'attachments':filenames(payload),'automated':automated,'date':datetime.fromtimestamp(int(item.get('internalDate','0'))/1000,timezone.utc).isoformat()})
-            messages.sort(key=lambda m:m['date'])
+            messages=parse_messages(raw,owner)
             outgoing=[m for m in messages if m['direction']=='sent']
             if not outgoing:continue
             summary=summarize(messages);first=outgoing[0]
@@ -108,3 +113,12 @@ def learn(engine):
                     line=re.sub(r'\+?\d[\d ().-]{7,}\d','[phone omitted]',line)
                     if len(line)<350 and line not in examples:examples.append(line)
     engine.set_setting('outreach_style',{'sent_messages_reviewed':total,'threads_with_human_replies':replies,'examples':examples[:10],'rules':['Short, confident introduction tied to the actual opportunity.','Requested-paperwork replies should just provide the requested documents.','Follow-ups should reference prior contact and ask for the next step.','Never infer a hire or payment from a positive reply.','Check historical correspondence before sending duplicate outreach.'],'learned_at':now()})
+
+def refresh_known_thread(engine,tid,raw):
+    owner=engine.setting('gmail_owner','')
+    case=engine.email_case(tid);messages=parse_messages(raw,owner);summary=summarize(messages)
+    old_stage=case['summary'].get('stage');current=engine.get(case['opportunity_id'])
+    with engine.lock,engine.connect() as c:
+        c.execute('UPDATE email_threads SET summary=?,messages=?,reviewed=? WHERE thread_id=?',(json.dumps(summary),json.dumps(messages),now(),tid))
+        if current['stage']==old_stage:c.execute('UPDATE opportunities SET stage=?,relationship=? WHERE id=?',(summary['stage'],summary['relationship'],case['opportunity_id']))
+        engine.log(c,case['opportunity_id'],'Conversation refreshed',summary['status'])

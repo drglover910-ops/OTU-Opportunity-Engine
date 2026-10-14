@@ -1,5 +1,9 @@
 # Release history
 
+## 0.5.4 — 2026-10-14
+
+- Resume recently read threads after Google rate limits instead of repeating requests; pace new reads and keep imported conversations monitored during partial reviews.
+
 ## 0.5.3 — 2026-10-14
 
 - Pace Gmail history reads, retry rate-limit responses, exclude legacy chat entries, and expose safe API denial reasons.

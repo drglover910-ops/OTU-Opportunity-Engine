@@ -5,7 +5,7 @@ from pathlib import Path
 from email.message import EmailMessage
 from email import policy
 from html.parser import HTMLParser
-VERSION = '0.5.3'
+VERSION = '0.5.4'
 STAGES = ['New','Researching','Ready to contact','Contacted','Interview / meeting','Offer / contract','Won','Parked']
 CATEGORIES = ['CRM / GoHighLevel','AI / business automation','Sales / operations','Coaching','Contract']
 FILES_LIMIT=25*1024*1024
@@ -200,8 +200,9 @@ class Engine:
         if self.setting('history_study',{}).get('status')=='running':return {'started':False,'message':'Sent-history review is already running.'}
         self.gmail_token()
         from mail_history import study
+        resume=self.setting('history_study',{}).get('status') in ('partial','interrupted','failed')
         self.set_setting('history_study',{'status':'running','threads_reviewed':0})
-        threading.Thread(target=study,args=(self,),daemon=True).start()
+        threading.Thread(target=study,args=(self,resume),daemon=True).start()
         return {'started':True,'message':'Reviewing sent outreach and its reply threads. No messages will be sent.'}
     def career_updates(self):
         with self.connect() as c:return [dict(r) for r in c.execute('SELECT * FROM career_updates ORDER BY id DESC')]
@@ -578,7 +579,7 @@ class Engine:
         return {'leads_added':added,'documents_added':docs,'message':'Merged records and delivery history. Approvals reset; reconnect Gmail separately. Existing records preserved.'}
     def schedule_loop(self):
         while True:
-            if self.setting('gmail_tokens') and self.setting('history_study',{}).get('status')=='complete':
+            if self.setting('gmail_tokens') and self.setting('history_study',{}).get('status') in ('complete','partial'):
                 last=self.setting('last_mail_check',{})
                 if not last.get('checked') or datetime.fromisoformat(last['checked'])<datetime.now(timezone.utc)-timedelta(hours=1):
                     try:

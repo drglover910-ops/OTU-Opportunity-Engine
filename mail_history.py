@@ -56,14 +56,14 @@ def gmail_read(url,headers):
         try:return fetch_json(url,headers=headers)
         except ValueError as e:
             if attempt==3 or (re.search(r'HTTP (?:400|401|403|404)',str(e)) and not re.search(r'(?:userRateLimitExceeded|rateLimitExceeded)',str(e))):raise
-            time.sleep(2**attempt)
+            time.sleep(5*(2**attempt))
 
-def study(engine):
+def study(engine,resume=False):
     try:
         token=engine.gmail_token();headers={'Authorization':'Bearer '+token};api='https://gmail.googleapis.com/gmail/v1/users/me'
         engine.set_setting('history_study',{'status':'running','started':now(),'threads_reviewed':0})
         profile=gmail_read(api+'/profile',headers=headers);owner=profile['emailAddress'].lower();engine.set_setting('gmail_owner',owner)
-        cases={};limited=False
+        cases={};refs={};limited=False
         queries=[('Buffalo Stallions','in:sent -in:chats stallions'),('Relevant outreach','in:sent -in:chats {resume résumé "cover letter" application coaching "job opportunity" "GoHighLevel" "Contra" proposal contract opportunity sales marketing}')]
         for label,query in queries:
             page=None
@@ -72,15 +72,21 @@ def study(engine):
                 if page:params['pageToken']=page
                 listing=gmail_read(api+'/messages?'+urllib.parse.urlencode(params),headers=headers)
                 for ref in listing.get('messages',[]):
-                    tid=ref['threadId']
+                    tid=ref['threadId'];refs.setdefault(tid,set()).add(ref['id'])
                     if tid not in cases:cases[tid]=label
                 page=listing.get('nextPageToken')
                 if not page:break
             if page:limited=True
-        reviewed=0;errors=[]
+        reviewed=0;errors=[];reused=0
+        known={c['thread_id']:c for c in engine.email_cases()} if resume else {}
         for tid,label in cases.items():
             try:
-                time.sleep(0.25)
+                cached=known.get(tid)
+                if cached and datetime.fromisoformat(cached['reviewed'])>datetime.now(timezone.utc)-timedelta(hours=1):
+                    detail=engine.email_case(tid)
+                    if refs[tid].issubset({m['id'] for m in detail['messages']}) and '#all/' in engine.get(detail['opportunity_id'])['url']:
+                        reviewed+=1;reused+=1;continue
+                time.sleep(1)
                 raw=gmail_read(api+'/threads/'+tid+'?format=full',headers=headers);messages=[]
                 messages=parse_messages(raw,owner)
                 outgoing=[m for m in messages if m['direction']=='sent']
@@ -106,7 +112,7 @@ def study(engine):
                 detail=str(e) if isinstance(e,ValueError) and str(e).startswith(('Service returned HTTP','Service could not be reached','Add both','Unknown category')) else type(e).__name__
                 errors.append(detail)
         learn(engine)
-        engine.set_setting('history_study',{'status':'partial' if errors else 'complete','threads_skipped':len(errors),'read_errors':list(dict.fromkeys(errors)),'threads_reviewed':reviewed,'threads_found':len(cases),'limited':limited,'finished':now(),'scope':'Sent-folder career/contract queries plus all messages in matching threads. Up to 10 pages per query; no attachment bodies downloaded.'})
+        engine.set_setting('history_study',{'status':'partial' if errors else 'complete','cached_threads_reused':reused,'threads_skipped':len(errors),'read_errors':list(dict.fromkeys(errors)),'threads_reviewed':reviewed,'threads_found':len(cases),'limited':limited,'finished':now(),'scope':'Sent-folder career/contract queries plus all messages in matching threads. Up to 10 pages per query; no attachment bodies downloaded.'})
     except Exception as e:
         current=engine.setting('history_study',{});current.update({'status':'failed','error':'Gmail history read failed: '+type(e).__name__,'finished':now()});engine.set_setting('history_study',current)
 

@@ -1,7 +1,7 @@
 """Run owner-authorized history review. Commit only redacted analytical summaries."""
 import os,json,time,re,urllib.request
 from pathlib import Path
-# Excludes legacy chat entries; throttles Gmail reads. Review is read-only and waits for the current deployment version.
+# Resumes cached reads after rate limits. Excludes legacy chat entries; throttles Gmail reads. Review is read-only and waits for the current deployment version.
 BASE='https://dezz-9-10-otu-opportunity-engine.hf.space'
 def request(path,data=None):
  req=urllib.request.Request(BASE+path,data=json.dumps(data).encode() if data is not None else None,headers={'Authorization':'Bearer '+os.environ['HF_TOKEN'],'Content-Type':'application/json'})

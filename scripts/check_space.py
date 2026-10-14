@@ -21,6 +21,18 @@ for attempt in range(24):
                 if health.get('version')==VERSION:
                     report['health']='verified';status=request('/api/status')
                     report['storage']=status['storage'];report['opportunities']=status['counts']['opportunities'];report['last_discovery']=status.get('last_discovery',{});report['documents']=status['counts']['documents'];report['gmail_connected']=status['gmail'];report['ai_configured']=status['ai_configured']
+                    report['connections']=request('/api/connections/check',{})
+                    report['workspaces']=len(request('/api/workspaces'))
+                    if status['ai_configured'] and not status.get('last_ai_success'):
+                        question='What is the next step for finding paid work on Contra? Keep it to two short sentences.'
+                        conversation=request('/api/conversation?workspace=contra')
+                        if not any(n['text']==question for n in conversation['notes']):
+                            try:
+                                result=request('/api/conversation/ask',{'workspace':'contra','text':question})
+                                report['ai_live_check']='passed' if result.get('answered') else 'not verified'
+                            except Exception:report['ai_live_check']='not verified; inspect writing connection'
+                        else:report['ai_live_check']='previous attempt recorded; no repeated paid check'
+                    else:report['ai_live_check']='previous successful request recorded' if status.get('last_ai_success') else 'not configured'
                     report['discovery']=request('/api/discover',{});break
             except urllib.error.HTTPError as e:
                 report['app_http_status']=e.code

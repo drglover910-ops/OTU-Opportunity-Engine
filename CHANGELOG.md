@@ -1,5 +1,12 @@
 # Release history
 
+## 0.6.0 — 2026-10-14
+
+- Simple daily navigation, plain-language Help, and honest connection cards.
+- Separate platform workspaces and opportunity conversations with private notes, original emails, and optional scoped AI answers.
+- Technical controls require a deliberate, expiring developer unlock; workspace notes survive private backups.
+
+
 ## 0.5.4 — 2026-10-14
 
 - Resume recently read threads after Google rate limits instead of repeating requests; pace new reads and keep imported conversations monitored during partial reviews.

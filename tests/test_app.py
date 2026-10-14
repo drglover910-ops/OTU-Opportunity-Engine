@@ -98,7 +98,7 @@ class HTTP(unittest.TestCase):
         req=urllib.request.Request(self.base+path,data=json.dumps(data).encode() if data is not None else None,headers={'Content-Type':'application/json',**(headers or {})})
         with urllib.request.urlopen(req) as r:return json.load(r)
     def test_health_and_status(self):
-        self.assertEqual(self.request('/health')['version'],'0.5.4');self.assertIn('storage',self.request('/api/status'))
+        self.assertEqual(self.request('/health')['version'],'0.6.0');self.assertIn('storage',self.request('/api/status'))
     def test_workflow(self):
         result=self.request('/api/add',{'company':'HTTP client','title':'CRM project','url':'https://example.com/http'})
         self.request('/api/update',{'id':result['id'],'contact':'a@example.com'})
@@ -115,4 +115,4 @@ class HTTP(unittest.TestCase):
             self.assertEqual(e.exception.code,303)
             self.assertEqual(e.exception.headers['Location'],'https://accounts.google.com/o/oauth2/v2/auth?state=test')
     def test_static_ui(self):
-        with urllib.request.urlopen(self.base+'/') as r:self.assertIn(b'Career library',r.read())
+        with urllib.request.urlopen(self.base+'/') as r:self.assertIn(b'My profile',r.read())

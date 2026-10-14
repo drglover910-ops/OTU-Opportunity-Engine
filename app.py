@@ -1,11 +1,12 @@
 """Private single-owner Hugging Face Space. HF access controls provide authentication."""
-import base64,json,os,threading,urllib.parse
+import base64,json,os,threading,urllib.parse,secrets,time
 from pathlib import Path
 from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
 from engine import Engine,VERSION,STAGES
 ROOT=Path(__file__).resolve().parent
 engine=Engine()
 class Handler(BaseHTTPRequestHandler):
+    developer_sessions={}
     def log_message(self,*args):pass  # No OAuth codes, inbox content, or credentials in logs.
     def output(self,body,ctype='application/json',status=200,download=None):
         if not isinstance(body,bytes):body=json.dumps(body).encode()
@@ -21,6 +22,8 @@ class Handler(BaseHTTPRequestHandler):
             if path in ['/', '/ui.js','/ui.css']:
                 name={'/':'ui.html','/ui.js':'ui.js','/ui.css':'ui.css'}[path];ctype={'/':'text/html; charset=utf-8','/ui.js':'text/javascript; charset=utf-8','/ui.css':'text/css; charset=utf-8'}[path]
                 return self.output((ROOT/name).read_bytes(),ctype)
+            if path=='/api/workspaces':return self.output(engine.workspaces())
+            if path=='/api/conversation':return self.output(engine.conversation({k:v[0] for k,v in query.items()}))
             if path=='/api/status':return self.output(engine.status())
             if path=='/api/opportunities':return self.output(engine.list())
             if path=='/api/documents':return self.output(engine.documents())
@@ -65,6 +68,17 @@ class Handler(BaseHTTPRequestHandler):
             length=int(self.headers.get('Content-Length',0))
             if length<=0 or length>90*1024*1024:raise ValueError('Request size invalid')
             d=json.loads(self.rfile.read(length))
+            if self.path=='/api/developer/unlock':
+                if d.get('confirmation')!='OPEN DEVELOPER TOOLS':raise ValueError('Confirm that you want to open developer tools.')
+                token=secrets.token_urlsafe(32);self.developer_sessions[token]=time.time()+1800
+                return self.output({'token':token,'expires_in':1800})
+            if self.path=='/api/developer/lock':
+                self.developer_sessions.pop(self.headers.get('X-Developer-Key',''),None);return self.output({'locked':True})
+            if self.path in ('/api/settings','/api/restore') and self.developer_sessions.get(self.headers.get('X-Developer-Key',''),0)<time.time():return self.output({'error':'Open developer tools before changing technical settings.'},status=403)
+            if self.path=='/api/connections/check':return self.output(engine.check_connections())
+            if self.path=='/api/workspaces':return self.output(engine.add_workspace(d))
+            if self.path=='/api/conversation/ask':return self.output(engine.ask_workspace(d))
+            if self.path=='/api/conversation/note':return self.output(engine.add_work_note(d))
             routes={'/api/add':engine.add,'/api/update':engine.update,'/api/draft':engine.create_draft,'/api/draft/edit':engine.edit_draft,'/api/approve':engine.approve,'/api/send':engine.send}
             if self.path in routes:return self.output(routes[self.path](d))
             if self.path=='/api/gmail/history':return self.output(engine.start_history_study())

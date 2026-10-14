@@ -1,0 +1,31 @@
+name: Verify connections and prepare review draft
+on:
+  push:
+    branches: [work]
+    paths: [scripts/launch_check.py, .github/workflows/launch-check.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: work
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/launch_check.py
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      - name: Record result without inbox contents or credentials
+        run: |
+          git config user.name 'OTU launch check'
+          git config user.email 'otu-check@users.noreply.github.com'
+          git add docs/LAUNCH_CHECK.json
+          git diff --cached --quiet && exit 0
+          git commit -m 'Record connection check and unsent review draft'
+          git pull --rebase origin work
+          git push origin HEAD:work

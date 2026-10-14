@@ -1,6 +1,7 @@
 {
+  "commit": "252767b5850137c8ab67a4a92c415c5562f15ed3",
   "version": "0.2.1",
-  "checked_at": "2026-10-14T15:29:36.012201+00:00",
+  "checked_at": "2026-10-14T15:30:50.408633+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -29,6 +30,5 @@
     "added": 0,
     "cached": true,
     "message": "Feed checked within 12 hours. Open the saved results; avoid repeated requests."
-  },
-  "restart_test": "passed"
+  }
 }

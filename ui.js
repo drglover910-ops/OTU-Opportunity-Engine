@@ -31,7 +31,7 @@ function renderToday(){
  if(replies)todos.push(`${replies} saved reply records are available under Activity & replies.`);
  $('todos').innerHTML=todos.map(t=>`<div class="row">${esc(t)}</div>`).join('')||empty('Choose a promising lead and prepare its next step.');
  $('best').innerHTML=leads.filter(l=>['New','Researching','Ready to contact'].includes(l.stage)).slice(0,4).map(l=>`<div class="row"><div><strong>${esc(l.title)}</strong><p class="small">${esc(l.company)} · Fit ${l.fit.score}/100</p></div><button class="secondary" data-action="board">Review board</button></div>`).join('')||empty('Your best fits will appear here after you save leads.');
- $('storage-warning').textContent=state.storage.restart_verified?'You marked the restart check complete. Keep a private backup before major changes.':state.storage.message;
+ $('storage-warning').textContent=state.storage.restart_verified?'Restart verification has been recorded. Keep a private backup before major changes.':state.storage.message;
 }
 function renderBoard(){
  const query=$('search').value.toLowerCase();const stage=$('stage-filter').value;const category=$('category-filter').value;

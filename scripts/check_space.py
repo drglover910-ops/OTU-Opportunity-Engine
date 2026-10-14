@@ -28,6 +28,25 @@ for attempt in range(24):
             except Exception:report['app_connection']='unavailable'
     except Exception:report['runtime_api']='unavailable';break
     time.sleep(10)
+if report['health']=='verified' and report.get('storage',{}).get('mount_detected') and not report['storage'].get('restart_verified'):
+    try:
+        marker=request('/api/storage/probe',{'action':'start'})
+        api.restart_space(SPACE)
+        report['restart_test']='started'
+        time.sleep(10)
+        for attempt in range(24):
+            try:
+                health=request('/health')
+                if health.get('version')==VERSION:
+                    proof=request('/api/storage/probe',{'action':'verify','nonce':marker['nonce']})
+                    report['restart_test']='passed' if proof.get('verified') else 'failed'
+                    status=request('/api/status');report['storage']=status['storage'];report['opportunities']=status['counts']['opportunities'];report['last_discovery']=status.get('last_discovery',{})
+                    break
+            except Exception:
+                pass
+            time.sleep(10)
+    except Exception:
+        report['restart_test']='unverified; check permissions or runtime'
 Path('docs/LATEST_DEPLOYMENT.json').write_text(json.dumps(report,indent=2)+'\n')
 print(json.dumps(report,indent=2))
 print('Runtime verification complete.' if report['health']=='verified' else 'Upload completed, but app health could not be verified. Check the private Space runtime.')

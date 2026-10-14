@@ -53,6 +53,7 @@ class Handler(BaseHTTPRequestHandler):
             d=json.loads(self.rfile.read(length))
             routes={'/api/add':engine.add,'/api/update':engine.update,'/api/draft':engine.create_draft,'/api/draft/edit':engine.edit_draft,'/api/approve':engine.approve,'/api/send':engine.send}
             if self.path in routes:return self.output(routes[self.path](d))
+            if self.path=='/api/storage/probe':return self.output(engine.storage_probe(d))
             if self.path=='/api/discover':return self.output(engine.scan())
             if self.path=='/api/upload':return self.output(engine.import_file(d['name'],base64.b64decode(d['content'],validate=True),d.get('kind','reference')))
             if self.path=='/api/restore':return self.output(engine.restore(base64.b64decode(d['content'],validate=True)))

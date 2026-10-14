@@ -67,6 +67,12 @@ class Core(unittest.TestCase):
         self.assertEqual(target.restore(backup)['leads_added'],0)
     def test_restart_persists_records(self):
         self.lead();new=Engine(self.engine.data);self.assertEqual(len(new.list()),1)
+    def test_storage_probe_reopens_database_and_file(self):
+        value=self.engine.storage_probe({'action':'start'})
+        reopened=Engine(self.engine.data)
+        with self.assertRaises(ValueError):reopened.storage_probe({'action':'verify','nonce':'wrong'})
+        self.assertTrue(reopened.storage_probe({'action':'verify','nonce':value['nonce']})['verified'])
+        self.assertTrue(reopened.storage()['restart_verified'])
     def test_oauth_state_required(self):
         with self.assertRaises(ValueError):self.engine.oauth_callback('unknown','code')
     def test_discovery_cache_and_source_attribution(self):
@@ -91,7 +97,7 @@ class HTTP(unittest.TestCase):
         req=urllib.request.Request(self.base+path,data=json.dumps(data).encode() if data is not None else None,headers={'Content-Type':'application/json',**(headers or {})})
         with urllib.request.urlopen(req) as r:return json.load(r)
     def test_health_and_status(self):
-        self.assertEqual(self.request('/health')['version'],'0.2.0');self.assertIn('storage',self.request('/api/status'))
+        self.assertEqual(self.request('/health')['version'],'0.2.1');self.assertIn('storage',self.request('/api/status'))
     def test_workflow(self):
         result=self.request('/api/add',{'company':'HTTP client','title':'CRM project','url':'https://example.com/http'})
         self.request('/api/update',{'id':result['id'],'contact':'a@example.com'})

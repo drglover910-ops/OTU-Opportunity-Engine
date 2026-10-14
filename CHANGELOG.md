@@ -1,5 +1,9 @@
 # Release history
 
+## 0.2.1 — 2026-10-14
+- Add database and file storage markers for automated first-launch restart validation.
+- Report production opportunity counts and actual source-check results.
+
 ## 0.2.0 — 2026-10-14
 - Private career-file ingestion and retrieval; original documents preserved.
 - Persistent storage checks, record migration, backup and merge recovery with delivery history.

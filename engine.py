@@ -5,7 +5,7 @@ from pathlib import Path
 from email.message import EmailMessage
 from email import policy
 from html.parser import HTMLParser
-VERSION = '0.2.0'
+VERSION = '0.2.1'
 STAGES = ['New','Researching','Ready to contact','Contacted','Interview / meeting','Offer / contract','Won','Parked']
 CATEGORIES = ['CRM / GoHighLevel','AI / business automation','Sales / operations','Coaching','Contract']
 FILES_LIMIT=25*1024*1024
@@ -241,6 +241,17 @@ class Engine:
                 if str(point) not in ('/','/tmp') and (self.data==point or point in self.data.parents):mount=True
         except OSError:pass
         return {'path':str(self.data),'writable':writable,'mount_detected':mount,'restart_verified':self.setting('storage_verified',False),'message':'Mounted storage detected; verify a saved record survives a restart.' if mount else 'Storage mount not detected. Export a backup before restarting.'}
+    def storage_probe(self,d):
+        path=self.data/'.storage-probe.json'
+        if d.get('action')=='start':
+            value={'nonce':secrets.token_hex(24),'started':now()}
+            path.write_text(json.dumps(value));self.set_setting('storage_probe',value)
+            return value
+        value=self.setting('storage_probe',{})
+        if not value or value.get('nonce')!=d.get('nonce') or not path.exists():raise ValueError('Storage marker did not survive; persistence is not verified.')
+        if json.loads(path.read_text())!=value:raise ValueError('Storage marker mismatch')
+        self.set_setting('storage_verified',True);self.set_setting('storage_verification_time',now());path.unlink();self.set_setting('storage_probe',None)
+        return {'verified':True}
     def status(self):
         with self.connect() as c:
             counts={table:c.execute('SELECT count(*) FROM '+table).fetchone()[0] for table in ['opportunities','documents','drafts']}

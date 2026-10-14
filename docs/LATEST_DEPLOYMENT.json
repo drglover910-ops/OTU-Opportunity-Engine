@@ -1,7 +1,7 @@
 {
-  "commit": "70c9ed77dc3b262633960027ee982fac1134a928",
-  "version": "0.4.0",
-  "checked_at": "2026-10-14T18:34:27.122523+00:00",
+  "commit": "7d68f57c7cb93d3e6571b93a20165fa34f340aa1",
+  "version": "0.5.0",
+  "checked_at": "2026-10-14T19:14:39.570662+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",

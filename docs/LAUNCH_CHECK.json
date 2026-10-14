@@ -1,8 +1,8 @@
 {
-  "checked_at": "2026-10-14T17:44:13.298932+00:00",
+  "checked_at": "2026-10-14T18:31:24.135224+00:00",
   "sent_messages": 0,
   "paid_ai_calls": 0,
-  "version": "0.3.1",
+  "version": "0.4.0",
   "gmail_connected": true,
   "ai_configured": true,
   "career_documents": 13,
@@ -37,14 +37,30 @@
       "url": "https://weworkremotely.com/remote-jobs/rubrik-job-board-customer-resilience-manager-customer-success-remote"
     }
   ],
+  "finished_application": {
+    "package_id": 1,
+    "checks": {
+      "passed": true,
+      "resume_pages": 1,
+      "cover_pages": 1,
+      "source": "Imported master career record; wording and dates preserved",
+      "ai_used": false
+    },
+    "files": {
+      "resume_pdf": 14,
+      "resume_docx": 15,
+      "cover_pdf": 16,
+      "cover_docx": 17
+    }
+  },
   "review_draft": {
-    "id": 3,
+    "id": 4,
     "opportunity_id": 3,
     "title": "Ecosystem Marketing Lead",
     "company": "Lattice",
     "source": "We Work Remotely",
     "url": "https://weworkremotely.com/remote-jobs/lattice-ecosystem-marketing-lead",
-    "mode": "basic template",
+    "mode": "finished r\u00e9sum\u00e9, cover letter and unsent email",
     "existing_draft_reused": false
   }
 }

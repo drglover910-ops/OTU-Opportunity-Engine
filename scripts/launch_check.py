@@ -1,5 +1,5 @@
 """Owner-requested launch check: read connections and prepare one unsent template."""
-import json,os,urllib.request,urllib.error
+import json,os,re,urllib.request,urllib.error
 from pathlib import Path
 from datetime import datetime,timezone
 BASE='https://dezz-9-10-otu-opportunity-engine.hf.space'
@@ -15,7 +15,11 @@ try:
             result=request('/api/gmail/sync',{});report['gmail_read_check']='passed';report['new_replies_linked']=result['linked']
         except Exception as e:report['gmail_read_check']='failed: '+type(e).__name__
     candidates=[r for r in leads if r['stage'] in ('New','Researching','Ready to contact')]
-    preferred=[r for r in candidates if r['category'] in ('CRM / GoHighLevel','AI / business automation')]
+    role_terms=r'crm|gohighlevel|highlevel|automation|customer success|customer support|sales|account executive|business development|marketing|customer operations'
+    excluded=r'finance|erp|accountant|controller|principal|software engineer|data scientist|architect'
+    candidates=[r for r in candidates if re.search(role_terms,r['title'],re.I) and not re.search(excluded,r['title'],re.I)]
+    preferred=[r for r in candidates if re.search(r'crm|gohighlevel|highlevel|automation|marketing',r['title'],re.I)]
+    report['shortlist']=[{'title':r['title'],'company':r['company'],'url':r['url']} for r in candidates[:5] if r['source'] in ('We Work Remotely','Remotive')]
     if preferred or candidates:
         row=(preferred or candidates)[0]
         existing=next((d for d in drafts if d['opportunity_id']==row['id'] and d['status'] in ('Draft','Approved')),None)

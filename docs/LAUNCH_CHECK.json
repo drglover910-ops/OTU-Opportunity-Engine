@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-14T17:42:33.499296+00:00",
+  "checked_at": "2026-10-14T17:44:13.298932+00:00",
   "sent_messages": 0,
   "paid_ai_calls": 0,
   "version": "0.3.1",
@@ -10,13 +10,40 @@
   "opportunities": 49,
   "gmail_read_check": "passed",
   "new_replies_linked": 0,
+  "shortlist": [
+    {
+      "title": "Senior Manager, AI Customer Success",
+      "company": "Webflow",
+      "url": "https://weworkremotely.com/remote-jobs/webflow-senior-manager-ai-customer-success"
+    },
+    {
+      "title": "Senior Manager, Corporate Sales - West",
+      "company": "Webflow",
+      "url": "https://weworkremotely.com/remote-jobs/webflow-senior-manager-corporate-sales-west"
+    },
+    {
+      "title": "Customer Success Director",
+      "company": "Maven Clinic",
+      "url": "https://weworkremotely.com/remote-jobs/maven-clinic-customer-success-director"
+    },
+    {
+      "title": "Senior Account Executive",
+      "company": "Typeform",
+      "url": "https://weworkremotely.com/remote-jobs/typeform-senior-account-executive"
+    },
+    {
+      "title": "Customer Resilience Manager - Customer Success (Remote)",
+      "company": "Rubrik Job Board",
+      "url": "https://weworkremotely.com/remote-jobs/rubrik-job-board-customer-resilience-manager-customer-success-remote"
+    }
+  ],
   "review_draft": {
-    "id": 2,
-    "opportunity_id": 42,
-    "title": "Director, Finance Systems & ERP",
-    "company": "Smartsheet",
+    "id": 3,
+    "opportunity_id": 3,
+    "title": "Ecosystem Marketing Lead",
+    "company": "Lattice",
     "source": "We Work Remotely",
-    "url": "https://weworkremotely.com/remote-jobs/smartsheet-director-finance-systems-erp",
+    "url": "https://weworkremotely.com/remote-jobs/lattice-ecosystem-marketing-lead",
     "mode": "basic template",
     "existing_draft_reused": false
   }

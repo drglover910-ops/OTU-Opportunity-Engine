@@ -4,11 +4,11 @@
   "private_message_storage": "Hugging Face private database only",
   "study": {
     "status": "failed",
-    "threads_reviewed": 52,
+    "threads_reviewed": 51,
     "threads_found": 95,
     "limited": false,
     "error": "Gmail history read failed: ValueError",
-    "finished": "2026-10-14T19:19:12.127633+00:00"
+    "finished": "2026-10-14T19:21:28.852037+00:00"
   },
   "style": {},
   "professional_outreach_examples": [],
@@ -34,19 +34,10 @@
     },
     {
       "company": "Buffalo Stallions",
-      "status": "Interview / meeting discussed",
+      "status": "Offer wording \u2014 verify terms",
       "sent": 2,
       "human_replies": 2,
       "latest_date": "2026-10-08T19:11:10+00:00",
-      "next_context": "Follow-up",
-      "paid_outcome_verified": false
-    },
-    {
-      "company": "gmail.com",
-      "status": "Reply received",
-      "sent": 1,
-      "human_replies": 1,
-      "latest_date": "2026-09-22T08:00:00+00:00",
       "next_context": "Follow-up",
       "paid_outcome_verified": false
     },
@@ -238,6 +229,15 @@
       "latest_date": "2026-09-22T08:00:00+00:00",
       "next_context": "Follow-up",
       "paid_outcome_verified": false
+    },
+    {
+      "company": "ghlva.com",
+      "status": "Reply received",
+      "sent": 1,
+      "human_replies": 1,
+      "latest_date": "2026-09-22T08:00:00+00:00",
+      "next_context": "Follow-up",
+      "paid_outcome_verified": false
     }
   ],
   "buffalo_stallions": [
@@ -264,7 +264,7 @@
       ]
     },
     {
-      "status": "Interview / meeting discussed",
+      "status": "Offer wording \u2014 verify terms",
       "sent": 2,
       "human_replies": 2,
       "evidence": [

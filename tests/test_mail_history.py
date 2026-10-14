@@ -1,6 +1,6 @@
 import base64,unittest,json,tempfile
 from unittest.mock import patch
-from engine import Engine
+from engine import Engine,safe_url
 from mail_history import body,summarize,study
 class MailHistory(unittest.TestCase):
  def message(self,direction,text,automated=False):return {'direction':direction,'body':text,'automated':automated,'date':'2026-10-14T10:00:00+00:00'}
@@ -30,3 +30,9 @@ class MailHistory(unittest.TestCase):
   e=Engine(tempfile.mkdtemp());oid=e.add({'company':'X','title':'Conversation'})['id']
   with e.connect() as c:c.execute('INSERT INTO email_threads VALUES(?,?,?,?,?,?,?)',('t',oid,'X','Subject',json.dumps({'status':'No reply found'}),'[]','2026-10-14'))
   target=Engine(tempfile.mkdtemp());target.restore(e.backup());self.assertEqual(len(target.email_cases()),1)
+
+ def test_gmail_thread_links_remain_distinct(self):
+  a=safe_url("https://mail.google.com/mail/u/0/#all/abc123")
+  b=safe_url("https://mail.google.com/mail/u/0/#all/abc456")
+  self.assertNotEqual(a,b)
+  self.assertEqual(safe_url("https://example.com/listing#tracking"),"https://example.com/listing")

@@ -51,11 +51,18 @@ def parse_messages(raw,owner):
     messages.sort(key=lambda m:m['date'])
     return messages
 
+def gmail_read(url,headers):
+    for attempt in range(4):
+        try:return fetch_json(url,headers=headers)
+        except ValueError:
+            if attempt==3:raise
+            time.sleep(2**attempt)
+
 def study(engine):
     try:
         token=engine.gmail_token();headers={'Authorization':'Bearer '+token};api='https://gmail.googleapis.com/gmail/v1/users/me'
         engine.set_setting('history_study',{'status':'running','started':now(),'threads_reviewed':0})
-        profile=fetch_json(api+'/profile',headers=headers);owner=profile['emailAddress'].lower();engine.set_setting('gmail_owner',owner)
+        profile=gmail_read(api+'/profile',headers=headers);owner=profile['emailAddress'].lower();engine.set_setting('gmail_owner',owner)
         cases={};limited=False
         queries=[('Buffalo Stallions','in:sent stallions'),('Relevant outreach','in:sent {resume résumé "cover letter" application coaching "job opportunity" "GoHighLevel" "Contra" proposal contract opportunity sales marketing}')]
         for label,query in queries:
@@ -63,7 +70,7 @@ def study(engine):
             for index in range(10):
                 params={'maxResults':100,'q':query}
                 if page:params['pageToken']=page
-                listing=fetch_json(api+'/messages?'+urllib.parse.urlencode(params),headers=headers)
+                listing=gmail_read(api+'/messages?'+urllib.parse.urlencode(params),headers=headers)
                 for ref in listing.get('messages',[]):
                     tid=ref['threadId']
                     if tid not in cases:cases[tid]=label
@@ -72,7 +79,7 @@ def study(engine):
             if page:limited=True
         reviewed=0
         for tid,label in cases.items():
-            raw=fetch_json(api+'/threads/'+tid+'?format=full',headers=headers);messages=[]
+            raw=gmail_read(api+'/threads/'+tid+'?format=full',headers=headers);messages=[]
             messages=parse_messages(raw,owner)
             outgoing=[m for m in messages if m['direction']=='sent']
             if not outgoing:continue
@@ -83,7 +90,7 @@ def study(engine):
             company=company or (recipient.split('@')[-1] if '@' in recipient else 'Outreach conversation')
             category='Coaching' if company in ('Buffalo Stallions','Kids Choice Sports','Healthy Buffalo') else choose_category(text)
             url='https://mail.google.com/mail/u/0/#all/'+tid
-            result=engine.add({'company':company,'title':first['subject'] or 'Opportunity conversation','url':url,'category':category,'description':'Imported Gmail correspondence. Open the thread for original opportunity context.','source':'Gmail history','relationship':summary['relationship']})
+            result=engine.add({'company':company,'title':first['subject'].strip() or 'Opportunity conversation','url':url,'category':category,'description':'Imported Gmail correspondence. Open the thread for original opportunity context.','source':'Gmail history','relationship':summary['relationship']})
             oid=result['id']
             if result['added']:
                 with engine.connect() as c:

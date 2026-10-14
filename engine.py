@@ -39,7 +39,8 @@ def safe_url(value):
     if p.scheme not in ('https','http') or not p.netloc or p.username or p.password:raise ValueError('Use a complete https or http listing link without credentials.')
     # Remove fragments and common tracking parameters to prevent duplicate imports.
     query=urllib.parse.urlencode([(k,v) for k,v in urllib.parse.parse_qsl(p.query) if not k.lower().startswith('utm_') and k not in ('fbclid','gclid')])
-    return urllib.parse.urlunsplit((p.scheme,p.netloc.lower(),p.path,query,''))
+    fragment=p.fragment if p.netloc.lower()=='mail.google.com' and re.fullmatch(r'all/[a-zA-Z0-9]+',p.fragment) else ''
+    return urllib.parse.urlunsplit((p.scheme,p.netloc.lower(),p.path,query,fragment))
 def email_address(value):
     value=(value or '').strip()
     if not re.fullmatch(r'[^\s@<>\r\n]+@[^\s@<>\r\n]+\.[^\s@<>\r\n]+',value):raise ValueError('Enter one valid recipient email address.')

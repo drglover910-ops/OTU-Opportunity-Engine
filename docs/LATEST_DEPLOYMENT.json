@@ -1,7 +1,7 @@
 {
-  "commit": "336cc6c3f562fb72480d1414864747fc1c59f19e",
-  "version": "0.7.3",
-  "checked_at": "2026-10-14T23:41:48.022827+00:00",
+  "commit": "c7b070f521b56d545b6eafede7cce30fdec988fe",
+  "version": "0.8.0",
+  "checked_at": "2026-10-15T01:27:50.232804+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -27,7 +27,7 @@
   "gmail_connected": true,
   "ai_configured": true,
   "connections": {
-    "checked_at": "2026-10-14T23:42:18.509442+00:00",
+    "checked_at": "2026-10-15T01:28:41.577172+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -47,6 +47,7 @@
   },
   "workspaces": 8,
   "ai_live_check": "previous successful request recorded",
+  "contra_signin_ready": true,
   "platforms": 7,
   "browser": "hosting configuration needed",
   "browser_detail": "This host cannot start the required browser sandbox. Do not enter credentials. Use the platform on your own device while browser hosting is configured.",

@@ -1,5 +1,10 @@
 # Release history
 
+## 0.9.5 — 2026-10-15
+
+- Read full block-based descriptions, format Contra budget amounts, and surface current service/portfolio counts.
+- Verify application state using the exact GeekyAnts job ID and visitorDidApply flag rather than matching a name or assuming historical delivery.
+
 ## 0.9.4 — 2026-10-15
 
 - Include challenge deadlines/prizes, broader feeds and a first client-conversation read; fetch a bounded set of full job descriptions.

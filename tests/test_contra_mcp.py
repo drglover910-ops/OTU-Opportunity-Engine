@@ -63,3 +63,8 @@ class ContraOAuth(unittest.TestCase):
   self.assertEqual(jobs['CRM build']['description'],'A full verified source description')
   self.assertEqual(jobs['Build challenge']['kind'],'Challenge / prize')
   self.assertFalse(jobs['CRM build']['requirements_verified'])
+ def test_applied_flag_requires_exact_job_and_description_blocks_are_read(self):
+  self.e.set_setting('contra_account_snapshot',{
+   'list_job_feed:3':{'structuredContent':{'entries':[{'visitorDidApply':True,'job':{'jobId':'WyJKb2IiLDk5NTIzXQ==','title':'Partnership','publicUrl':'https://contra.com/opportunity/geeky'}}]}},
+   'detail_get_job_by_slug:1':{'structuredContent':{'job':{'title':'CRM','publicUrl':'https://contra.com/opportunity/crm','blocknoteDescription':[{'content':[{'type':'text','text':'Build a workflow.'}]}]}}}})
+  result=self.c.inventory_details();self.assertTrue(result['geekyants_application_recorded']);self.assertEqual(result['public_opportunities'][0]['description'],'Build a workflow.')

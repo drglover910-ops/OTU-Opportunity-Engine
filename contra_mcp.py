@@ -63,7 +63,7 @@ class ContraConnection:
    return tokens['access_token']
  def discover(self):
   headers={'Authorization':'Bearer '+self.token()}
-  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.9.4'}}},headers=headers)
+  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.9.5'}}},headers=headers)
   if result.get('error'):raise ValueError('Contra could not initialize the connection. No account tools were run.')
   protocol=result.get('result',{}).get('protocolVersion','2025-03-26');headers['MCP-Protocol-Version']=protocol
   session=next((v for k,v in response_headers.items() if k.lower()=='mcp-session-id'),None)
@@ -82,7 +82,7 @@ class ContraConnection:
   allowed={'get_user_profile_by_username','list_services','list_portfolio_projects','list_job_feed','list_active_challenges','get_job_by_slug','list_chat_conversations'}
   if any(name not in allowed for name,args in calls):raise ValueError('Only approved read tools can run here.')
   headers={'Authorization':'Bearer '+self.token()}
-  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.9.4'}}},headers=headers)
+  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.9.5'}}},headers=headers)
   if result.get('error'):raise ValueError('Contra could not initialize read access.')
   headers['MCP-Protocol-Version']=result.get('result',{}).get('protocolVersion','2025-03-26')
   for k,v in response_headers.items():
@@ -98,7 +98,7 @@ class ContraConnection:
   return results
  def inventory_details(self):
   snapshot=self.engine.setting('contra_account_snapshot',{}) or {}
-  details={};public=[]
+  details={};public=[];applied=[]
   def unwrap(body):
    if body.get('structuredContent') is not None:return body['structuredContent']
    parsed=[]
@@ -113,6 +113,11 @@ class ContraConnection:
     for child in value.values():yield from walk(child)
    elif isinstance(value,list):
     for child in value:yield from walk(child)
+  def text_blocks(value):
+   if isinstance(value,str):
+    try:value=json.loads(value)
+    except ValueError:return value
+   return '\n'.join(node['text'] for node in walk(value) if isinstance(node.get('text'),str))
   for key,body in snapshot.items():
    data=unwrap(body);nodes=list(walk(data));shapes=[]
    for node in nodes:
@@ -125,15 +130,18 @@ class ContraConnection:
     if 'projects' in node:details[key].update({'projects_returned':len(node['projects']),'drafts_returned':sum(bool(p.get('isDraft')) for p in node['projects'])})
    if key.startswith('list_job_feed:3') and not body.get('isError'):
     details[key]['geekyants_mentioned_in_applied_page']='geeky' in json.dumps(data).lower()
+    for node in nodes:
+     if isinstance(node.get('job'),dict) and 'visitorDidApply' in node:
+      job=node['job'];applied.append({'job_id':job.get('jobId'),'title':job.get('title'),'url':job.get('publicUrl'),'applied':node['visitorDidApply'] is True})
    if key.startswith('list_job_feed:') and not key.endswith(':3') or key.startswith(('list_active_challenges:','get_job_by_slug:','detail_get_job_by_slug:')):
     for node in nodes:
      title=node.get('title') or node.get('name');url=node.get('publicUrl') or node.get('challengeUrl') or node.get('url')
      if isinstance(title,str) and isinstance(url,str) and url.startswith('https://contra.com/'):
-      public.append({'title':title[:200],'url':url,'kind':'Challenge / prize' if 'challenge' in key else 'Job / contract','source':'Contra','description':str(node.get('description') or '')[:12000],'budget':node.get('budget'),'prize':node.get('prize'),'deadline':node.get('submissionsDeadline'),'status':node.get('status'),'requirements_verified':False})
+      public.append({'title':title[:200],'url':url,'kind':'Challenge / prize' if 'challenge' in key else 'Job / contract','source':'Contra','description':text_blocks(node.get('description') or node.get('blocknoteDescription') or '')[:12000],'budget':node.get('budget'),'prize':node.get('prize'),'deadline':node.get('submissionsDeadline'),'status':node.get('status'),'requirements_verified':False})
   unique={}
   for item in public:
    if item['url'] not in unique or len(item['description'])>len(unique[item['url']]['description']):unique[item['url']]=item
-  return {'read_shapes':details,'public_opportunities':list(unique.values())[:75]}
+  return {'read_shapes':details,'public_opportunities':list(unique.values())[:75],'applications':applied,'geekyants_application_recorded':any(a['applied'] and a['job_id']=='WyJKb2IiLDk5NTIzXQ==' for a in applied)}
  def sync(self):
   old=self.engine.setting('contra_sync_summary',{}) or {}
   if old.get('scan_version')==2 and old.get('finished_epoch',0)>time.time()-1800:return {**old,**self.inventory_details(),'cached':True}

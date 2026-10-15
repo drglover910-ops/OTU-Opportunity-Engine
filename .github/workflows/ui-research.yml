@@ -1,0 +1,27 @@
+name: Research public UI guidance
+on:
+  push:
+    branches: [work]
+    paths: [scripts/research_ui_reference.py, .github/workflows/ui-research.yml]
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: work
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/research_ui_reference.py
+      - run: |
+          git config user.name 'OTU UI research'
+          git config user.email 'otu-research@users.noreply.github.com'
+          git add docs/UI_REFERENCE_RESEARCH.json
+          git diff --cached --quiet && exit 0
+          git commit -m 'Record public accessibility and animation research'
+          git pull --rebase origin work
+          git push origin HEAD:work

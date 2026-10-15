@@ -1,0 +1,67 @@
+[
+  {
+    "title": "Pause moving content",
+    "url": "https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html",
+    "http_status": 200,
+    "excerpts": [
+      " Moving, blinking, scrolling For any moving, blinking or scrolling information that (1) starts automatically, (2) lasts more than five seconds, and (3) is presented in parallel with other content, there is a mechanism for the user to pause , stop, or hide it unless the movement, blinking, or scrolling is part of an activity where it is essential ; and Auto-updating For any auto-updating information that (1) starts automatically and (2) is",
+      " Understanding Success Criterion 2.2.2: Pause, Stop, Hide | WAI | W3C Skip to content WCAG 2.2 Understanding Docs Informative explanations, not required to meet WCAG About WCAG Understanding Docs W3C homepage Web Accessibility Initiative (WAI) homepage All Understanding Docs Guideline: Enough Time Previous SC: Timing Adjustable Next SC: No Tim",
+      "mechanism for the user to pause , stop, or hide it unless the movement, blinking, or scrolling is part of an activity where it is essential ; and Auto-updating For any auto-updating information that (1) starts automatically and (2) is presented in parallel with other content, there is a mechanism for the user to pause, stop, or hide it or to control the frequency of the update unless the auto-updating is part of an activity where it is"
+    ],
+    "verified": true
+  },
+  {
+    "title": "Reduce animation",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion",
+    "http_status": 200,
+    "excerpts": [
+      " prefers-reduced-motion CSS media feature - CSS | MDN Skip to main content Skip to search MDN HTML HTML: Markup language HTML reference Elements Global attributes Attributes See all\u2026 HTML guides Responsive images HTML cheatsheet Date & time formats See all\u2026 Markup languages SVG MathML XML CSS CSS: Styling language",
+      "ing: An embedded example at the bottom of this page has a scaling movement that may be problematic for some readers. Readers with vestibular motion disorders may wish to enable the reduce motion feature on their device before viewing the animation. The prefers-reduced-motion CSS media feature is used to detect if a user has enabled a setting on their device to minimize the amount of non-essential motion. The setting is used to convey to",
+      "on disorders . Animations such as scaling or panning large objects can be vestibular motion triggers. In this article Syntax User preferences Examples Specifications Browser compatibility See also Syntax no-preference Indicates that a user has made no preference known on the device. This keyword value evaluates as false. reduce Indicates that a user has enabled the setting on their device for reduced motion. The reduce keyword value eva"
+    ],
+    "verified": true
+  },
+  {
+    "title": "Frame scheduling",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame",
+    "http_status": 200,
+    "excerpts": [
+      "d), though 75hz, 120hz, and 144hz are also widely used. requestAnimationFrame() calls are paused in most browsers when running in background tabs or hidden <iframe> s, in order to improve performance and battery life. Note: Your callback function must call requestAnimationFrame() again if you want to animate another frame. requestAnimationFrame() is one-shot. Warning: Be sure always to use the first argument (or some other method for getting",
+      "plied callback function before the next repaint. The frequency of calls to the callback function will generally match the display refresh rate. The most common refresh rate is 60hz, (60 cycles/frames per second), though 75hz, 120hz, and 144hz are also widely used. requestAnimationFrame() calls are paused in most browsers when running in background tabs or hidden <iframe> s, in order to improve performance and battery life. Note: Your call",
+      ": Your callback function must call requestAnimationFrame() again if you want to animate another frame. requestAnimationFrame() is one-shot. Warning: Be sure always to use the first argument (or some other method for getting the current time) to calculate how much the animation will progress in a frame \u2014 otherwise, the animation will run faster on high refresh-rate screens . For ways to do that, see the examples below. In this article "
+    ],
+    "verified": true
+  },
+  {
+    "title": "Canvas performance",
+    "url": "https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Optimizing_canvas",
+    "http_status": 200,
+    "excerpts": [
+      "ssible. Try different ways to clear the canvas ( clearRect() vs. fillRect() vs. resizing the canvas). With animations, use Window.requestAnimationFrame() instead of setInterval() . Be careful with heavy physics libraries. Previous Next Help improve MDN Was this page helpful to you? Yes No Learn how to contribute This page was last modified on Aug 25, 2026 by MDN contributors . View this page on GitHub \u2022 Report a problem with this content Filter si",
+      "multaneously, using its attributes, styling, and its context's scale. js // Get the DPR and size of the canvas const dpr = window.devicePixelRatio; const rect = canvas.getBoundingClientRect(); // Set the \"actual\" size of the canvas canvas.width = rect.width * dpr; canvas.height = rect.height * dpr; // Scale the context to ensure correct drawing operations ctx.scale(dpr, dpr); // Set the \"drawn\" size of the canvas canvas.style.width = `${rect.",
+      "ips The following is a collection of tips to improve canvas performance. Pre-render similar primitives or repeating objects on an offscreen canvas If you find yourself repeating some of the same drawing operations on each animation frame, consider offloading them to an offscreen canvas. You can then render the offscreen image to your primary canvas as often as needed, without unnecessarily repeating the steps needed to generate it in t"
+    ],
+    "verified": true
+  },
+  {
+    "title": "Text contrast",
+    "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+    "http_status": 200,
+    "excerpts": [
+      "annot read faint text. Success Criterion (SC) The visual presentation of text and images of text has a contrast ratio of at least 4.5:1, except for the following: Large Text Large-scale text and images of large-scale text have a contrast ratio of at least 3:1; Incidental Text or images of text that are part of an inactive user interface component , that are pure decoration , that are not visible to anyone, or that are part of a pic",
+      "ast 4.5:1, except for the following: Large Text Large-scale text and images of large-scale text have a contrast ratio of at least 3:1; Incidental Text or images of text that are part of an inactive user interface component , that are pure decoration , that are not visible to anyone, or that are part of a picture that contains significant other visual content, have no contrast requirement. Logotypes Text that is part of a logo or "
+    ],
+    "verified": true
+  },
+  {
+    "title": "Touch controls",
+    "url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html",
+    "http_status": 200,
+    "excerpts": [
+      " cannot click small buttons that are close together. Success Criterion (SC) The size of the target for pointer inputs is at least 24 by 24 CSS pixels , except when: Spacing Undersized targets (those less than 24 by 24 CSS pixels) are positioned so that if a 24 CSS pixel diameter circle is centered on the bounding box of each, the circles do not intersect another target or the circle for another undersized target; Equivalent The functi",
+      "t click small buttons that are close together. Success Criterion (SC) The size of the target for pointer inputs is at least 24 by 24 CSS pixels , except when: Spacing Undersized targets (those less than 24 by 24 CSS pixels) are positioned so that if a 24 CSS pixel diameter circle is centered on the bounding box of each, the circles do not intersect another target or the circle for another undersized target; Equivalent The function c",
+      "imum) (Level AA) In Brief Goal Make controls easier to activate. What to do Ensure targets meet a minimum size or have sufficient spacing around them. Why it's important Some people with physical impairments cannot click small buttons that are close together. Success Criterion (SC) The size of the target for pointer inputs is at least 24 by 24 CSS pixels , except when: Spacing Undersized targets (those less than 24 by 24 CSS pixels) "
+    ],
+    "verified": true
+  }
+]

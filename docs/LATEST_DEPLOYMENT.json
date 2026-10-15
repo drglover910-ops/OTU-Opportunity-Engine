@@ -1,7 +1,7 @@
 {
-  "commit": "3f0b033f16dec20b2329f85c9cc84abab2f046b5",
-  "version": "0.9.0",
-  "checked_at": "2026-10-15T03:23:01.674563+00:00",
+  "commit": "ccedd1af36ff1f3069fb663cd9abd42ff4295b6c",
+  "version": "0.9.1",
+  "checked_at": "2026-10-15T03:24:15.067587+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -27,7 +27,7 @@
   "gmail_connected": true,
   "ai_configured": true,
   "connections": {
-    "checked_at": "2026-10-15T03:23:32.192558+00:00",
+    "checked_at": "2026-10-15T03:24:46.215418+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -62,7 +62,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-15T03:23:33.335741+00:00",
+    "checked_at": "2026-10-15T03:24:47.764122+00:00",
     "tools": 120,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -5950,7 +5950,8 @@
     "checked_at": "2026-10-15T03:23:35.942443+00:00",
     "read_checks": 7,
     "message": "Profile, published services, portfolio, first application page, job feeds and active challenges read. No changes made. Private service drafts may require website review; pagination may leave more results.",
-    "actions": "Read-only; no paid inference requests."
+    "actions": "Read-only; no paid inference requests.",
+    "cached": true
   },
   "platforms": 7,
   "browser": "hosting configuration needed",

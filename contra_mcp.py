@@ -63,7 +63,7 @@ class ContraConnection:
    return tokens['access_token']
  def discover(self):
   headers={'Authorization':'Bearer '+self.token()}
-  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.9.3'}}},headers=headers)
+  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.9.4'}}},headers=headers)
   if result.get('error'):raise ValueError('Contra could not initialize the connection. No account tools were run.')
   protocol=result.get('result',{}).get('protocolVersion','2025-03-26');headers['MCP-Protocol-Version']=protocol
   session=next((v for k,v in response_headers.items() if k.lower()=='mcp-session-id'),None)
@@ -79,10 +79,10 @@ class ContraConnection:
   summary={'connected':True,'checked_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(),'tools':len(tools),'history_access':'Co-Agent AI history is not assumed available.','actions':'Capability discovery only; no account tools called.'}
   self.engine.set_setting('contra_last_check',summary);return summary
  def read_tools(self,calls):
-  allowed={'get_user_profile_by_username','list_services','list_portfolio_projects','list_job_feed','list_active_challenges'}
+  allowed={'get_user_profile_by_username','list_services','list_portfolio_projects','list_job_feed','list_active_challenges','get_job_by_slug','list_chat_conversations'}
   if any(name not in allowed for name,args in calls):raise ValueError('Only approved read tools can run here.')
   headers={'Authorization':'Bearer '+self.token()}
-  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.9.3'}}},headers=headers)
+  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.9.4'}}},headers=headers)
   if result.get('error'):raise ValueError('Contra could not initialize read access.')
   headers['MCP-Protocol-Version']=result.get('result',{}).get('protocolVersion','2025-03-26')
   for k,v in response_headers.items():
@@ -92,7 +92,8 @@ class ContraConnection:
   for index,(name,args) in enumerate(calls):
    response,_=request(RESOURCE,{'jsonrpc':'2.0','id':index+2,'method':'tools/call','params':{'name':name,'arguments':args}},headers=headers)
    body=response.get('result',{})
-   if response.get('error') or body.get('isError'):raise ValueError('Contra could not complete a read check. No account changes were made.')
+   if response.get('error') or body.get('isError'):
+    results[name+':'+str(index)]={'isError':True,'content':[]};continue
    results[name+':'+str(index)]=body
   return results
  def inventory_details(self):
@@ -117,24 +118,37 @@ class ContraConnection:
    for node in nodes:
     shape=sorted(node)
     if shape not in shapes:shapes.append(shape)
-   details[key]={'shapes':shapes[:18]}
-   if key.startswith('list_job_feed:3'):
+   details[key]={'shapes':shapes[:18],'unavailable':bool(body.get('isError'))}
+   for node in nodes:
+    if 'entries' in node:details[key].update({'returned':len(node['entries']),'has_more':node.get('hasNextPage'),'access_limited':node.get('accessLimitedFeed')})
+    if 'services' in node:details[key]['returned']=len(node['services'])
+    if 'projects' in node:details[key].update({'projects_returned':len(node['projects']),'drafts_returned':sum(bool(p.get('isDraft')) for p in node['projects'])})
+   if key.startswith('list_job_feed:3') and not body.get('isError'):
     details[key]['geekyants_mentioned_in_applied_page']='geeky' in json.dumps(data).lower()
-   if key.startswith('list_job_feed:') and not key.endswith(':3') or key.startswith('list_active_challenges:'):
+   if key.startswith('list_job_feed:') and not key.endswith(':3') or key.startswith(('list_active_challenges:','get_job_by_slug:','detail_get_job_by_slug:')):
     for node in nodes:
-     title=node.get('title') or node.get('name');url=node.get('publicUrl') or node.get('url')
+     title=node.get('title') or node.get('name');url=node.get('publicUrl') or node.get('challengeUrl') or node.get('url')
      if isinstance(title,str) and isinstance(url,str) and url.startswith('https://contra.com/'):
-      public.append({'title':title[:200],'url':url,'kind':'Challenge / prize' if 'challenge' in key else 'Job / contract','source':'Contra'})
-  unique={x['url']:x for x in public}
+      public.append({'title':title[:200],'url':url,'kind':'Challenge / prize' if 'challenge' in key else 'Job / contract','source':'Contra','description':str(node.get('description') or '')[:12000],'budget':node.get('budget'),'prize':node.get('prize'),'deadline':node.get('submissionsDeadline'),'status':node.get('status'),'requirements_verified':False})
+  unique={}
+  for item in public:
+   if item['url'] not in unique or len(item['description'])>len(unique[item['url']]['description']):unique[item['url']]=item
   return {'read_shapes':details,'public_opportunities':list(unique.values())[:75]}
  def sync(self):
   old=self.engine.setting('contra_sync_summary',{}) or {}
-  if old.get('finished_epoch',0)>time.time()-1800:return {**old,**self.inventory_details(),'cached':True}
-  calls=[('get_user_profile_by_username',{'username':'desmond_glover_59of9zq6'}),('list_services',{'username':'desmond_glover_59of9zq6','limit':50}),('list_portfolio_projects',{'username':'desmond_glover_59of9zq6','includeDrafts':True,'limit':25}),('list_job_feed',{'preset':'APPLIED','first':100}),('list_job_feed',{'preset':'FOR_YOU','first':25}),('list_job_feed',{'preset':'ALL','search':'GoHighLevel','first':25}),('list_active_challenges',{'limit':25})]
+  if old.get('scan_version')==2 and old.get('finished_epoch',0)>time.time()-1800:return {**old,**self.inventory_details(),'cached':True}
+  calls=[('get_user_profile_by_username',{'username':'desmond_glover_59of9zq6'}),('list_services',{'username':'desmond_glover_59of9zq6','limit':50}),('list_portfolio_projects',{'username':'desmond_glover_59of9zq6','includeDrafts':True,'limit':25}),('list_job_feed',{'preset':'APPLIED','first':100}),('list_job_feed',{'preset':'FOR_YOU','first':25}),('list_job_feed',{'preset':'ALL','search':'GoHighLevel','first':25}),('list_active_challenges',{'limit':25}),('list_chat_conversations',{'view':'ALL','first':50}),('list_job_feed',{'preset':'ALL','search':'automation','first':25}),('list_job_feed',{'preset':'ALL','search':'marketing','first':25})]
   # Store private account responses only on the mounted app volume, never in deployment logs.
   results=self.read_tools(calls)
   self.engine.set_setting('contra_account_snapshot',results)
-  summary={'finished_epoch':time.time(),'checked_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(),'read_checks':len(results),'message':'Profile, published services, portfolio, first application page, job feeds and active challenges read. No changes made. Private service drafts may require website review; pagination may leave more results.','actions':'Read-only; no paid inference requests.'}
+  # Fetch full public descriptions for a bounded set; never infer requirements from titles alone.
+  candidates=self.inventory_details()['public_opportunities'];extra=[]
+  for item in candidates:
+   if item['kind']=='Job / contract' and '/opportunity/' in item['url']:
+    extra.append(('get_job_by_slug',{'slug':item['url'].split('/opportunity/',1)[1].split('?',1)[0]}))
+  if extra:
+   more=self.read_tools(extra[:5]);results.update({'detail_'+k:v for k,v in more.items()});self.engine.set_setting('contra_account_snapshot',results)
+  summary={'scan_version':2,'finished_epoch':time.time(),'checked_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(),'read_checks':sum(not v.get('isError') for v in results.values()),'unavailable_reads':[k for k,v in results.items() if v.get('isError')],'message':'Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.','actions':'Read-only; no paid inference requests.'}
   self.engine.set_setting('contra_sync_summary',summary)
   return {**summary,**self.inventory_details()}
  def disconnect(self):

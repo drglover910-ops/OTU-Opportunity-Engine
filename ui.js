@@ -87,7 +87,7 @@ document.addEventListener('click',async event=>{
   if(action==='open-workspace'){openWorkspace(b.dataset.workspace);return}
   if(action==='workspace-conversation'){await openConversation(selectedWorkspace,null);return}
   if(action==='back-workspace'){openWorkspace(selectedWorkspace);return}
-  if(action==='contra-save'){const item=(contraSummary.public_opportunities||[])[Number(b.dataset.index)];if(!item)throw Error('Refresh the Contra results first.');await api('/api/add',{company:'Contra client · verify on listing',title:item.title,url:item.url,source:'Contra',description:item.kind+'. Open the original listing to verify pay, eligibility, deadline, scope, costs and effort before pursuing.',workspace:'contra'});await refresh();notice('Saved to My opportunities. Verify the original requirements before preparing an application.');return}
+  if(action==='contra-save'){const item=(contraSummary.public_opportunities||[])[Number(b.dataset.index)];if(!item)throw Error('Refresh the Contra results first.');await api('/api/add',{company:'Contra client · verify on listing',title:item.title,url:item.url,source:'Contra',description:(item.description||item.kind)+'. Verify eligibility, costs, effort and submission requirements before pursuing.',pay:contraPay(item),workspace:'contra'});await refresh();notice('Saved to My opportunities. Verify the original requirements before preparing an application.');return}
   if(action==='ai-limits'){await api('/api/ai/limits',{daily_requests:Number($('ai-daily').value),daily_tokens:Number($('ai-tokens').value),paused:$('ai-paused').checked});await refresh();notice('AI allowance saved.');return}
   if(action==='contra-sync'){notice('Reading Contra account and earning opportunities. No paid AI requests…');const r=await api('/api/contra/sync',{});await refresh();notice(r.message);return}
   if(action==='contra-check'){notice('Checking Contra access and available tools…');const r=await api('/api/contra/check',{});await refresh();notice(`Contra access checked: ${r.tools} available tools. No account actions were run.`);return}
@@ -281,5 +281,11 @@ async function copyDeviceTool(text){
 function renderContraResults(){
  const results=contraSummary.public_opportunities||[];
  $('contra-results-status').textContent=contraSummary.checked_at?`Last read: ${formatDate(contraSummary.checked_at)}. Results may be limited by your account and the pages checked. Pay, eligibility and deadlines still need verification.`:'Connect Contra in Connections, then check for opportunities.';
- $('contra-results').innerHTML=results.map((x,i)=>`<article class="panel"><span class="badge">${esc(x.kind)} · Needs review</span><h3>${esc(x.title)}</h3><a href="${esc(x.url)}" target="_blank" rel="noopener">Read original opportunity</a><button class="secondary" data-action="contra-save" data-index="${i}">Save to My opportunities</button></article>`).join('')||'<p class="small">No verified opportunity links extracted yet. This does not mean no work is available.</p>';
+ $('contra-results').innerHTML=results.map((x,i)=>`<article class="panel"><span class="badge">${esc(x.kind)} · Needs review</span><h3>${esc(x.title)}</h3><p>${esc(contraPay(x))}</p><p class="small">Deadline: ${esc(x.deadline?formatDate(x.deadline):'Not confirmed')}. Entry cost and eligibility need verification.</p><p>${esc((x.description||'Open the listing for requirements.').slice(0,400))}</p><a href="${esc(x.url)}" target="_blank" rel="noopener">Read original opportunity</a><button class="secondary" data-action="contra-save" data-index="${i}">Save to My opportunities</button></article>`).join('')||'<p class="small">No verified opportunity links extracted yet. This does not mean no work is available.</p>';
+}
+
+function contraPay(item){
+ if(item.prize)return `Prize · ${item.prize.formatted||'See original terms'} · winning is not guaranteed`;
+ const b=item.budget;if(!b)return 'Compensation not confirmed';
+ return `Listed budget: ${b.feeMin??'?'}–${b.feeMax??'?'} (${b.type||'terms not confirmed'}). Verify currency and scope on the listing.`;
 }

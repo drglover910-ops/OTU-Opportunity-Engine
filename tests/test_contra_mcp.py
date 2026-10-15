@@ -53,3 +53,13 @@ class ContraOAuth(unittest.TestCase):
   self.assertEqual(req.call_count,1);self.assertTrue(second['cached'])
   self.assertEqual(first['read_checks'],1)
   self.assertIn(('list_job_feed',{'preset':'APPLIED','first':100}),req.call_args.args[0])
+ def test_private_snapshot_extracts_public_jobs_and_challenges(self):
+  self.e.set_setting('contra_account_snapshot',{
+   'list_job_feed:4':{'structuredContent':{'ok':True,'entries':[{'job':{'title':'CRM build','publicUrl':'https://contra.com/opportunity/abc','budget':{'feeMin':300,'feeMax':500,'type':'FIXED'}}}]}},
+   'list_active_challenges:6':{'content':[{'type':'text','text':json.dumps({'ok':True,'challenges':[{'title':'Build challenge','challengeUrl':'https://contra.com/community/test','prize':{'formatted':'$100'},'submissionsDeadline':'2026-10-20'}]})}]},
+   'detail_get_job_by_slug:0':{'structuredContent':{'job':{'title':'CRM build','publicUrl':'https://contra.com/opportunity/abc','description':'A full verified source description'}}}})
+  data=self.c.inventory_details();self.assertEqual(len(data['public_opportunities']),2)
+  jobs={x['title']:x for x in data['public_opportunities']}
+  self.assertEqual(jobs['CRM build']['description'],'A full verified source description')
+  self.assertEqual(jobs['Build challenge']['kind'],'Challenge / prize')
+  self.assertFalse(jobs['CRM build']['requirements_verified'])

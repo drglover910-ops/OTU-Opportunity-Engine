@@ -1,5 +1,10 @@
 # Release history
 
+## 0.9.4 — 2026-10-15
+
+- Include challenge deadlines/prizes, broader feeds and a first client-conversation read; fetch a bounded set of full job descriptions.
+- Keep partial read failures visible and distinguish missing confirmation from a completed application.
+
 ## 0.9.3 — 2026-10-15
 
 - Show extracted Contra opportunities with original links and a reviewed save action; keep incomplete listings marked as needing verification.

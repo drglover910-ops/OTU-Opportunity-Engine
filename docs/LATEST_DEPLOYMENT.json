@@ -1,7 +1,7 @@
 {
-  "commit": "ed0ade1a93bbe6d7df591fb1691a50c62df9e9b6",
-  "version": "0.8.1",
-  "checked_at": "2026-10-15T01:36:10.271732+00:00",
+  "commit": "3f0b033f16dec20b2329f85c9cc84abab2f046b5",
+  "version": "0.9.0",
+  "checked_at": "2026-10-15T03:23:01.674563+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -27,7 +27,7 @@
   "gmail_connected": true,
   "ai_configured": true,
   "connections": {
-    "checked_at": "2026-10-15T01:36:41.177082+00:00",
+    "checked_at": "2026-10-15T03:23:32.192558+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -46,11 +46,23 @@
     }
   },
   "workspaces": 8,
-  "ai_live_check": "previous successful request recorded",
+  "ai_live_check": "not run; no paid inference during verification",
+  "ai_budget": {
+    "date": "2026-10-15",
+    "count": 0,
+    "reserved_tokens": 0,
+    "actual_tokens": 0,
+    "daily_requests": 5,
+    "daily_tokens": 60000,
+    "paused": false,
+    "scope": "This bot only; shared account balance and other projects are not available here.",
+    "cost": "Dollar cost unavailable; provider billing is authoritative.",
+    "reset": "UTC midnight"
+  },
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-15T01:36:43.389075+00:00",
+    "checked_at": "2026-10-15T03:23:33.335741+00:00",
     "tools": 120,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -5933,6 +5945,13 @@
       }
     }
   ],
+  "contra_inventory": {
+    "finished_epoch": 1792034615.9424179,
+    "checked_at": "2026-10-15T03:23:35.942443+00:00",
+    "read_checks": 7,
+    "message": "Profile, published services, portfolio, first application page, job feeds and active challenges read. No changes made. Private service drafts may require website review; pagination may leave more results.",
+    "actions": "Read-only; no paid inference requests."
+  },
   "platforms": 7,
   "browser": "hosting configuration needed",
   "browser_detail": "This host cannot start the required browser sandbox. Do not enter credentials. Use the platform on your own device while browser hosting is configured.",

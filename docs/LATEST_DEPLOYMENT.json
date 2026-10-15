@@ -1,7 +1,7 @@
 {
-  "commit": "6ed7f0f69230cb80b695d9823feaaee07c27e8d3",
-  "version": "0.9.5",
-  "checked_at": "2026-10-15T03:33:25.949661+00:00",
+  "commit": "116ffd920e67c30c227afb402bce9debb0fe4e8e",
+  "version": "0.10.0",
+  "checked_at": "2026-10-15T18:34:16.034388+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -12,22 +12,22 @@
     "restart_verified": true,
     "message": "Mounted storage detected; verify a saved record survives a restart."
   },
-  "opportunities": 147,
+  "opportunities": 160,
   "last_discovery": {
-    "added": 2,
-    "seen": 50,
+    "added": 12,
+    "seen": 53,
     "errors": [],
     "sources_ok": [
       "We Work Remotely RSS",
       "Remotive"
     ],
-    "finished": "2026-10-15T03:26:44.198097+00:00"
+    "finished": "2026-10-15T15:27:18.875616+00:00"
   },
-  "documents": 17,
+  "documents": 21,
   "gmail_connected": true,
   "ai_configured": true,
   "connections": {
-    "checked_at": "2026-10-15T03:33:47.114919+00:00",
+    "checked_at": "2026-10-15T18:34:47.244043+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -35,7 +35,7 @@
     "writing": {
       "status": "configured",
       "message": "AI settings are saved. A paid writing request has not been made by this connection check.",
-      "last_success": "2026-10-14T22:03:40.958663+00:00"
+      "last_success": "2026-10-15T03:39:39.110903+00:00"
     },
     "saving": {
       "status": "connected"
@@ -45,13 +45,16 @@
       "message": "Contra sign-in saved. Use Check Contra access to verify permitted tools."
     }
   },
-  "workspaces": 8,
+  "workspaces": 9,
+  "assistant_knowledge_version": "2026-10-15.1",
+  "document_preview": "passed",
+  "developer_request_queue": "available",
   "ai_live_check": "not run; no paid inference during verification",
   "ai_budget": {
+    "count": 1,
+    "reserved_tokens": 15073,
+    "actual_tokens": 3182,
     "date": "2026-10-15",
-    "count": 0,
-    "reserved_tokens": 0,
-    "actual_tokens": 0,
     "daily_requests": 5,
     "daily_tokens": 60000,
     "paused": false,
@@ -62,7 +65,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-15T03:33:49.027281+00:00",
+    "checked_at": "2026-10-15T18:34:49.881426+00:00",
     "tools": 120,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -5947,8 +5950,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792035098.327539,
-    "checked_at": "2026-10-15T03:31:38.327552+00:00",
+    "finished_epoch": 1792089296.507486,
+    "checked_at": "2026-10-15T18:34:56.507496+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",
@@ -6242,14 +6245,16 @@
             "tools"
           ],
           [
+            "estimatedHours",
+            "feeMax",
+            "feeMin",
+            "type"
+          ],
+          [
             "approvedAt",
             "externalUrl",
             "jobPostingId",
             "status"
-          ],
-          [
-            "languageName",
-            "proficiency"
           ],
           [
             "displayUsername",
@@ -6258,14 +6263,8 @@
             "userProfileId"
           ],
           [
-            "estimatedHours",
-            "feeMax",
-            "feeMin",
-            "type"
-          ],
-          [
-            "countryId",
-            "name"
+            "amount",
+            "interval"
           ],
           [
             "isVerified",
@@ -6401,110 +6400,14 @@
             "hasNextPage",
             "ok",
             "totalCount"
-          ],
-          [
-            "job",
-            "jobFeedEntryId",
-            "visitorDidApply",
-            "visitorDidBookmark",
-            "visitorDidDismiss",
-            "visitorDidView",
-            "visitorWasMatched"
-          ],
-          [
-            "budget",
-            "country",
-            "createdAt",
-            "duration",
-            "hiringAsIndividual",
-            "jobId",
-            "jobPosting",
-            "languages",
-            "numberOfOpenPositions",
-            "organization",
-            "owner",
-            "publicUrl",
-            "roles",
-            "slug",
-            "startTimeframe",
-            "status",
-            "timezoneOffsetTolerance",
-            "timezonePrimaryUtcOffset",
-            "title",
-            "tools"
-          ],
-          [
-            "estimatedHours",
-            "feeMax",
-            "feeMin",
-            "type"
-          ],
-          [
-            "approvedAt",
-            "externalUrl",
-            "jobPostingId",
-            "status"
-          ],
-          [
-            "displayUsername",
-            "firstName",
-            "lastName",
-            "userProfileId"
           ]
         ],
         "unavailable": false,
-        "returned": 1,
+        "returned": 0,
         "has_more": false,
         "access_limited": true
       },
       "detail_get_job_by_slug:0": {
-        "shapes": [
-          [
-            "job",
-            "ok"
-          ],
-          [
-            "blocknoteDescription",
-            "budget",
-            "duration",
-            "hiringAsIndividual",
-            "jobId",
-            "jobPosting",
-            "numberOfOpenPositions",
-            "organization",
-            "owner",
-            "publicUrl",
-            "slug",
-            "status",
-            "title"
-          ],
-          [
-            "children",
-            "content",
-            "id",
-            "props",
-            "type"
-          ],
-          [],
-          [
-            "styles",
-            "text",
-            "type"
-          ],
-          [
-            "jobPostingId",
-            "status"
-          ],
-          [
-            "displayUsername",
-            "firstName",
-            "lastName",
-            "userProfileId"
-          ]
-        ],
-        "unavailable": false
-      },
-      "detail_get_job_by_slug:1": {
         "shapes": [
           [
             "job",
@@ -6580,6 +6483,74 @@
         ],
         "unavailable": false
       },
+      "detail_get_job_by_slug:1": {
+        "shapes": [
+          [
+            "job",
+            "ok"
+          ],
+          [
+            "blocknoteDescription",
+            "budget",
+            "duration",
+            "hiringAsIndividual",
+            "jobId",
+            "jobPosting",
+            "numberOfOpenPositions",
+            "organization",
+            "owner",
+            "publicUrl",
+            "slug",
+            "status",
+            "title"
+          ],
+          [
+            "children",
+            "content",
+            "id",
+            "props",
+            "type"
+          ],
+          [
+            "backgroundColor",
+            "isToggleable",
+            "level",
+            "textAlignment",
+            "textColor"
+          ],
+          [
+            "styles",
+            "text",
+            "type"
+          ],
+          [],
+          [
+            "backgroundColor",
+            "textAlignment",
+            "textColor"
+          ],
+          [
+            "estimatedHours",
+            "feeMax",
+            "feeMin",
+            "type"
+          ],
+          [
+            "amount",
+            "interval"
+          ],
+          [
+            "jobPostingId",
+            "status"
+          ],
+          [
+            "name",
+            "organizationId",
+            "slug"
+          ]
+        ],
+        "unavailable": false
+      },
       "detail_get_job_by_slug:2": {
         "shapes": [
           [
@@ -6620,19 +6591,27 @@
           ],
           [],
           [
+            "bold"
+          ],
+          [
             "estimatedHours",
             "feeMax",
             "feeMin",
             "type"
           ],
           [
+            "amount",
+            "interval"
+          ],
+          [
             "jobPostingId",
             "status"
           ],
           [
-            "name",
-            "organizationId",
-            "slug"
+            "displayUsername",
+            "firstName",
+            "lastName",
+            "userProfileId"
           ]
         ],
         "unavailable": false
@@ -6640,25 +6619,13 @@
     },
     "public_opportunities": [
       {
-        "title": "Kajabi Website Rebrand & Landing Page Designer",
-        "url": "https://contra.com/opportunity/FovmWLAY-kajabi-website-rebrand-and-landing-page-designer",
+        "title": "Website & Digital Course Designer (Wix + Canva)",
+        "url": "https://contra.com/opportunity/2gN6MY2Q-website-and-digital-course-designer-wix-canva",
         "kind": "Job / contract",
         "source": "Contra",
-        "description": "We are hiring a proficient designer to rebrand and rebuild the homepage for an established Kajabi members-only website, then design and build conversion-focused landing pages for upcoming products.\n\nThis is hands-on design and implementation work. You will create the visual direction and page structure, then build responsive pages directly in Kajabi. The work includes preparing the site for a new domain, updating navigation and calls to action, and ensuring existing member signup, offers, forms, event registration, resource pages, privacy policy, terms, and disclaimer links continue to work correctly after launch.\n\nYou must have strong visual hierarchy, UX judgment, and proven Kajabi build experience. You must write and speak English professionally and be available to collaborate during Pacific Time working hours.\n\nTo be considered, include: 1) links to 2 or 3 live Kajabi sites you personally designed and built, 2) one example of a rebrand or new-domain launch, 3) a brief explanation of how you would protect existing links and member access during the change, 4) your PST-hour availability, and 5) how you scope homepage and landing-page work. Applications without these details will not be considered.",
-        "budget": null,
-        "prize": null,
-        "deadline": null,
-        "status": "POSTED",
-        "requirements_verified": false
-      },
-      {
-        "title": "Podcast Outreach & Marketing Contractor",
-        "url": "https://contra.com/opportunity/33oEMqsg-podcast-outreach-and-marketing-contractor",
-        "kind": "Job / contract",
-        "source": "Contra",
-        "description": "Podcast Outreach & Marketing Contractor\nTarot Times With Heidi | Remote | Independent Contractor | 5\u201310 hours/month | 40\u201360 CAD/hour\nTarot Times With Heidi is a small business offering education and services. We are looking for an independent contractor to help research and connect with relevant podcasts in Canada, US, and overseas.\nIf you are interested in applying, please read the full, detailed job posting here:\nhttps://docs.google.com/document/d/1TyQsY6mVtANNNRIBee_ERpvCJMh3Lkots0vM2dnZi8s/edit?usp=sharing",
+        "description": "Website & Digital Course Designer (Wix + Canva)\nTTWH is hiring a long-term Website & Digital Course Designer to maintain and expand an established Wix-based website, online course system, and Canva learning ecosystem.\nBefore Applying\nReview:\nTTWH web + social presence\nRole details + application process:\nhttps://docs.google.com/document/d/1g0lbO6t9ckFRm2mZkmectbNE_btTEeGYy6FAhmYecOc/edit?usp=sharing",
         "budget": {
-          "estimatedHours": 5,
+          "estimatedHours": 2,
           "feeMax": "USD:60.00000000",
           "feeMin": "USD:40.00000000",
           "type": "HourlyRateJobBudget"
@@ -6669,16 +6636,33 @@
         "requirements_verified": false
       },
       {
-        "title": "Social Media Content Manager",
-        "url": "https://contra.com/opportunity/FOUsee7N-social-media-content-manager",
+        "title": "Framer Developer",
+        "url": "https://contra.com/opportunity/6lXZlNNm-framer-developer",
         "kind": "Job / contract",
         "source": "Contra",
-        "description": "VIS World seeks a freelance social media content manager to develop and maintain a weekly content calendar using photos, videos, and graphics we provide. You'll review our brand guidelines, write captions, schedule posts, and help shape our digital voice. We're especially interested in someone fluent in online basketball and WNBA culture who can make Miami VIS, our parafictional basketball franchise, feel as dynamic and credible online as a professional basketball team.",
+        "description": "About the job\nPixavix Studio, a UI/UX and web design studio, is looking for an experienced Framer developer for ongoing, project-based work. The role focuses on turning finished Figma designs into polished, responsive Framer websites with smooth animations, CMS setup, and clean handover. This is a long-term collaboration opportunity for the right person, with a budget of $30\u201345 per hour depending on experience and about 20 hours per week. A portfolio of live Framer sites is required.\nWhat you\u2019ll accomplish\nYou\u2019ll work from completed Figma designs and build them into high-quality Framer websites that are responsive, visually polished, and ready to launch. The specific project scope was not provided, so the main deliverables are the implementation of the design in Framer and the related site setup.\nConvert finished Figma designs into responsive Framer websites\nAdd smooth animations\nSet up CMS in Framer\nPrepare a clean handover\nShare a portfolio of live Framer sites",
         "budget": {
-          "estimatedHours": 2,
-          "feeMax": "USD:25.00000000",
-          "feeMin": "USD:25.00000000",
+          "estimatedHours": 20,
+          "feeMax": "USD:45.00000000",
+          "feeMin": "USD:30.00000000",
           "type": "HourlyRateJobBudget"
+        },
+        "prize": null,
+        "deadline": null,
+        "status": "POSTED",
+        "requirements_verified": false
+      },
+      {
+        "title": "Editorial Video Editor & Social Media Curator \u2014 Luxury Travel & Lifestyle",
+        "url": "https://contra.com/opportunity/cYNWqvEs-editorial-video-editor-and-social-media-curator-luxury-travel-and-lifestyle",
+        "kind": "Job / contract",
+        "source": "Contra",
+        "description": "I\u2019m seeking a talented freelance video editor and visual content curator to transform personal travel footage and photography from a recent trip to Japan into polished, cinematic content for my personal social media.\nThe vision\nI\u2019m building an elevated personal presence, not an influencer or commercial content brand. My references are the effortless, understated editorial styles of Kendall Jenner and Hailey Bieber: candid, fashionable, cinematic, aspirational, but authentic and approachable.\nI want content that feels like a beautifully curated personal photo diary rather than traditional influencer content. Think natural moments, beautiful environments, interesting details, subtle humor, and thoughtful storytelling.\nProject deliverables\nOne fully edited travel vlog, including footage selection, narrative development, music, audio, color grading, and final export.\n2\u20133 short-form videos/Reels created from existing footage.\n4\u20136 thoughtfully curated Instagram photo carousels.\nA four-week content calendar with recommended sequencing, captions, cover images, and optional Stories.\nOrganized, publication-ready assets and editable project files.\nCreative direction\nI\u2019m looking for someone with excellent visual judgment who can independently review a large collection of footage and photographs and identify the strongest moments.\nThe primary focus should be me, my experiences, style, and surroundings. My husband may appear naturally in limited moments, but this is not a couples\u2019 account.\nI prefer understated, cinematic editing over heavy filters, artificial effects, forced trends, or influencer-style storytelling.\nPrivacy and ownership\nAll materials are personal and confidential. The selected freelancer must agree to written confidentiality, intellectual property assignment, no unauthorized portfolio or third-party use, no generative AI manipulation or training, and secure handling and deletion of project files.\nI will retain full creative approval and publishing control.\nIdeal candidate\nExperience with fashion, lifestyle, travel, or editorial video is strongly preferred. I\u2019m looking for a creative collaborator with a distinctive aesthetic, strong storytelling abilities, and the confidence to make thoughtful editorial decisions.\nPlease submit 2\u20133 relevant video examples, examples of photography or social content curation, your estimated project fee, and anticipated timeline.\nThis is initially a one-time project with the potential for ongoing collaboration.",
+        "budget": {
+          "estimatedHours": null,
+          "feeMax": "USD:1500.00000000",
+          "feeMin": "USD:1500.00000000",
+          "type": "FixedPriceJobBudget"
         },
         "prize": null,
         "deadline": null,
@@ -6710,8 +6694,7 @@
         "applied": true
       }
     ],
-    "geekyants_application_recorded": true,
-    "cached": true
+    "geekyants_application_recorded": true
   },
   "platforms": 7,
   "browser": "hosting configuration needed",

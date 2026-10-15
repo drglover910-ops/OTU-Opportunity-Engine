@@ -41,6 +41,9 @@ class Handler(BaseHTTPRequestHandler):
             if path=='/api/contra/tools':return self.output(engine.setting('contra_tool_catalog',[]) or [])
             if path=='/api/status':return self.output(engine.status())
             if path=='/api/opportunities':return self.output(engine.list())
+            if path=='/api/project-knowledge':return self.output(engine.project_knowledge())
+            if path=='/api/developer/requests':return self.output(engine.developer_requests())
+            if path=='/api/document-preview':return self.output(engine.document_preview(query['id'][0]))
             if path=='/api/documents':return self.output(engine.documents())
             if path=='/api/email-cases':return self.output(engine.email_cases())
             if path=='/api/email-case':return self.output(engine.email_case(query['id'][0]))
@@ -60,6 +63,7 @@ class Handler(BaseHTTPRequestHandler):
                 with engine.connect() as c:d=c.execute('SELECT * FROM documents WHERE id=?',(did,)).fetchone()
                 if not d:raise ValueError('Document not found')
                 name=d['name'].replace('"','').replace('\r','').replace('\n','')
+                if query.get('inline')==['1'] and name.lower().endswith('.pdf'):return self.output(Path(d['path']).read_bytes(),'application/pdf')
                 return self.output(Path(d['path']).read_bytes(),'application/octet-stream',download=name)
             if path=='/api/export':return self.output(engine.backup(),'application/zip',download='OTU-private-backup-'+VERSION+'.zip')
             if path=='/oauth/google/start':
@@ -103,7 +107,13 @@ class Handler(BaseHTTPRequestHandler):
             if self.path=='/api/browser':return self.output(engine.browser_action(d))
             if self.path=='/api/connections/check':return self.output(engine.check_connections())
             if self.path=='/api/workspaces':return self.output(engine.add_workspace(d))
+            if self.path=='/api/developer/request':return self.output(engine.queue_developer_request(d))
+            if self.path=='/api/developer/request-update':return self.output(engine.update_developer_request(d))
+            if self.path=='/api/document/revise':
+                from document_review import save
+                return self.output(save(engine,d))
             if self.path=='/api/conversation/ask':return self.output(engine.ask_workspace(d))
+            if self.path=='/api/conversation/memory':return self.output(engine.conversation_memory(d))
             if self.path=='/api/conversation/note':return self.output(engine.add_work_note(d))
             routes={'/api/add':engine.add,'/api/update':engine.update,'/api/draft':engine.create_draft,'/api/draft/edit':engine.edit_draft,'/api/approve':engine.approve,'/api/send':engine.send}
             if self.path in routes:return self.output(routes[self.path](d))

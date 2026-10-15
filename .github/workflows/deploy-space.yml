@@ -10,6 +10,8 @@ on:
       - mail_history.py
       - platform_browser.py
       - contra_mcp.py
+      - document_review.py
+      - assistant_knowledge.json
       - ui.html
       - ui.js
       - ui.css
@@ -61,3 +63,18 @@ jobs:
           git commit -m 'Record deployed Space health and connection checks'
           git pull --rebase origin work
           git push origin HEAD:work
+
+      - name: Transfer reviewed assistant requests and replies
+        continue-on-error: true
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/sync_assistant_bridge.py
+          git add docs/assistant_bridge/requests.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Receive owner-reviewed assistant requests'
+            git pull --rebase origin work
+            git push origin HEAD:work
+          fi
+          python scripts/sync_assistant_bridge.py --ack

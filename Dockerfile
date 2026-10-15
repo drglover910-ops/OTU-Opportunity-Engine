@@ -5,7 +5,7 @@ COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 ENV PLAYWRIGHT_BROWSERS_PATH=/opt/playwright
 RUN python -m playwright install --with-deps chromium && chmod -R a+rX /opt/playwright
-COPY --chown=appuser:appuser app.py engine.py applications.py mail_history.py platform_browser.py contra_mcp.py ui.html ui.js ui.css playbooks.json VERSION /app/
+COPY --chown=appuser:appuser app.py engine.py applications.py mail_history.py platform_browser.py contra_mcp.py document_review.py assistant_knowledge.json ui.html ui.js ui.css playbooks.json VERSION /app/
 USER appuser
 ENV PORT=7860
 EXPOSE 7860

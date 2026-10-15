@@ -1,5 +1,11 @@
 # Release history
 
+## 0.10.0 — 2026-10-15
+
+- Add Talk to OTU with curated project memory, scoped remembered instructions, and owner-reviewed developer requests/replies through the private repository. This does not provide live private ChatGPT access or wake an agent.
+- Add in-app text/PDF previews and reviewed document revision versions; retain originals and revoke unsent attachment approvals after revisions.
+- Reuse existing credentials and deployment runs for request sync; no scheduled background agent or paid inference tests.
+
 ## 0.9.5 — 2026-10-15
 
 - Read full block-based descriptions, format Contra budget amounts, and surface current service/portfolio counts.

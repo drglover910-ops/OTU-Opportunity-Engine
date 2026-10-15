@@ -23,6 +23,12 @@ for attempt in range(48):
                     report['storage']=status['storage'];report['opportunities']=status['counts']['opportunities'];report['last_discovery']=status.get('last_discovery',{});report['documents']=status['counts']['documents'];report['gmail_connected']=status['gmail'];report['ai_configured']=status['ai_configured']
                     report['connections']=request('/api/connections/check',{})
                     report['workspaces']=len(request('/api/workspaces'))
+                    report['assistant_knowledge_version']=request('/api/project-knowledge')['version']
+                    prepared=[d for d in request('/api/documents') if d['kind'] in ('resume','cover_letter')]
+                    if prepared:
+                        preview=request('/api/document-preview?id='+str(prepared[0]['id']))
+                        report['document_preview']='passed' if preview.get('text') else 'empty'
+                    report['developer_request_queue']='available' if isinstance(request('/api/developer/requests'),list) else 'unverified'
                     report['ai_live_check']='not run; no paid inference during verification'
                     report['ai_budget']=status.get('ai_budget',{})
                     try:

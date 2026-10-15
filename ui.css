@@ -5,3 +5,7 @@
 .nav-tools summary{font:600 14px system-ui;color:var(--muted);padding:12px 8px}.nav-tools{margin-top:12px}.quick-actions{margin:15px 0}@media(max-width:850px){.nav-tools{min-width:180px;margin:0}.nav-tools summary{white-space:nowrap}}
 .remote-screen{max-width:1024px;border:1px solid var(--line);background:#101010;min-height:200px}.remote-screen img{display:block;width:100%;height:auto;cursor:crosshair;touch-action:manipulation}.browser-toolbar{display:flex;flex-wrap:wrap;gap:5px}#browser-platform-name,#browser-page-url{overflow-wrap:anywhere}
 .copy-tool-dialog{width:min(680px,95vw);background:var(--surface);color:var(--text);border:1px solid var(--green);border-radius:12px;padding:22px}.copy-tool-dialog::backdrop{background:#000a}.copy-tool-dialog textarea{width:100%}
+
+#document-editor{min-height:55vh;font-family:Georgia,serif;line-height:1.6;background:#f7f8fa;color:#172b42;padding:1.2rem}#document-frame{width:100%;height:72vh;border:1px solid #355b48;background:white}.document-preview{display:inline-block;margin:.35rem}#developer-request-list .panel{border-left:3px solid #3bda82}.message-text{white-space:pre-wrap}
+
+#document-reader-title{overflow-wrap:anywhere}

@@ -34,6 +34,9 @@ class Handler(BaseHTTPRequestHandler):
                 from contra_mcp import ContraConnection
                 ContraConnection(engine).callback(query.get('state',[''])[0],query.get('code',[''])[0])
                 return self.output(b'<html><body><h1>Contra sign-in saved.</h1><p>Return to your Opportunity Engine, open Connections, and press Check Contra access. No messages or applications were sent.</p></body></html>','text/html; charset=utf-8')
+            if path=='/api/contra/summary':
+                from contra_mcp import ContraConnection
+                return self.output({**(engine.setting('contra_sync_summary',{}) or {}),**ContraConnection(engine).inventory_details()})
             if path=='/api/contra/snapshot':return self.output(engine.setting('contra_account_snapshot',{}) or {})
             if path=='/api/contra/tools':return self.output(engine.setting('contra_tool_catalog',[]) or [])
             if path=='/api/status':return self.output(engine.status())

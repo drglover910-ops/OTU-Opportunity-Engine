@@ -1,5 +1,10 @@
 # Release history
 
+## 0.9.3 — 2026-10-15
+
+- Show extracted Contra opportunities with original links and a reviewed save action; keep incomplete listings marked as needing verification.
+- Avoid caching malformed AI responses.
+
 ## 0.9.2 — 2026-10-15
 
 - Inspect read-result structure and extract canonical public opportunity links while keeping private account content on the mounted volume.

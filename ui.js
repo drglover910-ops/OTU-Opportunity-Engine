@@ -3,6 +3,7 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const stages=['New','Researching','Ready to contact','Contacted','Interview / meeting','Offer / contract','Won','Parked'];
 let leads=[],documents=[],drafts=[],history=[],messages=[],packages=[],careerUpdates=[],emailCases=[],workspaces=[],state={};
+let contraSummary={};
 let platforms=[],activePlatform=null,browserRunning=false,lastBrowserPage=null,frameBusy=false;
 let selectedWorkspace=null,selectedOpportunity=null,developerKey=sessionStorage.getItem("otu-developer-key")||"";
 function notice(message,error=false){$('status').textContent=message;$('status').classList.toggle('warning',error)}
@@ -19,10 +20,10 @@ function steps(){return [{done:hasMaster(),label:'Add your career files',text:'A
 function friendlyDocument(name){if(name.includes('Master_Career'))return 'Complete career record';if(name.includes('Master_Coaching'))return 'Master coaching résumé';if(name.includes('Kids_Choice'))return 'Kids Choice Sports résumé';return name.replace(/^Desmond_Glover_/, '').replace(/\.(pdf|docx|txt|md|json)$/i,'').replace(/_Designed_AI_Updated|_Designed|_CURRENT|_UPDATED/g,'').replace(/_/g,' ')}
 function empty(text){return `<p class="small">${esc(text)}</p>`}
 async function refresh(){
- [state,leads,documents,drafts,history,messages,packages,careerUpdates,emailCases,workspaces,platforms]=await Promise.all(['/api/status','/api/opportunities','/api/documents','/api/drafts','/api/history','/api/messages','/api/packages','/api/career-updates','/api/email-cases','/api/workspaces','/api/platforms'].map(p=>api(p)));
+ [state,leads,documents,drafts,history,messages,packages,careerUpdates,emailCases,workspaces,platforms,contraSummary]=await Promise.all(['/api/status','/api/opportunities','/api/documents','/api/drafts','/api/history','/api/messages','/api/packages','/api/career-updates','/api/email-cases','/api/workspaces','/api/platforms','/api/contra/summary'].map(p=>api(p)));
  $('version').textContent='v'+state.version;$('footer-version').textContent='v'+state.version;
  $('connection-summary').textContent=`${state.storage.restart_verified?'Your work is saved':state.storage.mount_detected?'Saving is connected':'Saving needs attention'} · Gmail ${state.gmail?'connected':'not connected'}`;
- renderToday();renderBoard();renderDrafts();renderLibrary();renderActivity();if(developerKey)renderSettings();renderConnections();renderWorkspaces();renderHelp();renderPlatforms();
+ renderContraResults();renderToday();renderBoard();renderDrafts();renderLibrary();renderActivity();if(developerKey)renderSettings();renderConnections();renderWorkspaces();renderHelp();renderPlatforms();
  if(!sessionStorage.getItem('otu-onboarding-seen')&&!documents.length){jump('library');sessionStorage.setItem('otu-onboarding-seen','yes')}
  const scan=state.last_discovery;$('scan-info').textContent=scan.finished?`Last check: ${formatDate(scan.finished)}. ${scan.added||0} added. ${(scan.errors||[]).length?'Some sources failed; live discovery is not fully verified.':''}`:'Your first search is ready. Click Find new opportunities.';
 }
@@ -86,6 +87,7 @@ document.addEventListener('click',async event=>{
   if(action==='open-workspace'){openWorkspace(b.dataset.workspace);return}
   if(action==='workspace-conversation'){await openConversation(selectedWorkspace,null);return}
   if(action==='back-workspace'){openWorkspace(selectedWorkspace);return}
+  if(action==='contra-save'){const item=(contraSummary.public_opportunities||[])[Number(b.dataset.index)];if(!item)throw Error('Refresh the Contra results first.');await api('/api/add',{company:'Contra client · verify on listing',title:item.title,url:item.url,source:'Contra',description:item.kind+'. Open the original listing to verify pay, eligibility, deadline, scope, costs and effort before pursuing.',workspace:'contra'});await refresh();notice('Saved to My opportunities. Verify the original requirements before preparing an application.');return}
   if(action==='ai-limits'){await api('/api/ai/limits',{daily_requests:Number($('ai-daily').value),daily_tokens:Number($('ai-tokens').value),paused:$('ai-paused').checked});await refresh();notice('AI allowance saved.');return}
   if(action==='contra-sync'){notice('Reading Contra account and earning opportunities. No paid AI requests…');const r=await api('/api/contra/sync',{});await refresh();notice(r.message);return}
   if(action==='contra-check'){notice('Checking Contra access and available tools…');const r=await api('/api/contra/check',{});await refresh();notice(`Contra access checked: ${r.tools} available tools. No account actions were run.`);return}
@@ -274,4 +276,10 @@ $('device-import-form').onsubmit=async e=>{e.preventDefault();if(!deviceCapture)
 async function copyDeviceTool(text){
  try{await navigator.clipboard.writeText(text);return true}catch(e){}
  const dialog=document.createElement('dialog');dialog.className='copy-tool-dialog';const heading=document.createElement('h2');heading.textContent='Copy your Safari tool';const explanation=document.createElement('p');explanation.textContent='Tap the text, select all, and choose Copy. Then close this window and edit the bookmark address.';const area=document.createElement('textarea');area.readOnly=true;area.value=text;area.rows=8;const close=document.createElement('button');close.textContent='Close';close.onclick=()=>{dialog.close();dialog.remove()};dialog.append(heading,explanation,area,close);document.body.append(dialog);dialog.showModal();area.focus();area.select();area.setSelectionRange(0,text.length);try{if(document.execCommand('copy')){dialog.close();dialog.remove();return true}}catch(e){}return false;
+}
+
+function renderContraResults(){
+ const results=contraSummary.public_opportunities||[];
+ $('contra-results-status').textContent=contraSummary.checked_at?`Last read: ${formatDate(contraSummary.checked_at)}. Results may be limited by your account and the pages checked. Pay, eligibility and deadlines still need verification.`:'Connect Contra in Connections, then check for opportunities.';
+ $('contra-results').innerHTML=results.map((x,i)=>`<article class="panel"><span class="badge">${esc(x.kind)} · Needs review</span><h3>${esc(x.title)}</h3><a href="${esc(x.url)}" target="_blank" rel="noopener">Read original opportunity</a><button class="secondary" data-action="contra-save" data-index="${i}">Save to My opportunities</button></article>`).join('')||'<p class="small">No verified opportunity links extracted yet. This does not mean no work is available.</p>';
 }

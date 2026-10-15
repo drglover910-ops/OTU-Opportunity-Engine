@@ -5,7 +5,7 @@ from pathlib import Path
 from email.message import EmailMessage
 from email import policy
 from html.parser import HTMLParser
-VERSION = '0.9.2'
+VERSION = '0.9.3'
 STAGES = ['New','Researching','Ready to contact','Contacted','Interview / meeting','Offer / contract','Won','Parked']
 CATEGORIES = ['CRM / GoHighLevel','AI / business automation','Sales / operations','Coaching','Contract']
 FILES_LIMIT=25*1024*1024
@@ -293,6 +293,8 @@ class Engine:
                 usage=self.setting('ai_usage',{})
                 if usage.get('date')==budget['date']:
                     usage['actual_tokens']=usage.get('actual_tokens',0)+measured;self.set_setting('ai_usage',usage)
+        choices=result.get('choices',[])
+        if not choices or not choices[0].get('message',{}).get('content'):return result
         with self.lock:
             cache=self.setting('ai_response_cache',{});cache={k:v for k,v in cache.items() if v['expires']>time.time()}
             cache[fingerprint]={'expires':time.time()+21600,'result':result};self.set_setting('ai_response_cache',dict(list(cache.items())[-20:]))

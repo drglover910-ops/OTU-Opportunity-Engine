@@ -1,7 +1,7 @@
 {
-  "commit": "ccedd1af36ff1f3069fb663cd9abd42ff4295b6c",
-  "version": "0.9.1",
-  "checked_at": "2026-10-15T03:24:15.067587+00:00",
+  "commit": "96a179024d37639924bdd9e65114ec5f6cd9cd4d",
+  "version": "0.9.3",
+  "checked_at": "2026-10-15T03:28:08.181175+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -12,22 +12,22 @@
     "restart_verified": true,
     "message": "Mounted storage detected; verify a saved record survives a restart."
   },
-  "opportunities": 145,
+  "opportunities": 147,
   "last_discovery": {
-    "added": 49,
+    "added": 2,
     "seen": 50,
     "errors": [],
     "sources_ok": [
       "We Work Remotely RSS",
       "Remotive"
     ],
-    "finished": "2026-10-14T15:26:02.387920+00:00"
+    "finished": "2026-10-15T03:26:44.198097+00:00"
   },
   "documents": 17,
   "gmail_connected": true,
   "ai_configured": true,
   "connections": {
-    "checked_at": "2026-10-15T03:24:46.215418+00:00",
+    "checked_at": "2026-10-15T03:28:38.660078+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -62,7 +62,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-15T03:24:47.764122+00:00",
+    "checked_at": "2026-10-15T03:28:39.939683+00:00",
     "tools": 120,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -5951,6 +5951,332 @@
     "read_checks": 7,
     "message": "Profile, published services, portfolio, first application page, job feeds and active challenges read. No changes made. Private service drafts may require website review; pagination may leave more results.",
     "actions": "Read-only; no paid inference requests.",
+    "read_shapes": {
+      "get_user_profile_by_username:0": {
+        "shapes": [
+          [
+            "ok",
+            "profileContentGuide",
+            "userProfile"
+          ],
+          [
+            "avatarImage",
+            "canReceiveInquiries",
+            "displayUsername",
+            "externalLinks",
+            "fullName",
+            "isQuickResponder",
+            "location",
+            "organizationName",
+            "postPreviews",
+            "profileUrl",
+            "projectPreviews",
+            "reviewAverageScore",
+            "reviewCount",
+            "title",
+            "userProfileId",
+            "username",
+            "visitorChatConversationId",
+            "workPostPreviews"
+          ],
+          [
+            "height",
+            "mimeType",
+            "previewUrl",
+            "width"
+          ],
+          [
+            "label",
+            "socialMediaSiteName",
+            "url"
+          ],
+          [
+            "bodyPlaintext",
+            "createdAt",
+            "id",
+            "mediaPreview",
+            "slug",
+            "title",
+            "url"
+          ],
+          [
+            "image",
+            "kind"
+          ],
+          [
+            "cover",
+            "slug",
+            "title"
+          ],
+          [
+            "contentPlaintext",
+            "cover",
+            "description",
+            "id",
+            "slug",
+            "socialPost",
+            "title",
+            "url"
+          ],
+          [
+            "id",
+            "slug",
+            "url"
+          ]
+        ]
+      },
+      "list_services:1": {
+        "shapes": [
+          [
+            "ok",
+            "services",
+            "username"
+          ],
+          [
+            "duration",
+            "price",
+            "serviceId",
+            "serviceUrl",
+            "slug",
+            "tags",
+            "title"
+          ],
+          [
+            "amount",
+            "interval",
+            "type"
+          ],
+          [
+            "name",
+            "type"
+          ],
+          [
+            "amount",
+            "interval"
+          ]
+        ]
+      },
+      "list_portfolio_projects:2": {
+        "shapes": [
+          [
+            "draftVisibilityHint",
+            "ok",
+            "projects",
+            "totalCount",
+            "username",
+            "workPosts"
+          ],
+          [
+            "blocknoteContent",
+            "collaborators",
+            "contentImages",
+            "contentPlaintext",
+            "cover",
+            "coverImage",
+            "coverVideo",
+            "description",
+            "endedAt",
+            "externalLink",
+            "id",
+            "industries",
+            "industryCategories",
+            "isDraft",
+            "isVerified",
+            "organizationSelections",
+            "organizations",
+            "outcomes",
+            "projectUrl",
+            "publishedAt",
+            "roles",
+            "slug",
+            "socialPost",
+            "startedAt",
+            "title",
+            "tools"
+          ],
+          [
+            "image",
+            "kind"
+          ],
+          [
+            "height",
+            "mimeType",
+            "previewUrl",
+            "width"
+          ],
+          [
+            "siteName",
+            "url"
+          ],
+          [
+            "slug",
+            "socialPost",
+            "title"
+          ],
+          [
+            "id",
+            "slug",
+            "url"
+          ]
+        ]
+      },
+      "list_job_feed:3": {
+        "shapes": [
+          [
+            "accessLimitGuidance",
+            "accessLimitedFeed",
+            "endCursor",
+            "entries",
+            "hasNextPage",
+            "ok",
+            "totalCount"
+          ]
+        ],
+        "geekyants_mentioned_in_applied_page": false
+      },
+      "list_job_feed:4": {
+        "shapes": [
+          [
+            "accessLimitGuidance",
+            "accessLimitedFeed",
+            "endCursor",
+            "entries",
+            "hasNextPage",
+            "ok",
+            "totalCount"
+          ],
+          [
+            "job",
+            "jobFeedEntryId",
+            "visitorDidApply",
+            "visitorDidBookmark",
+            "visitorDidDismiss",
+            "visitorDidView",
+            "visitorWasMatched"
+          ],
+          [
+            "budget",
+            "country",
+            "createdAt",
+            "duration",
+            "hiringAsIndividual",
+            "jobId",
+            "jobPosting",
+            "languages",
+            "numberOfOpenPositions",
+            "organization",
+            "owner",
+            "publicUrl",
+            "roles",
+            "slug",
+            "startTimeframe",
+            "status",
+            "timezoneOffsetTolerance",
+            "timezonePrimaryUtcOffset",
+            "title",
+            "tools"
+          ],
+          [
+            "approvedAt",
+            "externalUrl",
+            "jobPostingId",
+            "status"
+          ],
+          [
+            "languageName",
+            "proficiency"
+          ],
+          [
+            "displayUsername",
+            "firstName",
+            "lastName",
+            "userProfileId"
+          ],
+          [
+            "estimatedHours",
+            "feeMax",
+            "feeMin",
+            "type"
+          ],
+          [
+            "countryId",
+            "name"
+          ],
+          [
+            "isVerified",
+            "name",
+            "organizationId",
+            "slug"
+          ]
+        ]
+      },
+      "list_job_feed:5": {
+        "shapes": [
+          [
+            "accessLimitGuidance",
+            "accessLimitedFeed",
+            "endCursor",
+            "entries",
+            "hasNextPage",
+            "ok",
+            "totalCount"
+          ]
+        ]
+      },
+      "list_active_challenges:6": {
+        "shapes": [
+          [
+            "challenges",
+            "eventsPageUrl",
+            "ok",
+            "source",
+            "totalCount",
+            "visibility"
+          ],
+          [
+            "challengeUrl",
+            "description",
+            "headerMainLabel",
+            "headerTitle",
+            "name",
+            "numberOfWinners",
+            "openGraphImageUrl",
+            "prize",
+            "slug",
+            "status",
+            "submissionsDeadline",
+            "submissionsOpenDate",
+            "title",
+            "winnerAnnouncementDate"
+          ],
+          [
+            "amount",
+            "currency",
+            "formatted"
+          ]
+        ]
+      }
+    },
+    "public_opportunities": [
+      {
+        "title": "Kajabi Website Rebrand & Landing Page Designer",
+        "url": "https://contra.com/opportunity/FovmWLAY-kajabi-website-rebrand-and-landing-page-designer",
+        "kind": "Job / contract",
+        "source": "Contra"
+      },
+      {
+        "title": "Podcast Outreach & Marketing Contractor",
+        "url": "https://contra.com/opportunity/33oEMqsg-podcast-outreach-and-marketing-contractor",
+        "kind": "Job / contract",
+        "source": "Contra"
+      },
+      {
+        "title": "Social Media Content Manager",
+        "url": "https://contra.com/opportunity/FOUsee7N-social-media-content-manager",
+        "kind": "Job / contract",
+        "source": "Contra"
+      }
+    ],
     "cached": true
   },
   "platforms": 7,

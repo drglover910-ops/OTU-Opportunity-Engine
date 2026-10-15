@@ -19,13 +19,14 @@ class Handler(BaseHTTPRequestHandler):
         parsed=urllib.parse.urlsplit(self.path);path=parsed.path;query=urllib.parse.parse_qs(parsed.query)
         try:
             if path=='/health':return self.output({'status':'ok','version':VERSION})
-            if path in ['/', '/ui.js','/ui.css']:
-                name={'/':'ui.html','/ui.js':'ui.js','/ui.css':'ui.css'}[path];ctype={'/':'text/html; charset=utf-8','/ui.js':'text/javascript; charset=utf-8','/ui.css':'text/css; charset=utf-8'}[path]
+            if path in ['/', '/ui.js','/ui.css','/matrix.js']:
+                name={'/':'ui.html','/ui.js':'ui.js','/ui.css':'ui.css','/matrix.js':'matrix.js'}[path];ctype={'/':'text/html; charset=utf-8','/ui.js':'text/javascript; charset=utf-8','/ui.css':'text/css; charset=utf-8','/matrix.js':'text/javascript; charset=utf-8'}[path]
                 return self.output((ROOT/name).read_bytes(),ctype)
             if path=='/api/platforms':return self.output(engine.platforms())
             if path=='/api/platform-profile':return self.output(engine.platform_profile(query['id'][0]))
             if path=='/api/browser/frame':return self.output(engine.browser_action({'action':'frame'}),'image/jpeg')
             if path=='/api/workspaces':return self.output(engine.workspaces())
+            if path=='/api/chat-threads':return self.output(engine.chat_threads())
             if path=='/api/conversation':return self.output(engine.conversation({k:v[0] for k,v in query.items()}))
             if path=='/oauth/contra/start':
                 from contra_mcp import ContraConnection
@@ -43,6 +44,11 @@ class Handler(BaseHTTPRequestHandler):
             if path=='/api/opportunities':return self.output(engine.list())
             if path=='/api/project-knowledge':return self.output(engine.project_knowledge())
             if path=='/api/developer/requests':return self.output(engine.developer_requests())
+            if path=='/api/document-page':
+                from document_preview import render_page
+                with engine.connect() as c:doc=c.execute('SELECT * FROM documents WHERE id=?',(int(query['id'][0]),)).fetchone()
+                if not doc or not doc['name'].lower().endswith('.pdf'):raise ValueError('Choose a PDF document for its designed preview.')
+                return self.output(render_page(doc['path'],int(query.get('page',['0'])[0])),'image/png')
             if path=='/api/document-preview':return self.output(engine.document_preview(query['id'][0]))
             if path=='/api/documents':return self.output(engine.documents())
             if path=='/api/email-cases':return self.output(engine.email_cases())
@@ -106,6 +112,8 @@ class Handler(BaseHTTPRequestHandler):
             if self.path=='/api/platform-profile':return self.output(engine.save_platform_profile(d))
             if self.path=='/api/browser':return self.output(engine.browser_action(d))
             if self.path=='/api/connections/check':return self.output(engine.check_connections())
+            if self.path=='/api/chat/new':return self.output(engine.create_chat(d))
+            if self.path=='/api/chat/rename':return self.output(engine.rename_chat(d))
             if self.path=='/api/workspaces':return self.output(engine.add_workspace(d))
             if self.path=='/api/developer/request':return self.output(engine.queue_developer_request(d))
             if self.path=='/api/developer/request-update':return self.output(engine.update_developer_request(d))

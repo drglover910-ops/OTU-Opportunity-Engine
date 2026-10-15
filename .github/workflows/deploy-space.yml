@@ -11,8 +11,10 @@ on:
       - platform_browser.py
       - contra_mcp.py
       - document_review.py
+      - document_preview.py
       - assistant_knowledge.json
       - ui.html
+      - matrix.js
       - ui.js
       - ui.css
       - playbooks.json
@@ -41,7 +43,9 @@ jobs:
       - name: Install app dependencies
         run: python -m pip install -r requirements.txt
       - name: Validate browser JavaScript
-        run: node --check ui.js
+        run: |
+          node --check ui.js
+          node --check matrix.js
       - name: Validate app
         run: python -m unittest discover -s tests
       - name: Install deployment client

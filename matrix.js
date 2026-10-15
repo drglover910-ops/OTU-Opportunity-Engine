@@ -1,0 +1,14 @@
+'use strict';
+(()=>{
+ const canvas=document.getElementById('matrix-rain'),button=document.getElementById('matrix-toggle');
+ const ctx=canvas.getContext('2d',{alpha:false});if(!ctx){button.hidden=true;return}
+ const preference=window.matchMedia('(prefers-reduced-motion: reduce)');let choice=localStorage.getItem('otu-matrix-motion'),raf=0,last=0,width=0,height=0,columns=[],frames=0;
+ const glyphs='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄ';let mobile=false;
+ const enabled=()=>choice==='on'||(choice!=='off'&&!preference.matches);
+ function glyph(){return glyphs[Math.floor(Math.random()*glyphs.length)]}
+ function resize(){mobile=innerWidth<760;width=innerWidth;height=innerHeight;const scale=Math.min(devicePixelRatio||1,mobile?1:1.5,1920/width);canvas.width=Math.round(width*scale);canvas.height=Math.round(height*scale);ctx.setTransform(scale,0,0,scale,0,0);ctx.font=(mobile?17:16)+'px monospace';const count=Math.min(mobile?32:75,Math.floor(width/22));columns=Array.from({length:count},(_,i)=>({x:(i+.5)*width/count,y:Math.random()*height,speed:35+Math.random()*65}));ctx.fillStyle='#030604';ctx.fillRect(0,0,width,height);drawStatic();}
+ function drawStatic(){ctx.fillStyle='#030604';ctx.fillRect(0,0,width,height);for(const col of columns){for(let j=0;j<12;j++){ctx.fillStyle=`rgba(37,191,86,${.5*(1-j/12)})`;ctx.fillText(glyph(),col.x,col.y-j*19)}}}
+ function animate(time){raf=0;if(!enabled()||document.hidden)return;raf=requestAnimationFrame(animate);const step=1000/(mobile?12:18);if(time-last<step)return;const elapsed=Math.min((time-last)/1000,.15);last=time;frames++;ctx.fillStyle='rgba(3,6,4,.12)';ctx.fillRect(0,0,width,height);for(const col of columns){col.y+=col.speed*elapsed;if(col.y>height+150){col.y=-Math.random()*300}ctx.fillStyle='#4bd779';ctx.fillText(glyph(),col.x,col.y);ctx.fillStyle='rgba(182,255,202,.5)';ctx.fillText(glyph(),col.x,col.y+16)}}
+ function sync(){if(raf)cancelAnimationFrame(raf);raf=0;const active=enabled()&&!document.hidden;button.textContent=enabled()?'Pause Matrix':'Play Matrix';button.setAttribute('aria-pressed',String(enabled()));button.setAttribute('aria-label',enabled()?'Pause Matrix background animation':'Play Matrix background animation');canvas.dataset.mode=active?'running':preference.matches&&choice!=='on'?'reduced':'paused';if(active){last=performance.now();raf=requestAnimationFrame(animate)}else drawStatic()}
+ button.addEventListener('click',()=>{choice=enabled()?'off':'on';localStorage.setItem('otu-matrix-motion',choice);sync()});document.addEventListener('visibilitychange',sync);preference.addEventListener('change',sync);let timer;addEventListener('resize',()=>{clearTimeout(timer);timer=setTimeout(()=>{resize();sync()},120)});window.otuMatrixStatus=()=>({frames,running:!!raf,mode:canvas.dataset.mode});resize();sync();
+})();

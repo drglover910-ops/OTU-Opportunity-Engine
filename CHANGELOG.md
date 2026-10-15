@@ -1,5 +1,11 @@
 # Release history
 
+## 0.11.0 — 2026-10-15
+
+- Make conversation the default workspace with a persistent recent-chat sidebar, separate new threads, search, rename and restored last conversation. Preserve original conversations and scoped memory in backups.
+- Add decorative Matrix character rain with reduced-motion support, a saved pause control and background-tab suspension.
+- Review documents beside chat on larger screens and in an accessible mobile sheet, with preserved revision and approval controls.
+
 ## 0.10.1 — 2026-10-15
 
 - Include the current prepared proposal in its opportunity chat and add reviewed proposal revisions alongside document revisions. No message changes are saved or sent without review.

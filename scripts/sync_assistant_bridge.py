@@ -23,7 +23,7 @@ def main():
  rows=app('/api/developer/requests');saved=json.loads(ledger.read_text()) if ledger.exists() else [];known={r['id'] for r in saved}
  for row in rows:
   if row['status']=='Queued for repository sync' and row['id'] not in known:
-   saved.append({k:row[k] for k in ('id','workspace','opportunity_id','text','created')});known.add(row['id'])
+   saved.append({**{k:row[k] for k in ('id','workspace','opportunity_id','text','created')},**({'chat_id':row['chat_id']} if row.get('chat_id') else {})});known.add(row['id'])
  ledger.parent.mkdir(parents=True,exist_ok=True);ledger.write_text(json.dumps(saved,indent=2)+'\n')
  commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
  for file in Path('docs/assistant_bridge/replies').glob('*.json'):

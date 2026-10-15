@@ -28,6 +28,13 @@ for attempt in range(48):
                     if prepared:
                         preview=request('/api/document-preview?id='+str(prepared[0]['id']))
                         report['document_preview']='passed' if preview.get('text') else 'empty'
+                    pdf=next((d for d in prepared if d['name'].lower().endswith('.pdf')),None)
+                    if pdf:
+                        with urllib.request.urlopen(urllib.request.Request(base+'/api/document-page?id='+str(pdf['id']),headers=headers),timeout=40) as image:
+                            report['designed_document_preview']='passed' if image.headers.get('Content-Type')=='image/png' and image.read(8)==b'\x89PNG\r\n\x1a\n' else 'unverified'
+                    with urllib.request.urlopen(urllib.request.Request(base+'/matrix.js',headers=headers),timeout=30) as asset:
+                        report['matrix_asset']='available' if b'matrix-rain' in asset.read(1000) else 'unverified'
+                    report['chat_threads']=len(request('/api/chat-threads'))
                     report['developer_request_queue']='available' if isinstance(request('/api/developer/requests'),list) else 'unverified'
                     report['ai_live_check']='not run; no paid inference during verification'
                     report['ai_budget']=status.get('ai_budget',{})

@@ -10,7 +10,7 @@ Career library → Choose your ZIP or résumé files → Add my career files. Se
 
 At Hugging Face Settings → Access Tokens, create a fine-grained token named otu-opportunity-writing with Make calls to Inference Providers permission. In this Space's Settings → Variables and secrets → New secret, save it under HF_INFERENCE_TOKEN. Keep it out of chat and GitHub files. Return to Get set up and click Check my connections. After importing career files, try Write with AI on one real opportunity and inspect its accuracy. The default model is already chosen; no model-variable entry is needed unless changing providers/models.
 
-Searching and basic draft templates do not use a paid AI API. AI requests can consume credits and incur provider costs. Ten attempts/day is a request limit, not a spending cap. Check Hugging Face's Inference Providers account/billing settings before requesting AI writing. OpenAI is not connected or charged.
+Searching and basic draft templates do not use a paid AI API. AI requests can consume credits and incur provider costs. Five shared chat/writing attempts per UTC day is the default local request limit, not a dollar spending cap. Connections includes a pause switch and adjustable request/token allowances; identical successful requests can be reused for six hours. Other projects’ spending and the account balance are not available inside this bot. Check Hugging Face's Inference Providers account/billing settings before requesting AI writing. OpenAI is not connected or charged.
 
 ## 3. Gmail — one-time Google registration, then sign-in
 

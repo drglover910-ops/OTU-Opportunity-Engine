@@ -1,0 +1,29 @@
+name: Verify Contra MCP public connection metadata
+on:
+  push:
+    branches: [work]
+    paths: [scripts/probe_contra_mcp.py, .github/workflows/contra-discovery.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  discovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: work
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/probe_contra_mcp.py
+      - name: Save public discovery results
+        run: |
+          git config user.name 'OTU integration discovery'
+          git config user.email 'otu-discovery@users.noreply.github.com'
+          git add docs/CONTRA_MCP_DISCOVERY.json
+          git diff --cached --quiet && exit 0
+          git commit -m 'Record anonymous Contra MCP endpoint and authentication discovery'
+          git pull --rebase origin work
+          git push origin HEAD:work

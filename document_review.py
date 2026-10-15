@@ -31,16 +31,17 @@ def save(engine,data):
  if not old or old['kind'] not in ('resume','cover_letter'):raise ValueError('Only prepared résumés and cover letters can be revised here.')
  package=next((p for p in candidates if did in json.loads(p['files']).values()),None)
  if not package:raise ValueError('This is not a current application document. Open the latest prepared version.')
- pdf,word=render(text);prefix='resume' if old['kind']=='resume' else 'cover';stamp=now().replace(':','').replace('.','').replace('+','')
+ pdf,word=render(text);prefix='resume' if old['kind']=='resume' else 'cover';stamp=now().replace(':','').replace('.','').replace('+','');revision=int(json.loads(package['checks']).get('revision_number',0))+1
+ base=re.sub(r'_v\d.*$','',Path(old['name']).stem)
  # Rendering and persistence complete before the package changes; old files remain intact.
  new={}
  for extension,content in [('pdf',pdf),('docx',word)]:
-  result=engine.import_file(Path(old['name']).stem+'_reviewed_'+stamp+'.'+extension,content,old['kind']);new[prefix+'_'+extension]=result['id']
+  result=engine.import_file(base+'_v'+str(revision)+'_'+stamp+'.'+extension,content,old['kind']);new[prefix+'_'+extension]=result['id']
  with engine.lock,engine.connect() as c:
   current=c.execute('SELECT * FROM packages WHERE id=?',(package['id'],)).fetchone();files=json.loads(current['files'])
   if did not in files.values():raise ValueError('A newer version was saved while you were editing. Open that version before retrying.')
   replaced={files.get(prefix+'_pdf'),files.get(prefix+'_docx')};files.update(new)
-  checks=json.loads(current['checks']);checks.update({prefix+'_pages':len(PdfReader(io.BytesIO(pdf)).pages),'owner_reviewed_revision':True,'factual_check':'Owner review; no automated factual certification'})
+  checks=json.loads(current['checks']);checks.update({prefix+'_pages':len(PdfReader(io.BytesIO(pdf)).pages),'revision_number':revision,'owner_reviewed_revision':True,'factual_check':'Owner review; no automated factual certification'})
   c.execute('UPDATE packages SET files=?,checks=? WHERE id=?',(json.dumps(files),json.dumps(checks),package['id']))
   # Changing attachments revokes any prior approval; sent drafts remain untouched.
   draft=c.execute('SELECT * FROM drafts WHERE id=?',(package['draft_id'],)).fetchone()

@@ -1,4 +1,4 @@
-# Talk to OTU — v0.10.0
+# Talk to OTU — v0.10.1
 
 Open **Talk to OTU** for the main assistant. It receives the curated project decisions in `assistant_knowledge.json`, recent opportunity summaries, saved outreach-style examples, and current connection indicators. Platform and opportunity chats keep their own history, emails and remembered instructions. The main chat can see opportunity summaries, not other chats' private messages. Use **What to remember in this conversation** for up to eight persistent instructions without an AI call. Recent dialogue is bounded rather than repeatedly transmitting the whole archive.
 
@@ -13,3 +13,5 @@ The assistant is powered by the configured HF inference provider, not a live con
 In chat, open **Request a development change**, or turn an assistant answer into a draft request. Review the exact text and check permission to share it to the private repository. Only that text and routing metadata transfer; emails, documents and complete chats are not included automatically. Requests persist on mounted storage and in backups. The bridge verifies the repository is private, transfers on a deployment or manual GitHub workflow run, and returns a receipt. The developer can commit a response which appears in this panel after sync/refresh. See `docs/assistant_bridge/README.md`.
 
 There are no scheduled worker runs or autonomous developer starts. For immediate transfer, the link opens GitHub's bridge workflow: choose **Run workflow**. A copied handoff is the fallback. Receiving a request is not the same as completing it; statuses make that distinction. Existing GitHub Actions runners and authentication are reused; no new app token, subscription or OpenAI spending is required by this implementation. Existing runner usage remains subject to the account's normal allowance.
+
+Prepared proposals have a **Discuss or revise this proposal** button. The correct opportunity chat receives the selected saved proposal. **Review revised proposal** loads suggested wording into the message editor; it is not saved until **Save my edits**, which resets approval. It never sends the proposal automatically.

@@ -41,3 +41,10 @@ class AssistantReview(unittest.TestCase):
   self.assertEqual(self.e.conversation({'workspace':'assistant'})['memory'],[])
   restored=Engine(tempfile.mkdtemp());restored.restore(self.e.backup());notes=restored.conversation({'workspace':'contra','opportunity_id':self.oid})['memory']
   self.assertEqual(notes[0]['text'],'Ask about weekly workload before quoting.')
+
+ def test_proposal_revision_sees_selected_draft_without_changing_it(self):
+  draft=self.e.draft(self.pkg['draft_id']);original=draft['body']
+  with patch.dict(os.environ,{'HF_INFERENCE_TOKEN':'fixture'}),patch('engine.fetch_json',return_value={'choices':[{'message':{'content':'Hello, a reviewed proposal suggestion.'}}]}) as req:
+   result=self.e.ask_workspace({'workspace':'contra','opportunity_id':self.oid,'draft_id':draft['id'],'mode':'revise_proposal','text':'Make it more concise.'})
+   payload=json.loads(req.call_args.args[1]['messages'][1]['content']);self.assertEqual(payload['prepared_proposals'][0]['body'],original)
+  self.assertEqual(result['draft_id'],draft['id']);self.assertEqual(self.e.draft(draft['id'])['body'],original)

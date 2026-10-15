@@ -1,5 +1,9 @@
 # Release history
 
+## 0.10.1 — 2026-10-15
+
+- Include the current prepared proposal in its opportunity chat and add reviewed proposal revisions alongside document revisions. No message changes are saved or sent without review.
+
 ## 0.10.0 — 2026-10-15
 
 - Add Talk to OTU with curated project memory, scoped remembered instructions, and owner-reviewed developer requests/replies through the private repository. This does not provide live private ChatGPT access or wake an agent.

@@ -40,6 +40,13 @@ for attempt in range(48):
                         report['contra_signin_ready']=False
                         try:report['contra_setup_detail']=json.load(e).get('error','')[:250]
                         except Exception:report['contra_setup_detail']='Registration could not be verified.'
+                    if status.get('contra_connected'):
+                        try:
+                            report['contra_access']=request('/api/contra/check',{})
+                            report['contra_tools']=request('/api/contra/tools')
+                        except urllib.error.HTTPError as e:
+                            try:report['contra_access_error']=json.load(e).get('error','')[:250]
+                            except Exception:report['contra_access_error']='Account access could not be verified.'
                     report['platforms']=len(request('/api/platforms'))
                     report['browser']='not checked'
                     try:

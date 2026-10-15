@@ -1,5 +1,9 @@
 # Release history
 
+## 0.8.1 — 2026-10-14
+
+- Verify authorized Contra access during deployment and record tool definitions for integration planning, without invoking account tools or exporting account records.
+
 ## 0.8.0 — 2026-10-14
 
 - Verify Contra’s MCP endpoint and OAuth metadata, register a public app client, and add Connect Contra with PKCE sign-in.

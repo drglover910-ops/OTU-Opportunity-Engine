@@ -1,7 +1,7 @@
 {
-  "commit": "7f1cf98c83da0d9194124866ee6ba546d96392ae",
-  "version": "0.9.4",
-  "checked_at": "2026-10-15T03:31:10.143358+00:00",
+  "commit": "6ed7f0f69230cb80b695d9823feaaee07c27e8d3",
+  "version": "0.9.5",
+  "checked_at": "2026-10-15T03:33:25.949661+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -27,7 +27,7 @@
   "gmail_connected": true,
   "ai_configured": true,
   "connections": {
-    "checked_at": "2026-10-15T03:31:30.953513+00:00",
+    "checked_at": "2026-10-15T03:33:47.114919+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -62,7 +62,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-15T03:31:32.358494+00:00",
+    "checked_at": "2026-10-15T03:33:49.027281+00:00",
     "tools": 120,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -6644,7 +6644,7 @@
         "url": "https://contra.com/opportunity/FovmWLAY-kajabi-website-rebrand-and-landing-page-designer",
         "kind": "Job / contract",
         "source": "Contra",
-        "description": "",
+        "description": "We are hiring a proficient designer to rebrand and rebuild the homepage for an established Kajabi members-only website, then design and build conversion-focused landing pages for upcoming products.\n\nThis is hands-on design and implementation work. You will create the visual direction and page structure, then build responsive pages directly in Kajabi. The work includes preparing the site for a new domain, updating navigation and calls to action, and ensuring existing member signup, offers, forms, event registration, resource pages, privacy policy, terms, and disclaimer links continue to work correctly after launch.\n\nYou must have strong visual hierarchy, UX judgment, and proven Kajabi build experience. You must write and speak English professionally and be available to collaborate during Pacific Time working hours.\n\nTo be considered, include: 1) links to 2 or 3 live Kajabi sites you personally designed and built, 2) one example of a rebrand or new-domain launch, 3) a brief explanation of how you would protect existing links and member access during the change, 4) your PST-hour availability, and 5) how you scope homepage and landing-page work. Applications without these details will not be considered.",
         "budget": null,
         "prize": null,
         "deadline": null,
@@ -6656,7 +6656,7 @@
         "url": "https://contra.com/opportunity/33oEMqsg-podcast-outreach-and-marketing-contractor",
         "kind": "Job / contract",
         "source": "Contra",
-        "description": "",
+        "description": "Podcast Outreach & Marketing Contractor\nTarot Times With Heidi | Remote | Independent Contractor | 5\u201310 hours/month | 40\u201360 CAD/hour\nTarot Times With Heidi is a small business offering education and services. We are looking for an independent contractor to help research and connect with relevant podcasts in Canada, US, and overseas.\nIf you are interested in applying, please read the full, detailed job posting here:\nhttps://docs.google.com/document/d/1TyQsY6mVtANNNRIBee_ERpvCJMh3Lkots0vM2dnZi8s/edit?usp=sharing",
         "budget": {
           "estimatedHours": 5,
           "feeMax": "USD:60.00000000",
@@ -6673,7 +6673,7 @@
         "url": "https://contra.com/opportunity/FOUsee7N-social-media-content-manager",
         "kind": "Job / contract",
         "source": "Contra",
-        "description": "",
+        "description": "VIS World seeks a freelance social media content manager to develop and maintain a weekly content calendar using photos, videos, and graphics we provide. You'll review our brand guidelines, write captions, schedule posts, and help shape our digital voice. We're especially interested in someone fluent in online basketball and WNBA culture who can make Miami VIS, our parafictional basketball franchise, feel as dynamic and credible online as a professional basketball team.",
         "budget": {
           "estimatedHours": 2,
           "feeMax": "USD:25.00000000",
@@ -6701,7 +6701,17 @@
         "status": "ACTIVE",
         "requirements_verified": false
       }
-    ]
+    ],
+    "applications": [
+      {
+        "job_id": "WyJKb2IiLDk5NTIzXQ==",
+        "title": " One-Time Promotional Partnership: LinkedIn, Medium, and GitHub",
+        "url": "https://contra.com/opportunity/OEosYmYY-one-time-promotional-partnership-linked-in-medium-and-git-hub",
+        "applied": true
+      }
+    ],
+    "geekyants_application_recorded": true,
+    "cached": true
   },
   "platforms": 7,
   "browser": "hosting configuration needed",

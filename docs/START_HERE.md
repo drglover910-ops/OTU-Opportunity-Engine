@@ -27,3 +27,12 @@ After that, daily use is sign-in-free while consent remains valid. Google can ex
 ## Daily work
 
 Today → Review an opportunity → Read the original listing → Create finished application → Save my edits → Approve this message → Send approved email. For Contra, copy the reviewed proposal and submit it through the platform's Apply workflow. Set your follow-up date and review replies. Preparing or approving a message does not send it.
+
+
+## Current chat-first interface (v0.11.0)
+
+Refresh the app to open your conversation. Use **New conversation** for a separate thread, **Recent conversations** to return to work, and **···** to rename a new thread. On a narrow screen, tap **☰** for the sidebar. Existing opportunity conversations remain available through Opportunities and the original conversation entries.
+
+Use **Ready to review → View finished documents → View résumé / cover letter** to read the actual designed pages in the app. **Ask the bot for changes** opens the relevant opportunity chat; review suggested wording before saving a new document version. On a phone, Back to conversation closes the review sheet. No download is required. **Conversation tools** holds remembered instructions and development requests; **Options** beside Send holds writing modes and free note saving.
+
+**Pause Matrix / Play Matrix** controls the falling characters. The choice is saved on this device. Reduced-motion settings are respected by default. The background does not use AI credits. Existing writing allowance and pause controls remain in Connections.

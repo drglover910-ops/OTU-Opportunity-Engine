@@ -1,7 +1,7 @@
 {
-  "commit": "116ffd920e67c30c227afb402bce9debb0fe4e8e",
-  "version": "0.10.0",
-  "checked_at": "2026-10-15T18:34:16.034388+00:00",
+  "commit": "1b96a29c1587b61e3a3c15d633d0d6d9a6eda29c",
+  "version": "0.10.1",
+  "checked_at": "2026-10-15T18:40:34.302852+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -27,7 +27,7 @@
   "gmail_connected": true,
   "ai_configured": true,
   "connections": {
-    "checked_at": "2026-10-15T18:34:47.244043+00:00",
+    "checked_at": "2026-10-15T18:41:04.787324+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -65,7 +65,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-15T18:34:49.881426+00:00",
+    "checked_at": "2026-10-15T18:41:06.094332+00:00",
     "tools": 120,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -6694,7 +6694,8 @@
         "applied": true
       }
     ],
-    "geekyants_application_recorded": true
+    "geekyants_application_recorded": true,
+    "cached": true
   },
   "platforms": 7,
   "browser": "hosting configuration needed",

@@ -9,6 +9,7 @@ on:
       - applications.py
       - mail_history.py
       - platform_browser.py
+      - contra_mcp.py
       - ui.html
       - ui.js
       - ui.css

@@ -1,5 +1,10 @@
 # Release history
 
+## 0.8.0 — 2026-10-14
+
+- Verify Contra’s MCP endpoint and OAuth metadata, register a public app client, and add Connect Contra with PKCE sign-in.
+- Discover available tools after owner authorization; no account tools are invoked and no messages, applications, or publications are performed.
+
 ## 0.7.3 — 2026-10-14
 
 - Encode device bookmarks safely and validate them as actual JavaScript bookmark URLs, including the cross-origin reader workflow.

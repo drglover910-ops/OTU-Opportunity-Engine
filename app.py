@@ -27,6 +27,13 @@ class Handler(BaseHTTPRequestHandler):
             if path=='/api/browser/frame':return self.output(engine.browser_action({'action':'frame'}),'image/jpeg')
             if path=='/api/workspaces':return self.output(engine.workspaces())
             if path=='/api/conversation':return self.output(engine.conversation({k:v[0] for k,v in query.items()}))
+            if path=='/oauth/contra/start':
+                from contra_mcp import ContraConnection
+                url=ContraConnection(engine).authorize();self.send_response(303);self.send_header('Location',url);self.send_header('Cache-Control','no-store');self.send_header('Referrer-Policy','no-referrer');self.end_headers();return
+            if path=='/oauth/contra/callback':
+                from contra_mcp import ContraConnection
+                ContraConnection(engine).callback(query.get('state',[''])[0],query.get('code',[''])[0])
+                return self.output(b'<html><body><h1>Contra sign-in saved.</h1><p>Return to your Opportunity Engine, open Connections, and press Check Contra access. No messages or applications were sent.</p></body></html>','text/html; charset=utf-8')
             if path=='/api/status':return self.output(engine.status())
             if path=='/api/opportunities':return self.output(engine.list())
             if path=='/api/documents':return self.output(engine.documents())
@@ -78,6 +85,10 @@ class Handler(BaseHTTPRequestHandler):
             if self.path=='/api/developer/lock':
                 self.developer_sessions.pop(self.headers.get('X-Developer-Key',''),None);return self.output({'locked':True})
             if self.path in ('/api/settings','/api/restore') and self.developer_sessions.get(self.headers.get('X-Developer-Key',''),0)<time.time():return self.output({'error':'Open developer tools before changing technical settings.'},status=403)
+            if self.path in ('/api/contra/prepare','/api/contra/check','/api/contra/disconnect'):
+                from contra_mcp import ContraConnection
+                connection=ContraConnection(engine)
+                return self.output({'/api/contra/prepare':connection.prepare,'/api/contra/check':connection.discover,'/api/contra/disconnect':connection.disconnect}[self.path]())
             if self.path=='/api/platforms':return self.output(engine.add_platform(d))
             if self.path=='/api/platform-profile':return self.output(engine.save_platform_profile(d))
             if self.path=='/api/browser':return self.output(engine.browser_action(d))

@@ -33,6 +33,13 @@ for attempt in range(48):
                             except Exception:report['ai_live_check']='not verified; inspect writing connection'
                         else:report['ai_live_check']='previous attempt recorded; no repeated paid check'
                     else:report['ai_live_check']='previous successful request recorded' if status.get('last_ai_success') else 'not configured'
+                    try:
+                        ready=request('/api/contra/prepare',{})
+                        report['contra_signin_ready']=bool(ready.get('ready'))
+                    except urllib.error.HTTPError as e:
+                        report['contra_signin_ready']=False
+                        try:report['contra_setup_detail']=json.load(e).get('error','')[:250]
+                        except Exception:report['contra_setup_detail']='Registration could not be verified.'
                     report['platforms']=len(request('/api/platforms'))
                     report['browser']='not checked'
                     try:

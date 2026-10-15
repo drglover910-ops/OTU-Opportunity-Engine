@@ -5,7 +5,7 @@ from pathlib import Path
 from email.message import EmailMessage
 from email import policy
 from html.parser import HTMLParser
-VERSION = '0.7.3'
+VERSION = '0.8.0'
 STAGES = ['New','Researching','Ready to contact','Contacted','Interview / meeting','Offer / contract','Won','Parked']
 CATEGORIES = ['CRM / GoHighLevel','AI / business automation','Sales / operations','Coaching','Contract']
 FILES_LIMIT=25*1024*1024
@@ -341,6 +341,7 @@ class Engine:
                 fetch_json('https://gmail.googleapis.com/gmail/v1/users/me/profile',headers={'Authorization':'Bearer '+self.gmail_token()})
                 result['gmail']={'status':'connected','message':'Inbox access passed a live check.'}
             except ValueError:result['gmail']={'status':'needs_attention','message':'Inbox access could not be checked. Try again or reconnect Gmail.'}
+        if self.setting('contra_tokens'):result['contra']={'status':'configured','message':'Contra sign-in saved. Use Check Contra access to verify permitted tools.'}
         if os.getenv('HF_INFERENCE_TOKEN'):result['writing']={'status':'configured','message':'AI settings are saved. A paid writing request has not been made by this connection check.'}
         if self.setting('last_ai_success'):result['writing']['last_success']=self.setting('last_ai_success')
         self.set_setting('connection_check',result);return result
@@ -475,7 +476,7 @@ class Engine:
     def status(self):
         with self.connect() as c:
             counts={table:c.execute('SELECT count(*) FROM '+table).fetchone()[0] for table in ['opportunities','documents','drafts']}
-        return {'version':VERSION,'storage':self.storage(),'counts':counts,'gmail':bool(self.setting('gmail_tokens')),'gmail_configured':bool(os.getenv('GOOGLE_CLIENT_ID') and os.getenv('GOOGLE_CLIENT_SECRET') and os.getenv('PUBLIC_URL')),'ai_configured':bool(os.getenv('HF_INFERENCE_TOKEN')),'last_ai_success':self.setting('last_ai_success',None),'ai_model':os.getenv('HF_MODEL','Qwen/Qwen3-235B-A22B-Instruct-2507:scaleway'),'scheduler_enabled':self.setting('scheduler_enabled',True),'last_discovery':self.setting('last_discovery',{}),'contra':'Manual listing import; account automation not verified','last_mail_check':self.setting('last_mail_check',{}),'history_study':self.setting('history_study',{}),'outreach_style':self.setting('outreach_style',{}),'connection_check':self.setting('connection_check',{}),'backup':self.setting('last_backup',None)}
+        return {'version':VERSION,'storage':self.storage(),'counts':counts,'gmail':bool(self.setting('gmail_tokens')),'gmail_configured':bool(os.getenv('GOOGLE_CLIENT_ID') and os.getenv('GOOGLE_CLIENT_SECRET') and os.getenv('PUBLIC_URL')),'ai_configured':bool(os.getenv('HF_INFERENCE_TOKEN')),'last_ai_success':self.setting('last_ai_success',None),'ai_model':os.getenv('HF_MODEL','Qwen/Qwen3-235B-A22B-Instruct-2507:scaleway'),'scheduler_enabled':self.setting('scheduler_enabled',True),'last_discovery':self.setting('last_discovery',{}),'contra':'Manual listing import; account automation not verified','last_mail_check':self.setting('last_mail_check',{}),'history_study':self.setting('history_study',{}),'outreach_style':self.setting('outreach_style',{}),'contra_connected':bool(self.setting('contra_tokens')),'contra_check':self.setting('contra_last_check',{}),'connection_check':self.setting('connection_check',{}),'backup':self.setting('last_backup',None)}
     def history(self,oid=None):
         with self.connect() as c:
             if oid:return [dict(r) for r in c.execute('SELECT * FROM activity WHERE opportunity_id=? ORDER BY id DESC LIMIT 100',(oid,))]

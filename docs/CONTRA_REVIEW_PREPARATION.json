@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "actions": "Private preparation only; no paid inference, approvals, messages or applications.",
+  "review_package": "resume, cover letter and tailored unsent proposal prepared",
+  "document_checks": {
+    "passed": true,
+    "resume_pages": 1,
+    "cover_pages": 1,
+    "source": "Imported master career record; wording and dates preserved",
+    "ai_used": false
+  },
+  "geekyants_application_recorded": true
+}

@@ -1,4 +1,4 @@
-# AI usage controls — v0.9.0
+# AI usage controls — v0.9.1
 
 Chat and AI proposals share one persistent allowance, default five attempts and 60,000 conservative token reservations per UTC day. Each request reserves its UTF-8 message bytes plus 512 overhead and at most 700 requested output tokens. Reservations are an intentionally conservative local guard, not provider billing or guaranteed dollar costs. Attempts remain counted after errors; no automatic retry or provider fallback. A 24,000-byte message limit prevents sending entire archives. Provider-reported actual tokens are recorded separately when returned. Settings and usage remain on the private mounted volume. Concurrent requests reserve under the same engine lock. Owner may pause or reduce limits in Connections; zero disables further calls.
 
@@ -7,3 +7,5 @@ These limits cover this bot only, not other projects using the account. Hugging 
 Conversation modes offer advice, reviewed reply drafts, possible questions and negotiation preparation in the selected workspace/opportunity. The model has no action tools or automatic send permissions. No automatic deal closing, commitments or arbitrary Contra tool calls are enabled. Predictions must not be represented as observed client responses.
 
 Contra sync invokes a fixed allowlist of read tools and caches for 30 minutes: profile, published services, portfolio including drafts when supported, first 100 applied feed entries, personalized and GoHighLevel feeds, and active challenges. Results stay in private settings and are not copied into deployment logs or exports. This is an initial inventory, not exhaustive pagination or verification of private service drafts, payment readiness, Labs eligibility or all earning programs.
+
+Identical successful AI payloads (model and full supplied context included) are reused for six hours, with at most twenty private cache entries. A cache hit does not make a provider request. Source excerpts and recent notes are bounded before transmission; omitted detail should not be assumed known by the model.

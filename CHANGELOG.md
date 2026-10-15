@@ -1,5 +1,9 @@
 # Release history
 
+## 0.9.1 — 2026-10-15
+
+- Reuse identical successful AI requests for six hours and bound reference excerpts before inference to reduce unnecessary usage.
+
 ## 0.9.0 — 2026-10-15
 
 - Share atomic persistent AI request/token reservations across chat and proposal writing, with a pause switch and owner-visible limits; no paid inference in deployment checks.

@@ -10,7 +10,7 @@ class AIBudget(unittest.TestCase):
  def test_concurrent_calls_share_persistent_limit(self):
   self.e.save_ai_limits({'daily_requests':1,'daily_tokens':60000})
   def attempt(_):
-   try:self.e.ai_request(self.payload);return True
+   try:self.e.ai_request({**self.payload,'messages':[{'role':'user','content':str(_)}]});return True
    except ValueError:return False
   with patch('engine.fetch_json',return_value={'usage':{'total_tokens':12}}) as req:
    with ThreadPoolExecutor(max_workers=4) as pool:results=list(pool.map(attempt,range(4)))
@@ -32,3 +32,8 @@ class AIBudget(unittest.TestCase):
   with patch('engine.fetch_json') as req:
    with self.assertRaises(ValueError):self.e.ai_request(self.payload)
    req.assert_not_called()
+
+ def test_identical_success_is_reused_without_another_charge(self):
+  with patch('engine.fetch_json',return_value={'usage':{'total_tokens':12},'choices':[{'message':{'content':'Example'}}]}) as req:
+   first=self.e.ai_request(self.payload);second=self.e.ai_request(self.payload)
+  self.assertEqual(first,second);self.assertEqual(req.call_count,1);self.assertEqual(self.e.ai_budget()['count'],1)

@@ -63,7 +63,7 @@ class ContraConnection:
    return tokens['access_token']
  def discover(self):
   headers={'Authorization':'Bearer '+self.token()}
-  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.9.1'}}},headers=headers)
+  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.9.2'}}},headers=headers)
   if result.get('error'):raise ValueError('Contra could not initialize the connection. No account tools were run.')
   protocol=result.get('result',{}).get('protocolVersion','2025-03-26');headers['MCP-Protocol-Version']=protocol
   session=next((v for k,v in response_headers.items() if k.lower()=='mcp-session-id'),None)
@@ -82,7 +82,7 @@ class ContraConnection:
   allowed={'get_user_profile_by_username','list_services','list_portfolio_projects','list_job_feed','list_active_challenges'}
   if any(name not in allowed for name,args in calls):raise ValueError('Only approved read tools can run here.')
   headers={'Authorization':'Bearer '+self.token()}
-  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.9.1'}}},headers=headers)
+  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.9.2'}}},headers=headers)
   if result.get('error'):raise ValueError('Contra could not initialize read access.')
   headers['MCP-Protocol-Version']=result.get('result',{}).get('protocolVersion','2025-03-26')
   for k,v in response_headers.items():
@@ -95,16 +95,48 @@ class ContraConnection:
    if response.get('error') or body.get('isError'):raise ValueError('Contra could not complete a read check. No account changes were made.')
    results[name+':'+str(index)]=body
   return results
+ def inventory_details(self):
+  snapshot=self.engine.setting('contra_account_snapshot',{}) or {}
+  details={};public=[]
+  def unwrap(body):
+   if body.get('structuredContent') is not None:return body['structuredContent']
+   parsed=[]
+   for part in body.get('content',[]):
+    if part.get('type')=='text':
+     try:parsed.append(json.loads(part.get('text','')))
+     except ValueError:pass
+   return parsed
+  def walk(value):
+   if isinstance(value,dict):
+    yield value
+    for child in value.values():yield from walk(child)
+   elif isinstance(value,list):
+    for child in value:yield from walk(child)
+  for key,body in snapshot.items():
+   data=unwrap(body);nodes=list(walk(data));shapes=[]
+   for node in nodes:
+    shape=sorted(node)
+    if shape not in shapes:shapes.append(shape)
+   details[key]={'shapes':shapes[:18]}
+   if key.startswith('list_job_feed:3'):
+    details[key]['geekyants_mentioned_in_applied_page']='geeky' in json.dumps(data).lower()
+   if key.startswith('list_job_feed:') and not key.endswith(':3') or key.startswith('list_active_challenges:'):
+    for node in nodes:
+     title=node.get('title') or node.get('name');url=node.get('publicUrl') or node.get('url')
+     if isinstance(title,str) and isinstance(url,str) and url.startswith('https://contra.com/'):
+      public.append({'title':title[:200],'url':url,'kind':'Challenge / prize' if 'challenge' in key else 'Job / contract','source':'Contra'})
+  unique={x['url']:x for x in public}
+  return {'read_shapes':details,'public_opportunities':list(unique.values())[:75]}
  def sync(self):
   old=self.engine.setting('contra_sync_summary',{}) or {}
-  if old.get('finished_epoch',0)>time.time()-1800:return {**old,'cached':True}
+  if old.get('finished_epoch',0)>time.time()-1800:return {**old,**self.inventory_details(),'cached':True}
   calls=[('get_user_profile_by_username',{'username':'desmond_glover_59of9zq6'}),('list_services',{'username':'desmond_glover_59of9zq6','limit':50}),('list_portfolio_projects',{'username':'desmond_glover_59of9zq6','includeDrafts':True,'limit':25}),('list_job_feed',{'preset':'APPLIED','first':100}),('list_job_feed',{'preset':'FOR_YOU','first':25}),('list_job_feed',{'preset':'ALL','search':'GoHighLevel','first':25}),('list_active_challenges',{'limit':25})]
   # Store private account responses only on the mounted app volume, never in deployment logs.
   results=self.read_tools(calls)
   self.engine.set_setting('contra_account_snapshot',results)
   summary={'finished_epoch':time.time(),'checked_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(),'read_checks':len(results),'message':'Profile, published services, portfolio, first application page, job feeds and active challenges read. No changes made. Private service drafts may require website review; pagination may leave more results.','actions':'Read-only; no paid inference requests.'}
   self.engine.set_setting('contra_sync_summary',summary)
-  return summary
+  return {**summary,**self.inventory_details()}
  def disconnect(self):
   for key in ('contra_tokens','contra_oauth_client','contra_oauth_states','contra_tool_catalog','contra_last_check'):self.engine.set_setting(key,None)
   return {'disconnected':True,'message':'Stored Contra access removed locally. You can also revoke access in Contra.'}

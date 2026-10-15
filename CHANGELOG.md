@@ -1,5 +1,9 @@
 # Release history
 
+## 0.9.2 — 2026-10-15
+
+- Inspect read-result structure and extract canonical public opportunity links while keeping private account content on the mounted volume.
+
 ## 0.9.1 — 2026-10-15
 
 - Reuse identical successful AI requests for six hours and bound reference excerpts before inference to reduce unnecessary usage.

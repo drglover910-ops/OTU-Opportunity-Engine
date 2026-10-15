@@ -7,7 +7,7 @@ sdk: docker
 app_port: 7860
 ---
 
-# OTU Opportunity Engine — v0.8.1
+# OTU Opportunity Engine — v0.9.0
 
 A private opportunity workspace for Desmond Glover. Matrix-inspired responsive dashboard for discovery, fit ranking, career retrieval, draft preparation, approved email, replies and follow-ups. Contra-first contract workflow; coaching and employment alongside it.
 

@@ -43,3 +43,13 @@ class ContraOAuth(unittest.TestCase):
   with zipfile.ZipFile(io.BytesIO(self.e.backup())) as z:self.assertNotIn('DO_NOT_EXPORT_CONTRA_TOKEN',z.read('records.json').decode())
   self.c.disconnect()
   with patch('contra_mcp.request',return_value=({'client_id':'new-client'},{})):self.assertTrue(self.c.authorize().startswith(AUTH))
+ def test_read_tool_allowlist_rejects_writes_before_network(self):
+  with patch('contra_mcp.request') as req:
+   with self.assertRaises(ValueError):self.c.read_tools([('send_chat_message_confirm',{'confirm':True})])
+   req.assert_not_called()
+ def test_sync_uses_only_allowlisted_reads_and_reuses_cache(self):
+  with patch.object(self.c,'read_tools',return_value={'fixture':{'content':[]}}) as req:
+   first=self.c.sync();second=self.c.sync()
+  self.assertEqual(req.call_count,1);self.assertTrue(second['cached'])
+  self.assertEqual(first['read_checks'],1)
+  self.assertIn(('list_job_feed',{'preset':'APPLIED','first':100}),req.call_args.args[0])

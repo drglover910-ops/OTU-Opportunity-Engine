@@ -63,7 +63,7 @@ class ContraConnection:
    return tokens['access_token']
  def discover(self):
   headers={'Authorization':'Bearer '+self.token()}
-  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.8.1'}}},headers=headers)
+  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.9.0'}}},headers=headers)
   if result.get('error'):raise ValueError('Contra could not initialize the connection. No account tools were run.')
   protocol=result.get('result',{}).get('protocolVersion','2025-03-26');headers['MCP-Protocol-Version']=protocol
   session=next((v for k,v in response_headers.items() if k.lower()=='mcp-session-id'),None)
@@ -78,6 +78,33 @@ class ContraConnection:
   self.engine.set_setting('contra_tool_catalog',tools)
   summary={'connected':True,'checked_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(),'tools':len(tools),'history_access':'Co-Agent AI history is not assumed available.','actions':'Capability discovery only; no account tools called.'}
   self.engine.set_setting('contra_last_check',summary);return summary
+ def read_tools(self,calls):
+  allowed={'get_user_profile_by_username','list_services','list_portfolio_projects','list_job_feed','list_active_challenges'}
+  if any(name not in allowed for name,args in calls):raise ValueError('Only approved read tools can run here.')
+  headers={'Authorization':'Bearer '+self.token()}
+  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.9.0'}}},headers=headers)
+  if result.get('error'):raise ValueError('Contra could not initialize read access.')
+  headers['MCP-Protocol-Version']=result.get('result',{}).get('protocolVersion','2025-03-26')
+  for k,v in response_headers.items():
+   if k.lower()=='mcp-session-id':headers['Mcp-Session-Id']=v
+  request(RESOURCE,{'jsonrpc':'2.0','method':'notifications/initialized'},headers=headers,allow_empty=True)
+  results={}
+  for index,(name,args) in enumerate(calls):
+   response,_=request(RESOURCE,{'jsonrpc':'2.0','id':index+2,'method':'tools/call','params':{'name':name,'arguments':args}},headers=headers)
+   body=response.get('result',{})
+   if response.get('error') or body.get('isError'):raise ValueError('Contra could not complete a read check. No account changes were made.')
+   results[name+':'+str(index)]=body
+  return results
+ def sync(self):
+  old=self.engine.setting('contra_sync_summary',{}) or {}
+  if old.get('finished_epoch',0)>time.time()-1800:return {**old,'cached':True}
+  calls=[('get_user_profile_by_username',{'username':'desmond_glover_59of9zq6'}),('list_services',{'username':'desmond_glover_59of9zq6','limit':50}),('list_portfolio_projects',{'username':'desmond_glover_59of9zq6','includeDrafts':True,'limit':25}),('list_job_feed',{'preset':'APPLIED','first':100}),('list_job_feed',{'preset':'FOR_YOU','first':25}),('list_job_feed',{'preset':'ALL','search':'GoHighLevel','first':25}),('list_active_challenges',{'limit':25})]
+  # Store private account responses only on the mounted app volume, never in deployment logs.
+  results=self.read_tools(calls)
+  self.engine.set_setting('contra_account_snapshot',results)
+  summary={'finished_epoch':time.time(),'checked_at':__import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(),'read_checks':len(results),'message':'Profile, published services, portfolio, first application page, job feeds and active challenges read. No changes made. Private service drafts may require website review; pagination may leave more results.','actions':'Read-only; no paid inference requests.'}
+  self.engine.set_setting('contra_sync_summary',summary)
+  return summary
  def disconnect(self):
   for key in ('contra_tokens','contra_oauth_client','contra_oauth_states','contra_tool_catalog','contra_last_check'):self.engine.set_setting(key,None)
   return {'disconnected':True,'message':'Stored Contra access removed locally. You can also revoke access in Contra.'}

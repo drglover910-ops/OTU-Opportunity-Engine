@@ -90,6 +90,10 @@ class Handler(BaseHTTPRequestHandler):
                 from contra_mcp import ContraConnection
                 connection=ContraConnection(engine)
                 return self.output({'/api/contra/prepare':connection.prepare,'/api/contra/check':connection.discover,'/api/contra/disconnect':connection.disconnect}[self.path]())
+            if self.path=='/api/ai/limits':return self.output(engine.save_ai_limits(d))
+            if self.path=='/api/contra/sync':
+                from contra_mcp import ContraConnection
+                return self.output(ContraConnection(engine).sync())
             if self.path=='/api/platforms':return self.output(engine.add_platform(d))
             if self.path=='/api/platform-profile':return self.output(engine.save_platform_profile(d))
             if self.path=='/api/browser':return self.output(engine.browser_action(d))

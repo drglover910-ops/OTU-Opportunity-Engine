@@ -1,5 +1,11 @@
 # Release history
 
+## 0.9.0 — 2026-10-15
+
+- Share atomic persistent AI request/token reservations across chat and proposal writing, with a pause switch and owner-visible limits; no paid inference in deployment checks.
+- Add conversation modes for reviewed replies, possible questions and negotiation preparation.
+- Add a fixed read-only Contra inventory/feed check, cached for 30 minutes; keep account responses private.
+
 ## 0.8.1 — 2026-10-14
 
 - Verify authorized Contra access during deployment and record tool definitions for integration planning, without invoking account tools or exporting account records.

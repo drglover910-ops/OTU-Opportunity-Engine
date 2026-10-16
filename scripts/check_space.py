@@ -54,6 +54,12 @@ for attempt in range(48):
                     with urllib.request.urlopen(urllib.request.Request(base+'/ui.js',headers=headers),timeout=30) as shell:
                         source=shell.read(200000);report['workspace_shell']='available' if b'closeWorkspacePanel' in source and b'browsingWorkspace' in source else 'unverified';report['read_aloud_controls']='asset available; device audio not tested' if b'readAnswer' in source else 'unverified'
                     report['chat_threads']=len(request('/api/chat-threads'))
+                    report['projects']=len(request('/api/projects'))
+                    report['recovery_checkpoint']=request('/api/recovery-status')
+                    report['mail_workspace']='local drafts readable' if isinstance(request('/api/mail?box=drafts').get('items'),list) else 'unverified'
+                    if status['gmail']:
+                        try:report['gmail_mailbox_read']='passed' if isinstance(request('/api/mail?box=inbox&limit=1').get('items'),list) else 'unverified'
+                        except Exception:report['gmail_mailbox_read']='unverified; check Gmail connection'
                     report['developer_request_queue']='available' if isinstance(request('/api/developer/requests'),list) else 'unverified'
                     report['ai_live_check']='not run; no paid inference during verification'
                     report['ai_budget']=status.get('ai_budget',{})

@@ -6,6 +6,8 @@ on:
     paths:
       - app.py
       - engine.py
+      - workspace_ops.py
+      - backup_store.py
       - applications.py
       - mail_history.py
       - platform_browser.py

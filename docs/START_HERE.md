@@ -36,3 +36,14 @@ Refresh the app to open your conversation. Use **New conversation** for a separa
 Use **Ready to review → View finished documents → View résumé / cover letter** to read the actual designed pages in the app. **Ask the bot for changes** opens the relevant opportunity chat; review suggested wording before saving a new document version. On a phone, Back to conversation closes the review sheet. No download is required. **Conversation tools** holds remembered instructions and development requests; **Options** beside Send holds writing modes and free note saving.
 
 **Pause Matrix / Play Matrix** controls the falling characters. The choice is saved on this device. Reduced-motion settings are respected by default. The background does not use AI credits. Existing writing allowance and pause controls remain in Connections.
+
+
+## Daily use in v0.16.0
+
+Open the private app at https://huggingface.co/spaces/Dezz-9-10/OTU-Opportunity-Engine and refresh once after an upgrade. No reconnection or upload is needed for existing saved work.
+
+Choose a project above recent conversations, then New chat to start another conversation there. Use three dots or hold a conversation still briefly to Rename, Pin, Move, Archive or Delete. Delete moves it to Trash; select Trash above the list and Restore to bring it back. Projects group conversations; their original opportunity, messages and files remain together. Use Move on iPad. Desktop dragging onto the project selector also opens the destination chooser.
+
+Open Mail for Inbox or Sent. Search / refresh loads current Gmail results. Open a conversation to read its messages; Open Gmail handles Gmail-only drafts and mail attachment downloads. OTU drafts and Outbox lead to the existing review-and-send screen. Approved messages do not send themselves. Folder assignments and follow-up dates are private OTU organization, not Gmail changes.
+
+Connections → Download a private backup includes completed conversation uploads. Developer tools also offers complete-backup recovery. Recovery merges existing work and resets unsent approval; a checkpoint is kept before restoring. The UI accepts a backup ZIP up to 1 GiB, with 95 MiB total career files during recovery. Larger ZIPs need developer help. Keep your backup private; account credentials are excluded.

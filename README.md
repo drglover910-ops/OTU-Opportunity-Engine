@@ -7,7 +7,7 @@ sdk: docker
 app_port: 7860
 ---
 
-# OTU Opportunity Engine — v0.15.0
+# OTU Opportunity Engine — v0.16.0
 
 A private opportunity workspace for Desmond Glover. Matrix-inspired responsive dashboard for discovery, fit ranking, career retrieval, draft preparation, approved email, replies and follow-ups. Contra-first contract workflow; coaching and employment alongside it.
 
@@ -21,7 +21,7 @@ Keep the Space **Private**: Hugging Face access controls supply authentication; 
 
 Import the original master archive and designed résumés through **Career library**. Files are stored in the private bucket, not GitHub. Originals are preserved and indexed. Reference dossiers cannot be sent as attachments. Selected originals with internal verification notes are blocked from sending. AI receives selected, scrubbed career text only when requested; review its output for accuracy.
 
-Use Connections → Download private backup before major changes. Exports include records, originals and delivery history, but exclude Google OAuth tokens. Restore merges records, preserves sent/unresolved delivery history and resets unsent approvals. Reconnect Gmail after recovery. Run only one app instance against this SQLite store; do not share the database with another bot. Verify a saved lead survives a Space restart before relying on storage.
+Use Connections → Download private backup before major changes. Complete exports include records, originals, completed conversation uploads, projects and delivery history, but exclude account credentials and incomplete uploads. A private pre-v0.16.0 checkpoint stays in mounted storage. Complete ZIP recovery uses resumable 4 MiB uploads (ZIP up to 1 GiB; larger ZIPs need developer assistance); career documents currently support up to 95 MiB total during recovery. Conversation uploads support up to 1 GiB each. Restore merges records, preserves sent/unresolved delivery history and resets unsent approvals. Reconnect Gmail after recovery. Run only one app instance against this SQLite store; do not share the database with another bot. Verify a saved lead survives a Space restart before relying on storage.
 
 ## Connections
 
@@ -40,3 +40,8 @@ GitHub `work`/`main` changes trigger deployment to the existing private Space th
 Create finished application generates a source-grounded PDF/DOCX résumé and matching cover letter plus an unsent email from the master record. Earlier designed résumés are optional examples. Checks enforce a two-page résumé limit, one-page cover letter, required names and absence of internal notes. These are automated checks, not independent verification of every career claim. The master is preserved; source-labeled confirmed updates are versioned separately and merged into future applications. Planned projects remain planned, and application activity is never treated as employment or revenue.
 
 Sent-history study reads career/contract Sent queries and all messages in matching threads. Full bodies stay in the private database and backups, never source code. Automated replies are distinguished from human replies; detected interview/offer wording is not proof of hiring or payment. Imported threads are tracked with Gmail links. No study action sends messages. Maximum ten query pages; the result reports whether the page limit was reached.
+
+
+v0.16.0: Projects organize chats without changing their source workspace or opportunity context. Three dots, right-click or a stationary 600 ms press opens Rename, Pin, Move, Archive and recoverable Delete. Use the list selector for Archived or Trash; Restore never sends anything. On desktop drag a conversation onto the project selector to choose its destination; the Move menu works on touch devices. Creating a project does not create a platform account or connection.
+
+Mail reads Gmail Inbox/Sent/search and complete threads on demand. OTU drafts and approved/uncertain-delivery Outbox reuse existing draft review and sending. Local mail folders, opportunity links and dated follow-up flags do not modify Gmail labels/read state. Gmail-only drafts and attachment downloads remain in Open Gmail. Refresh/search is manual; it is not a continuously mirrored mailbox. Full mail bodies are plain text with remote content disabled. No new OAuth scopes or paid inference are used for mail browsing. Local folders are backed up; disposable Gmail body caches are fetched again after recovery.

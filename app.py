@@ -7,6 +7,11 @@ ROOT=Path(__file__).resolve().parent
 engine=Engine()
 from attachment_store import AttachmentStore
 attachments=AttachmentStore(engine)
+from backup_store import Backups
+backups=Backups(engine)
+backups.checkpoint()
+from workspace_ops import WorkspaceOps
+workspace_ops=WorkspaceOps(engine)
 class Handler(BaseHTTPRequestHandler):
     developer_sessions={}
     def log_message(self,*args):pass  # No OAuth codes, inbox content, or credentials in logs.
@@ -37,7 +42,11 @@ class Handler(BaseHTTPRequestHandler):
             if path=='/api/platform-profile':return self.output(engine.platform_profile(query['id'][0]))
             if path=='/api/browser/frame':return self.output(engine.browser_action({'action':'frame'}),'image/jpeg')
             if path=='/api/workspaces':return self.output(engine.workspaces())
-            if path=='/api/chat-threads':return self.output(engine.chat_threads())
+            if path=='/api/chat-threads':return self.output(workspace_ops.threads())
+            if path=='/api/recovery-status':return self.output(backups.status())
+            if path=='/api/projects':return self.output(workspace_ops.projects())
+            if path=='/api/mail':return self.output(workspace_ops.mail_list({k:v[0] for k,v in query.items()}))
+            if path=='/api/mail/thread':return self.output(workspace_ops.mail_thread(query['id'][0]))
             if path=='/api/conversation':return self.output(engine.conversation({k:v[0] for k,v in query.items()}))
             if path=='/oauth/contra/start':
                 from contra_mcp import ContraConnection
@@ -82,7 +91,14 @@ class Handler(BaseHTTPRequestHandler):
                 name=d['name'].replace('"','').replace('\r','').replace('\n','')
                 if query.get('inline')==['1'] and name.lower().endswith('.pdf'):return self.output(Path(d['path']).read_bytes(),'application/pdf')
                 return self.output(Path(d['path']).read_bytes(),'application/octet-stream',download=name)
-            if path=='/api/export':return self.output(engine.backup(),'application/zip',download='OTU-private-backup-'+VERSION+'.zip')
+            if path=='/api/export':
+                file=backups.export()
+                try:
+                    self.send_response(200);self.send_header('Content-Type','application/zip');self.send_header('Content-Length',str(file.stat().st_size));self.send_header('Content-Disposition','attachment; filename="OTU-complete-backup-'+VERSION+'.zip"');self.send_header('Cache-Control','no-store');self.end_headers()
+                    with file.open('rb') as stream:
+                        for block in iter(lambda:stream.read(1024*1024),b''):self.wfile.write(block)
+                finally:file.unlink(missing_ok=True)
+                return
             if path=='/oauth/google/start':
                 url=engine.oauth_url()
                 self.send_response(303);self.send_header('Location',url)
@@ -115,7 +131,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self.output({'token':token,'expires_in':1800})
             if self.path=='/api/developer/lock':
                 self.developer_sessions.pop(self.headers.get('X-Developer-Key',''),None);return self.output({'locked':True})
-            if self.path in ('/api/settings','/api/restore') and self.developer_sessions.get(self.headers.get('X-Developer-Key',''),0)<time.time():return self.output({'error':'Open developer tools before changing technical settings.'},status=403)
+            if self.path in ('/api/settings','/api/restore','/api/restore-complete') and self.developer_sessions.get(self.headers.get('X-Developer-Key',''),0)<time.time():return self.output({'error':'Open developer tools before changing technical settings.'},status=403)
             if self.path in ('/api/contra/prepare','/api/contra/check','/api/contra/disconnect'):
                 from contra_mcp import ContraConnection
                 connection=ContraConnection(engine)
@@ -128,6 +144,13 @@ class Handler(BaseHTTPRequestHandler):
             if self.path=='/api/platform-profile':return self.output(engine.save_platform_profile(d))
             if self.path=='/api/browser':return self.output(engine.browser_action(d))
             if self.path=='/api/connections/check':return self.output(engine.check_connections())
+            if self.path=='/api/projects':return self.output(workspace_ops.create_project(d))
+            if self.path=='/api/chat/organize':return self.output(workspace_ops.change(d))
+            if self.path=='/api/mail/organize':return self.output(workspace_ops.organize_mail(d))
+            if self.path=='/api/restore-complete':
+                if d.get('confirmed') is not True:raise ValueError('Confirm restoring this complete backup.')
+                file,record=attachments.file(d.get('id'))
+                return self.output(backups.restore(file,record['id']))
             if self.path=='/api/chat/new':return self.output(engine.create_chat(d))
             if self.path=='/api/chat/rename':return self.output(engine.rename_chat(d))
             if self.path=='/api/workspaces':return self.output(engine.add_workspace(d))

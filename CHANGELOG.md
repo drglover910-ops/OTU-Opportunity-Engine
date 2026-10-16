@@ -1,3 +1,11 @@
+## v0.16.0
+
+- Add project grouping, multiple chats per project and a Move menu for touch/desktop; preserve original workspace, opportunity, messages and file links, including older conversations.
+- Add conversation options through three dots, right-click or long-press: Rename, Pin, Move, Archive, recoverable Delete and Restore from Trash. Keep unfinished messages when organizing.
+- Add Mail: Gmail Inbox/Sent/search, full plain-text threads, OTU Drafts/Outbox, local folders, opportunity links, follow-up dates and Open Gmail. Reuse exact-draft review/send protections; no extra scopes, Gmail label edits, automatic sends or paid AI browsing.
+- Stream complete credential-free backup ZIPs with completed conversation files; verify checksums before recovery, merge organization metadata and remap opportunity/file links. Preserve a pre-upgrade checkpoint and pre-restore checkpoints. Recovery currently accepts ZIPs up to 1 GiB through the UI and 95 MiB total career files; larger backups require developer assistance.
+- Add runtime checkpoint-preservation reporting and browser checks for long-press, project movement, archive/Trash recovery, Mail folders and unchanged chat scope/draft text.
+
 ## v0.15.0
 
 - Load reconciled owner handoff knowledge and an evidence-labeled Contra status report into the conversational assistant; preserve existing records and distinguish applications, unsent drafts, conflicting decisions and unverified opportunities.

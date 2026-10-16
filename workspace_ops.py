@@ -69,12 +69,20 @@ CREATE TABLE IF NOT EXISTS mail_cache(thread_id TEXT PRIMARY KEY,payload TEXT,up
    folder=d.get('folder_id') or None
    if folder and not c.execute('SELECT id FROM mail_folders WHERE id=?',(folder,)).fetchone():raise ValueError('Folder not found.')
    oid=int(d['opportunity_id']) if d.get('opportunity_id') else None
-   if oid:self.e.get(oid)
+   lead=self.e.get(oid) if oid else None
+   known=c.execute('SELECT opportunity_id FROM email_threads WHERE thread_id=?',(key,)).fetchone()
+   if known and oid and known['opportunity_id']!=oid:raise ValueError('This thread already belongs to another opportunity. Keep its original link so conversations stay separate.')
+   if known and not oid:oid=known['opportunity_id'];lead=self.e.get(oid)
    followup=str(d.get('followup',''))
    if followup:
     from datetime import date
     date.fromisoformat(followup)
    c.execute('INSERT OR REPLACE INTO mail_organization VALUES(?,?,?,?)',(key,folder,followup,oid))
+   cached=c.execute('SELECT payload FROM mail_cache WHERE thread_id=?',(key,)).fetchone()
+   if oid and cached:
+    from mail_history import summarize
+    thread=json.loads(cached['payload']);messages=thread.get('messages',[])
+    c.execute('INSERT OR REPLACE INTO email_threads(thread_id,opportunity_id,company,subject,summary,messages,reviewed) VALUES(?,?,?,?,?,?,?)',(key,oid,lead['company'],thread['subject'],json.dumps(summarize(messages)),json.dumps(messages),now()))
   return {'saved':True}
  def mail_list(self,d):
   box=d.get('box','inbox');search=str(d.get('search',''))[:200];page=str(d.get('page',''))[:500]
@@ -116,4 +124,7 @@ CREATE TABLE IF NOT EXISTS mail_cache(thread_id TEXT PRIMARY KEY,payload TEXT,up
    c.execute('INSERT OR REPLACE INTO mail_cache VALUES(?,?,?)',(key,json.dumps(result),now()))
    meta=c.execute('SELECT * FROM mail_organization WHERE thread_id=?',(key,)).fetchone()
   result['organization']=dict(meta) if meta else {}
+  if not result['organization'].get('opportunity_id'):
+   with self.e.connect() as c:known=c.execute('SELECT opportunity_id FROM email_threads WHERE thread_id=?',(key,)).fetchone()
+   if known:result['organization']['opportunity_id']=known['opportunity_id']
   return result

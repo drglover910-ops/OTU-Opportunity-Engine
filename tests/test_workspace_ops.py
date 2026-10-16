@@ -57,7 +57,11 @@ class WorkspaceOperations(unittest.TestCase):
    thread=self.ops.mail_thread('abc123');self.assertEqual(thread['messages'][0]['body'],'Can we discuss this project?')
    self.assertEqual(len(fetch.call_args_list),3)
    self.assertTrue(all(not call.kwargs.get('method') and 'data' not in call.kwargs for call in fetch.call_args_list))
-  self.ops.organize_mail({'action':'folder','name':'Follow up'});folder=self.ops.folders()[0]['id'];self.ops.organize_mail({'thread_id':'abc123','folder_id':folder,'followup':'2026-10-20'})
+  oid=self.e.add({'company':'Mail client','title':'CRM work','workspace':'contra'})['id']
+  self.ops.organize_mail({'action':'folder','name':'Follow up'});folder=self.ops.folders()[0]['id'];self.ops.organize_mail({'thread_id':'abc123','folder_id':folder,'followup':'2026-10-20','opportunity_id':oid})
+  self.assertEqual(self.e.conversation({'workspace':'contra','opportunity_id':oid})['email_threads'][0]['messages'][0]['body'],'Can we discuss this project?')
+  other=self.e.add({'company':'Other client','title':'Different'})['id']
+  with self.assertRaises(ValueError):self.ops.organize_mail({'thread_id':'abc123','opportunity_id':other})
   with patch.object(self.e,'gmail_token',return_value='fixture'),patch('workspace_ops.fetch_json') as fetch:
    result=self.ops.mail_list({'box':folder});self.assertEqual(result['items'][0]['organization']['followup'],'2026-10-20');fetch.assert_not_called()
 

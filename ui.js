@@ -22,7 +22,7 @@ function tab(name){
  if(name==='settings')name='connections';
  document.querySelector('.layout').classList.add('chat-mode');$('conversation').hidden=false;
  if(name==='conversation'){closeWorkspacePanel(false);return}
- if(name==='mail')loadMail().catch(e=>{$('mail-status').textContent=e.message});
+ if(name==='mail')loadMail().catch(()=>{});
  const section=$(name);if(!section)return;
  if(!$('document-reader').hidden)closeDocumentPane(false);
  panelReturnFocus=document.activeElement;activePanel=name;

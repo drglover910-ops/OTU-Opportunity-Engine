@@ -48,3 +48,13 @@ class AssistantReview(unittest.TestCase):
    result=self.e.ask_workspace({'workspace':'contra','opportunity_id':self.oid,'draft_id':draft['id'],'mode':'revise_proposal','text':'Make it more concise.'})
    payload=json.loads(req.call_args.args[1]['messages'][1]['content']);self.assertEqual(payload['prepared_proposals'][0]['body'],original)
   self.assertEqual(result['draft_id'],draft['id']);self.assertEqual(self.e.draft(draft['id'])['body'],original)
+
+ def test_reconciled_status_and_personality_are_available_without_cross_case_context(self):
+  knowledge=self.e.chat_knowledge({'workspace':'assistant'})
+  statuses={r['name']:r['status'] for r in knowledge['status_report']['opportunities']}
+  self.assertIn('Applied',statuses['GeekyAnts sponsorship']);self.assertIn('not sent',statuses['Podcast Outreach / Tarot Times With Heidi'])
+  self.assertIn('friendly',knowledge['personality']['voice'])
+  scoped=self.e.chat_knowledge({'workspace':'contra','opportunity_id':self.oid})
+  self.assertEqual(scoped['status_report']['opportunities'],[])
+  compact=self.e.chat_knowledge({'workspace':'contra','opportunity_id':self.oid,'mode':'revise_document'})
+  self.assertLess(len(json.dumps(compact)),2200);self.assertIn('career_rules',compact)

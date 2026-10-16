@@ -81,3 +81,5 @@ body.sidebar-collapsed{--nav-width:64px}.sidebar-collapsed .sidebar-top{padding:
 #workspace-menu #version{display:block;padding:8px 12px;font-size:12px;color:#9caea0;border-top:1px solid #354439}
 #app-sidebar .nav-tools[open]{position:absolute;left:10px;bottom:54px;width:236px;max-height:70%;overflow:auto;padding:8px;z-index:70;border:1px solid #455648;box-shadow:0 10px 25px #0009}
 @media(max-width:1100px){#app-sidebar .nav-tools[open]{position:fixed;left:68px;bottom:54px;width:240px;max-height:70dvh}.sidebar-open #app-sidebar .nav-tools[open]{position:absolute;left:10px;bottom:54px;width:236px;border:1px solid #455648;box-shadow:0 10px 25px #0009}}
+
+.answer-audio{display:flex;align-items:center;gap:8px;margin-top:8px}#conversation-feed .answer-audio button{font-size:13px;min-height:40px;margin-top:0;background:transparent;border:0;padding:8px;color:#bdcec2}.answer-audio [aria-pressed="true"]{color:#91efb0!important}#status-report-overview{font-size:15px;line-height:1.7;margin:16px 0}#status-report-basis{font-size:13px;color:#aebeaf}

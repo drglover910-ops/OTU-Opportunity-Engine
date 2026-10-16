@@ -11,7 +11,7 @@ let noticeTimer;function notice(message,error=false){clearTimeout(noticeTimer);$
 async function api(path,data){const r=await fetch(path,{method:data===undefined?'GET':'POST',headers:{'Content-Type':'application/json',...(developerKey?{'X-Developer-Key':developerKey}:{})},body:data===undefined?undefined:JSON.stringify(data)});const value=await r.json();if(!r.ok){if(r.status===403&&value.error?.includes('developer tools')){developerKey='';sessionStorage.removeItem('otu-developer-key');$('developer-content').hidden=true;$('developer-gate').hidden=false;$('developer-lock').hidden=true}let error=value.error||'This request could not be completed.';if(!developerKey&&error.startsWith('Service returned HTTP'))error=/HTTP 402/.test(error)?'AI writing needs provider credits. Basic writing and saved notes still work.':/HTTP 429/.test(error)?'The service needs a short pause. Wait a minute and try again.':/HTTP (401|403)/.test(error)?'This connection needs attention. Open Connections to check it.':'The service could not complete this request. Your saved work is safe.';throw Error(error)}return value}
 async function run(task,success){try{const r=await task();if(success)notice(typeof success==='function'?success(r):success);await refresh();return r}catch(e){notice(e.message,true)}}
 let activePanel=null,browsingWorkspace=null,panelReturnFocus=null;
-const panelNames={today:'Overview',board:'Opportunities',drafts:'Ready to review',library:'Career library',discover:'Explore opportunities',connections:'Connections',help:'Help',workspaces:'Workspaces',developer:'Developer tools',platforms:'Platforms & profiles','platform-browser':'Platform browser','device-tools':'Safari tools','device-import':'Review opportunity',activity:'Activity','chat-settings':'Conversation tools',files:'Conversation files'};
+const panelNames={'status-report':'Where we stand',today:'Overview',board:'Opportunities',drafts:'Ready to review',library:'Career library',discover:'Explore opportunities',connections:'Connections',help:'Help',workspaces:'Workspaces',developer:'Developer tools',platforms:'Platforms & profiles','platform-browser':'Platform browser','device-tools':'Safari tools','device-import':'Review opportunity',activity:'Activity','chat-settings':'Conversation tools',files:'Conversation files'};
 // Retain each live section and its form state. Do not clone IDs or rebuild chat on navigation.
 for(const section of [...document.querySelectorAll('main > .tab')])if(section.id!=='conversation')$('workspace-panel-content').append(section);
 for(const [id,title,nodes] of [['chat-settings','Conversation tools',['application-shortcut','conversation-tools']],['files','Conversation files',['conversation-files']]]){
@@ -50,7 +50,7 @@ async function refresh(){
  [state,leads,documents,drafts,history,messages,packages,careerUpdates,emailCases,workspaces,platforms,contraSummary,developerRequests,knowledge,chatThreads]=await Promise.all(['/api/status','/api/opportunities','/api/documents','/api/drafts','/api/history','/api/messages','/api/packages','/api/career-updates','/api/email-cases','/api/workspaces','/api/platforms','/api/contra/summary','/api/developer/requests','/api/project-knowledge','/api/chat-threads'].map(p=>api(p)));
  $('version').textContent='v'+state.version;$('footer-version').textContent='v'+state.version;
  $('connection-summary').textContent=`${state.storage.restart_verified?'Your work is saved':state.storage.mount_detected?'Saving is connected':'Saving needs attention'} · Gmail ${state.gmail?'connected':'not connected'}`;
- renderSidebar();renderContraResults();renderToday();renderBoard();renderDrafts();renderLibrary();renderActivity();if(developerKey)renderSettings();renderConnections();renderWorkspaces();renderHelp();renderPlatforms();
+ renderStatusReport();renderSidebar();renderContraResults();renderToday();renderBoard();renderDrafts();renderLibrary();renderActivity();if(developerKey)renderSettings();renderConnections();renderWorkspaces();renderHelp();renderPlatforms();
  if(!sessionStorage.getItem('otu-onboarding-seen')&&!documents.length){jump('library');sessionStorage.setItem('otu-onboarding-seen','yes')}
  const scan=state.last_discovery;$('scan-info').textContent=scan.finished?`Last check: ${formatDate(scan.finished)}. ${scan.added||0} added. ${(scan.errors||[]).length?'Some sources failed; live discovery is not fully verified.':''}`:'Your first search is ready. Click Find new opportunities.';
 }
@@ -118,6 +118,8 @@ document.addEventListener('click',async event=>{
   if(action==='open-recent'){const r=chatThreads[Number(b.dataset.chatIndex)];if(r){documentContext=null;proposalContext=null;await openConversation(r.workspace,r.opportunity_id,r.id);closeSidebar()}return}
   if(action==='rename-chat'){renameTarget=b.dataset.chatId;$('rename-chat-title').value=chatThreads.find(t=>t.id===renameTarget)?.title||'';$('rename-chat-dialog').showModal();$('rename-chat-title').focus({preventScroll:true});return}
   if(action==='close-document'){closeDocumentPane();return}
+  if(action==='read-answer'){readAnswer(b);return}
+  if(action==='stop-answer'){stopAnswer();return}
   if(action==='copy-message'){await copyDeviceTool(b.closest('article').querySelector('.message-text').textContent);b.closest('details').open=false;return}
   if(action==='developer-from-answer'){tab('chat-settings');const text=b.closest('article').querySelector('.message-text').textContent;$('developer-request-text').value=text.slice(0,4000);$('developer-request-reviewed').checked=false;$('developer-request-panel').open=true;$('developer-request-text').focus({preventScroll:true});notice('Review this request before sharing it to the private repository.');return}
   if(action==='remember-conversation'){await api('/api/conversation/memory',{workspace:selectedWorkspace,opportunity_id:selectedOpportunity,chat_id:selectedChat,text:$('conversation-memory-text').value});await openConversation(selectedWorkspace,selectedOpportunity);$('conversation-memory-text').value='';notice('Remembered for this conversation. No AI used.');return}
@@ -218,6 +220,7 @@ function renderWorkspaceDetail(){
  $('workspace-cards').innerHTML=`<article class="panel"><h2>${esc(workspace.name)}</h2><p>Planning stays here. Each opportunity below has its own separate conversation.</p><button data-action="workspace-conversation">Open workspace notes</button>${workspace.id==='contra'?'<button class="secondary" data-tab="platforms">Profiles &amp; assisted browsing</button><a class="button secondary" href="https://contra.com/opportunities" target="_blank" rel="noopener">Browse Contra</a><p class="small">Sign in on Contra to browse. Proposals are submitted there manually until account access is verified.</p>':''}<button class="secondary" data-tab="discover">Add an opportunity</button></article>`+items.map(l=>`<article class="panel"><span class="badge">${esc(progressLabels[l.stage]||l.stage)}</span><h2>${esc(l.company)}</h2><p>${esc(l.title)}</p><button data-action="conversation" data-id="${l.id}">Open conversation</button></article>`).join('')+(items.length?'':empty('No opportunities saved here yet. Find a listing, then save it to this workspace.'));
 }
 async function openConversation(workspace,opportunity,chatId=undefined){
+ stopAnswer();
  const load=++conversationLoad;
  if(chatId===undefined)chatId=selectedWorkspace===workspace&&selectedOpportunity===opportunity?selectedChat:null;
  selectedChat=chatId||null;
@@ -238,7 +241,7 @@ async function openConversation(workspace,opportunity,chatId=undefined){
  $('conversation-memory-list').innerHTML=(data.memory||[]).map(m=>`<p>${esc(m.text)} <button class="secondary" data-action="forget-conversation" data-id="${m.id}">Forget</button></p>`).join('');
  const emails=data.email_threads.flatMap(t=>t.messages.map(m=>({type:m.direction==='sent'?'Your email':'Incoming email',text:m.body,date:m.date,subject:m.subject})));
  const notes=data.notes.map(n=>({role:n.role,type:n.role==='assistant'?'OTU assistant':n.role==='user'?'You':'Your private note',text:n.text,date:n.created}));
- $('conversation-feed').innerHTML=[...emails,...notes].sort((a,b)=>a.date.localeCompare(b.date)).map(m=>`<article class="panel ${m.role==='user'?'user-message':'assistant-message'}"><strong>${esc(m.type)}</strong><p class="small">${formatDate(m.date)}${m.subject?' · '+esc(m.subject):''}</p><p class="message-text">${esc(m.text)}</p>${m.type==='OTU assistant'?'<details class="message-menu"><summary aria-label="Message actions">•••</summary><div><button class="secondary" data-action="copy-message">Copy answer</button><button class="secondary" data-action="developer-from-answer">Request a development change</button></div></details>':''}</article>`).join('')||'<div class="chat-welcome"><h1>What shall we work on?</h1><p>Find an opportunity, prepare an application, or ask me a question.</p></div>';
+ $('conversation-feed').innerHTML=[...emails,...notes].sort((a,b)=>a.date.localeCompare(b.date)).map(m=>`<article class="panel ${m.role==='user'?'user-message':'assistant-message'}"><strong>${esc(m.type)}</strong><p class="small">${formatDate(m.date)}${m.subject?' · '+esc(m.subject):''}</p><p class="message-text">${esc(m.text)}</p>${m.type==='OTU assistant'?'<div class="answer-audio"><button type="button" class="secondary" data-action="read-answer" aria-pressed="false">🔊 Read aloud</button><button type="button" class="secondary" data-action="stop-answer" hidden>Stop</button></div><details class="message-menu"><summary aria-label="Message actions">•••</summary><div><button class="secondary" data-action="copy-message">Copy answer</button><button class="secondary" data-action="developer-from-answer">Request a development change</button></div></details>':''}</article>`).join('')||'<div class="chat-welcome"><h1>What shall we work on?</h1><p>Find an opportunity, prepare an application, or ask me a question.</p></div>';
  if(!documentContext)$('conversation-mode').value='advice';
  renderDeveloperRequests();$('chat-document-context').hidden=!documentContext;$('chat-document-context').textContent=documentContext?'Editing context: '+(documents.find(d=>d.id===documentContext)?.name||'prepared document')+'. Suggestions do not change the file until you review and save.':'';
  $('conversation-text').value='';$('ask-workspace').disabled=!state.ai_configured;jump('conversation');
@@ -426,6 +429,7 @@ let speech=null,speechActive=false,speechBase='',speechFinal='',speechAccept=fal
 function stopDictation(){if(speechActive&&speech)speech.stop()}
 function speechStatus(text){$('dictation-status').textContent=text}
 $('dictate-message').onclick=()=>{
+ stopAnswer();
  if(speechActive){stopDictation();return}
  if(!SpeechRecognition){speechStatus('Use the microphone on your iPad keyboard: tap the message box, then the keyboard microphone. Browser dictation is unavailable here.');$('conversation-text').focus({preventScroll:true});return}
  speechAccept=true;speechBase=$('conversation-text').value;speechFinal='';const scope=[selectedWorkspace,selectedOpportunity,selectedChat].join(':');speech=new SpeechRecognition();
@@ -474,3 +478,31 @@ $('chat-files').onchange=async()=>{
  }catch(e){notice(e.message+' If interrupted, select the same file again to resume.',true);await loadConversationFiles()}finally{$('attach-file').disabled=false;$('chat-files').value=''}
 };
 updateFileStorage().catch(()=>{});
+
+function renderStatusReport(){
+ const report=knowledge.status_report||{};
+ $('status-report-basis').textContent='Updated '+(report.as_of||'not recorded')+' · '+(report.basis||'No report yet.');
+ $('status-report-overview').textContent=report.overview||'';
+ $('status-report-items').innerHTML=(report.opportunities||[]).map(item=>`<article class="panel"><span class="badge">${esc(item.status)}</span><h2>${esc(item.name)}</h2><p>${esc(item.evidence)}</p><p><strong>Next:</strong> ${esc(item.next)}</p><details><summary>What supports this status?</summary><p>${esc(item.verification)}</p></details></article>`).join('');
+ $('status-report-foundation').innerHTML=`<article class="panel"><h2>Keep the progress already made</h2><p>${esc(report.services)}</p><p>${esc(report.portfolio)}</p><p>${esc(report.continuity)}</p><p>${esc(report.next_focus)}</p></article>`;
+}
+
+let audioAnswer=null,audioUtterance=null;
+function stopAnswer(){
+ const old=audioAnswer;audioAnswer=null;audioUtterance=null;window.speechSynthesis?.cancel();
+ if(old){old.textContent='🔊 Read aloud';old.setAttribute('aria-pressed','false');const stop=old.parentElement?.querySelector('[data-action=stop-answer]');if(stop)stop.hidden=true}
+}
+function readAnswer(button){
+ if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){notice('Read aloud is unavailable in this browser. Use your device’s spoken-content accessibility controls.',true);return}
+ speechAccept=false;stopDictation();
+ const synth=window.speechSynthesis;
+ if(audioAnswer===button&&audioUtterance){if(synth.paused){synth.resume();button.textContent='⏸ Pause'}else{synth.pause();button.textContent='▶ Resume'}return}
+ stopAnswer();audioAnswer=button;const utterance=new SpeechSynthesisUtterance(button.closest('article').querySelector('.message-text').textContent);audioUtterance=utterance;
+ const language=navigator.language||'en-US',voices=synth.getVoices(),voice=voices.find(v=>v.localService&&v.lang===language)||voices.find(v=>v.localService&&v.lang.startsWith(language.split('-')[0]));if(voice)utterance.voice=voice;utterance.lang=language;utterance.rate=1;
+ button.textContent='⏸ Pause';button.setAttribute('aria-pressed','true');button.parentElement.querySelector('[data-action=stop-answer]').hidden=false;
+ utterance.onend=()=>{if(audioUtterance===utterance)stopAnswer()};utterance.onerror=event=>{if(audioUtterance===utterance){stopAnswer();if(!['canceled','interrupted'].includes(event.error))notice('Your browser could not read this answer aloud. Try its spoken-content accessibility controls.',true)}};
+ try{synth.speak(utterance)}catch(error){stopAnswer();notice('Read aloud could not start in this browser. Try your device’s spoken-content controls.',true)}
+}
+document.addEventListener('click',event=>{if(event.target.closest('[data-action=new-chat],[data-action=open-recent],[data-action=conversation],[data-action=workspace-conversation]'))stopAnswer()},true);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAnswer()});
+addEventListener('pagehide',stopAnswer);

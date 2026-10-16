@@ -15,3 +15,10 @@ In chat, open **Request a development change**, or turn an assistant answer into
 There are no scheduled worker runs or autonomous developer starts. For immediate transfer, the link opens GitHub's bridge workflow: choose **Run workflow**. A copied handoff is the fallback. Receiving a request is not the same as completing it; statuses make that distinction. Existing GitHub Actions runners and authentication are reused; no new app token, subscription or OpenAI spending is required by this implementation. Existing runner usage remains subject to the account's normal allowance.
 
 Prepared proposals have a **Discuss or revise this proposal** button. The correct opportunity chat receives the selected saved proposal. **Review revised proposal** loads suggested wording into the message editor; it is not saved until **Save my edits**, which resets approval. It never sends the proposal automatically.
+
+
+## Working knowledge and voice — v0.15.0
+
+The header menu now includes Where we stand, backed by the reconciled, dated shared working record. It does not perform a live account audit or use inference. Conversational context includes the relevant working status, personality and platform operating policy. A selected opportunity excludes unrelated status records; revisions use a smaller knowledge payload. Latest owner corrections and verified records take precedence over old snapshots. No raw ZIPs, inbox transcripts or master contact documents are added to the shared knowledge file.
+
+Assistant replies include Read aloud, Pause/Resume and Stop, using browser speech synthesis. A local voice is preferred where available; available voices and whether browser/vendor speech processing is online vary by device. No Hugging Face/OpenAI speech endpoint is called. Reading stops on conversation changes/background, and dictation/playback stop each other. No audio is recorded or stored by this feature. Actual Safari speech quality and playback support require owner-device confirmation; Chromium tests mock speech interfaces rather than claiming microphone/speaker hardware validation.

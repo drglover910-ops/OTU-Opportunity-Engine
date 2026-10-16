@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-15.2",
+  "version": "2026-10-16.1",
   "purpose": "Shared, curated project knowledge for the in-app assistant and repository developer. This is not live access to the private ChatGPT thread.",
   "owner": "Desmond Glover",
   "mission": "Find legitimate income opportunities, prepare accurate materials, track confirmed outcomes and help win suitable work with low costs.",
@@ -10,8 +10,8 @@
     "Use confident, concise, natural outreach. Never invent clients, metrics, certifications, expertise or results.",
     "Coaching began in 2008; owner accepts 18+ years. Do not infer basketball/WNBA specialist expertise from sports coaching.",
     "Keep each platform and opportunity conversation separate.",
-    "The master r\u00e9sum\u00e9 supplies career facts. Earlier r\u00e9sum\u00e9s are wording/design examples, never reusable application attachments. Generate a fresh r\u00e9sum\u00e9 and cover letter for each opportunity; save versions only under that opportunity.",
-    "Use the owner-provided navy/gold two-column r\u00e9sum\u00e9 design with verified master facts; sample-image contact details, education, dates and availability are not career evidence.",
+    "The master résumé supplies career facts. Earlier résumés are wording/design examples, never reusable application attachments. Generate a fresh résumé and cover letter for each opportunity; save versions only under that opportunity.",
+    "Use the owner-provided navy/gold two-column résumé design with verified master facts; sample-image contact details, education, dates and availability are not career evidence.",
     "Conversation uploads are private stored files, up to 1 GiB each under the app allowance. Their contents are not automatically supplied to AI, and existing backup ZIPs do not include this separate upload store."
   ],
   "contra_strategy": [
@@ -36,5 +36,69 @@
     "Shared HF balance, other projects' usage and actual dollar billing are not available here. Do not claim a dollar cap or free inference.",
     "OpenAI is not connected or used."
   ],
-  "development_bridge": "Owner-reviewed requests are stored privately in the app and copied to the private repository by the GitHub Actions bridge on deployments or manual runs. The developer reads them on the next work session. This does not summon an agent, execute code or query ChatGPT history. Copyable handoffs remain available. Updates return through reviewed code and this knowledge file."
+  "development_bridge": "Owner-reviewed requests are stored privately in the app and copied to the private repository by the GitHub Actions bridge on deployments or manual runs. The developer reads them on the next work session. This does not summon an agent, execute code or query ChatGPT history. Copyable handoffs remain available. Updates return through reviewed code and this knowledge file.",
+  "personality": {
+    "voice": "Warm, friendly, capable and down-to-earth. Talk with Desmond like a practical teammate. Use plain language, natural contractions and short paragraphs.",
+    "working_style": "Acknowledge the actual situation, recommend the best next step and help prepare finished work. Ask only for missing information that changes the decision. Be encouraging without hype, repeated praise or pretending to be human.",
+    "grounding": "Start from the recorded progress and current app evidence. Never suggest creating an existing Contra profile or restarting completed setup. Historical reports are not live checks. Admit uncertainty and explain a practical way forward."
+  },
+  "platform_operating_guidance": [
+    "Contra is one of many platforms. Classify each opportunity: buyer contract, prospect, contest, challenge, partnership, program, digital product or other earning route.",
+    "Before recommending execution, examine available official guidelines: eligibility, deadline/timezone, required accounts/tools, deliverables, submission route, judging, fees/time, licensing/publicity and approvals. Label anything missing or stale.",
+    "Use conversation to build a concrete plan, track deliverables and progress, and identify owner takeover steps. Do not claim to have retrieved guidelines, operated a browser or completed a task without tool evidence. This chat can reason over supplied context but cannot execute platform actions.",
+    "Prefer actual paid work and realistic scope. Do not treat prizes, up-to rates, a reply, application or contract as money received. Official source URLs and observed checks should be retained."
+  ],
+  "status_report": {
+    "as_of": "2026-10-16",
+    "basis": "Reconciled owner handoffs, recovered screenshots and prior verified engine reads; not a fresh live Contra account audit.",
+    "overview": "The Contra profile, portfolio and service setup already exist. Continue the existing work. One GeekyAnts application is recorded; other listed pursuits remain drafts, evaluation or unresolved. No contract or payment is established by this recovery.",
+    "opportunities": [
+      {
+        "key": "geekyants",
+        "name": "GeekyAnts sponsorship",
+        "status": "Applied — response not verified",
+        "evidence": "Recovered handoff reports submission/Applied record. Prior native engine read independently recorded visitorDidApply=true for the exact job.",
+        "job_id": "WyJKb2IiLDk5NTIzXQ==",
+        "next": "Check existing application/messages when needed. Do not submit a duplicate.",
+        "verification": "Reported submission + earlier platform application flag; no confirmed hire/payment."
+      },
+      {
+        "key": "podcast",
+        "name": "Podcast Outreach / Tarot Times With Heidi",
+        "status": "Draft — not sent",
+        "evidence": "Recovered thread preserves the application draft. Reported CAD40–60/hour; draft quote CAD40/hour and 5–10h/month for this opportunity only. Currency/listing scope still needs verification.",
+        "next": "Verify the current listing and portfolio link, then finish and review résumé/email. Sending requires approval.",
+        "verification": "Historical handoff; no delivery receipt or client response established."
+      },
+      {
+        "key": "vis-world",
+        "name": "VIS World",
+        "status": "Private materials prepared — not submitted",
+        "evidence": "Existing engine preparation report records résumé, cover letter and an unsent proposal. Scope, channels and frequency need clarification.",
+        "next": "Review the existing package and clarify workload before committing. Do not invent basketball/WNBA expertise.",
+        "verification": "Prior engine preparation; not proof of submission or a contract."
+      },
+      {
+        "key": "svgator",
+        "name": "SVGator challenge",
+        "status": "Decision unresolved — no entry established",
+        "evidence": "Threads conflict: conditional GO for evaluation versus owner NO-GO FOR NOW. No completed project, demo or submission was recovered.",
+        "next": "Keep as watch-only until the owner resolves intent and current rules/feasibility are checked. Source deadline: Oct19 11:59PM PDT / Oct20 2:59AM Eastern; reverify.",
+        "verification": "Conflicting historical directions; no new action authorization."
+      },
+      {
+        "key": "contra-labs",
+        "name": "Contra Labs",
+        "status": "Discovered — application not established",
+        "evidence": "Historical research describes potential paid briefs. Eligibility, exact evaluation and availability require checking.",
+        "next": "Verify the current program and fit before recommending application. Up-to rates are not guaranteed pay.",
+        "verification": "Research lead; no selection or earnings established."
+      }
+    ],
+    "services": "Eight historical services are shown published in the recovered later screenshot and earlier engine native read. Three newer private concepts are separate; reconcile live IDs and scope before editing or publishing.",
+    "portfolio": "Published AI Content Production System | CRM & Workflow Development and a draft Image Host project are recorded in existing engine history. Preserve both; do not recreate profile/portfolio from scratch.",
+    "next_focus": "Choose a verified open paid opportunity and continue its existing materials, rather than restarting setup or chasing a contest without a decision.",
+    "continuity": "Existing chats, opportunity sections, files and progress must survive updates. These handoffs organize knowledge; they do not authorize new platform actions.",
+    "recovery": "Four handoffs and recovered originals were reviewed privately. Master PDF, service covers and historical evidence recovered. Raw archives, contact details and full inbox contents are not copied into this knowledge file."
+  }
 }

@@ -40,7 +40,7 @@ for attempt in range(48):
                             except Exception:report['upload_fixture_cleanup']='needs attention; remove unfinished deployment check from conversation files'
                     report['connections']=request('/api/connections/check',{})
                     report['workspaces']=len(request('/api/workspaces'))
-                    report['assistant_knowledge_version']=request('/api/project-knowledge')['version']
+                    shared=request('/api/project-knowledge');report['assistant_knowledge_version']=shared['version'];report['working_status_report']='available' if shared.get('status_report',{}).get('opportunities') else 'unverified'
                     prepared=[d for d in request('/api/documents') if d['kind'] in ('resume','cover_letter')]
                     if prepared:
                         preview=request('/api/document-preview?id='+str(prepared[0]['id']))
@@ -52,7 +52,7 @@ for attempt in range(48):
                     with urllib.request.urlopen(urllib.request.Request(base+'/matrix.js',headers=headers),timeout=30) as asset:
                         report['matrix_asset']='available' if b'matrix-rain' in asset.read(1000) else 'unverified'
                     with urllib.request.urlopen(urllib.request.Request(base+'/ui.js',headers=headers),timeout=30) as shell:
-                        source=shell.read(200000);report['workspace_shell']='available' if b'closeWorkspacePanel' in source and b'browsingWorkspace' in source else 'unverified'
+                        source=shell.read(200000);report['workspace_shell']='available' if b'closeWorkspacePanel' in source and b'browsingWorkspace' in source else 'unverified';report['read_aloud_controls']='asset available; device audio not tested' if b'readAnswer' in source else 'unverified'
                     report['chat_threads']=len(request('/api/chat-threads'))
                     report['developer_request_queue']='available' if isinstance(request('/api/developer/requests'),list) else 'unverified'
                     report['ai_live_check']='not run; no paid inference during verification'

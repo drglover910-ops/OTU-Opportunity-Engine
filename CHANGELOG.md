@@ -1,3 +1,11 @@
+## v0.15.0
+
+- Load reconciled owner handoff knowledge and an evidence-labeled Contra status report into the conversational assistant; preserve existing records and distinguish applications, unsent drafts, conflicting decisions and unverified opportunities.
+- Add Where we stand to the conversation menu using the existing side panel, without AI calls or new setup.
+- Define a warm, practical conversational personality and multi-platform guideline-first planning policy; do not restart existing Contra setup or invent action capabilities.
+- Bound chat knowledge by selected opportunity and use smaller context for document/proposal revisions to control usage and preserve isolation.
+- Add per-answer browser/device Read aloud, Pause, Resume and Stop. Stop playback on chat changes/background and prevent dictation/playback overlap. No HF/OpenAI speech API, new token or paid smoke test.
+
 ## v0.14.0
 
 - Rebuild the viewport shell around one persistent chat, with a collapsible desktop icon rail and tablet/phone navigation overlay.

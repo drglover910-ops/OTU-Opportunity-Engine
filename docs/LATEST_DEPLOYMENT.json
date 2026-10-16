@@ -1,7 +1,7 @@
 {
-  "commit": "37182ae27bcd58463cc9ecbc460a28337e7af4dc",
-  "version": "0.13.0",
-  "checked_at": "2026-10-16T03:52:19.999485+00:00",
+  "commit": "08ae9e5cd0da43e004cc3fd82b6b51932189c145",
+  "version": "0.14.0",
+  "checked_at": "2026-10-16T05:40:04.968416+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-16T03:52:52.592875+00:00",
+    "checked_at": "2026-10-16T05:40:37.509866+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -54,6 +54,7 @@
   "document_preview": "passed",
   "designed_document_preview": "passed",
   "matrix_asset": "available",
+  "workspace_shell": "available",
   "chat_threads": 4,
   "developer_request_queue": "available",
   "ai_live_check": "not run; no paid inference during verification",
@@ -72,7 +73,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-16T03:52:55.598837+00:00",
+    "checked_at": "2026-10-16T05:40:40.932471+00:00",
     "tools": 120,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -5957,8 +5958,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792122780.7536948,
-    "checked_at": "2026-10-16T03:53:00.753706+00:00",
+    "finished_epoch": 1792129246.136963,
+    "checked_at": "2026-10-16T05:40:46.136974+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",

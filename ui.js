@@ -203,8 +203,9 @@ async function openConversation(workspace,opportunity,chatId=undefined){
  $('conversation-title').textContent=thread?thread.title:lead?lead.company+' · '+lead.title:workspace==='assistant'?'Talk to OTU':name+' · Conversation';
  $('pane-title').textContent=$('conversation-title').textContent;
  localStorage.setItem('otu-last-conversation',JSON.stringify({workspace,opportunity,chat_id:selectedChat}));
- $('conversation-description').textContent=name+' · '+(lead?'Opportunity conversation':'Private conversation');
- $('application-shortcut').innerHTML=lead?`<button data-action="package" data-id="${lead.id}">Generate résumé + cover letter</button><span class="small">Fresh from your master record · no paid AI</span>`:'';
+ $('conversation-description').textContent=lead?name+' · Opportunity conversation':'';
+ await loadConversationFiles();if(load!==conversationLoad)return;
+ $('application-shortcut').innerHTML=lead?`<button data-action="package" data-id="${lead.id}">Generate résumé + cover letter</button><button class="secondary" data-tab="drafts">Review documents</button>`:'';
  $('conversation-actions').innerHTML=lead?`<button data-action="package" data-id="${lead.id}">Generate résumé + cover letter</button><button class="secondary" data-action="ai" data-id="${lead.id}">${state.ai_configured?'Prepare an AI message':'Prepare a basic message'}</button><button class="secondary" data-tab="drafts">Review prepared messages</button>${lead.url?`<a class="button secondary" href="${esc(lead.url)}" target="_blank" rel="noopener">Open original opportunity</a>`:''}`:'';
  if(lead&&!state.ai_configured)$('conversation-actions').querySelector('[data-action="ai"]').dataset.action='draft';
  $('conversation-memory-list').innerHTML=(data.memory||[]).map(m=>`<p>${esc(m.text)} <button class="secondary" data-action="forget-conversation" data-id="${m.id}">Forget</button></p>`).join('');
@@ -388,3 +389,32 @@ function showPdfPage(){
  if(!activeDocument)return;$('document-frame').hidden=false;$('document-edit-label').hidden=true;$('pdf-page-error').textContent='';$('pdf-page-status').textContent=`Page ${pdfPage+1} of ${activeDocument.pages}`;document.querySelector('[data-action=pdf-previous]').disabled=pdfPage<=0;document.querySelector('[data-action=pdf-next]').disabled=pdfPage+1>=activeDocument.pages;$('pdf-page-image').src='/api/document-page?id='+activeDocument.id+'&page='+pdfPage;
 }
 $('pdf-page-image').onerror=()=>{$('pdf-page-error').textContent='This page could not be displayed. Choose Read and edit text to continue.'};
+
+function fileScope(){return {workspace:selectedWorkspace,opportunity_id:selectedOpportunity,chat_id:selectedChat}}
+function bytesLabel(n){return n>=1024**3?(n/1024**3).toFixed(2)+' GiB':(n/1024**2).toFixed(1)+' MiB'}
+async function updateFileStorage(){const s=await api('/api/files/storage');const meter=$('file-storage-meter');if(meter)meter.textContent=bytesLabel(s.used)+' saved · '+bytesLabel(s.reserved)+' uploading · '+bytesLabel(s.allowance)+' app allowance. Bucket capacity may differ.';return s}
+async function loadConversationFiles(){
+ const scope=fileScope(),stamp=JSON.stringify(scope);const params=new URLSearchParams(Object.entries(scope).filter(([k,v])=>v!==null));const rows=await api('/api/files/list?'+params);
+ if(stamp!==JSON.stringify(fileScope()))return;
+ $('conversation-files').hidden=!rows.length;
+ $('conversation-file-list').innerHTML=rows.map(f=>`<div class="file-row"><span>${esc(f.name)} · ${bytesLabel(f.size)}</span>${f.state==='complete'?`<a href="/api/files/download?id=${f.id}">Open / save file</a>${/\.(png|jpe?g|webp|gif)$/i.test(f.name)?`<button type="button" class="secondary" data-action="view-photo" data-file="${f.id}">View photo</button>`:''}<details><summary>File options</summary><button type="button" class="secondary" data-action="remove-file" data-file="${f.id}">Remove this file</button></details>`:`<span>Paused at ${Math.floor(f.received/f.size*100)}% · Select this file again to resume</span><button type="button" class="secondary" data-action="cancel-file" data-file="${f.id}">Remove unfinished upload</button>`}</div>`).join('');
+}
+$('attach-file').onclick=()=>$('chat-files').click();
+$('photo-preview').onerror=()=>{$('photo-caption').textContent='This image cannot be previewed here. Use Open / save file to view the original.'};
+$('close-photo').onclick=()=>$('photo-dialog').close();
+document.addEventListener('click',async event=>{const b=event.target.closest('[data-file]');if(!b)return;try{if(b.dataset.action==='view-photo'){$('photo-preview').src='/api/files/photo?id='+b.dataset.file;$('photo-caption').textContent='Private image preview';$('photo-dialog').showModal()}else if(b.dataset.action==='remove-file'){if(!confirm('Remove this file from OTU? Keep your own original if you need it. Your career master files are unaffected.'))return;await api('/api/files/remove',{id:b.dataset.file,confirmed:true});await loadConversationFiles();await updateFileStorage()}else if(b.dataset.action==='cancel-file'){await api('/api/files/cancel',{id:b.dataset.file});await loadConversationFiles();await updateFileStorage()}}catch(e){notice(e.message,true)}});
+$('chat-files').onchange=async()=>{
+ const files=Array.from($('chat-files').files),scope=fileScope();$('attach-file').disabled=true;
+ try{for(const file of files){
+ if(file.size>1024**3)throw Error('Each file can be up to 1 GiB.');
+ const key='otu-upload:'+JSON.stringify(scope)+':'+file.name+':'+file.size+':'+file.lastModified;
+ let saved=localStorage.getItem(key),session=null;
+ if(saved){try{session=await api('/api/files/status?id='+saved)}catch(e){localStorage.removeItem(key)}}
+ if(!session||session.name!==file.name||session.size!==file.size)session=await api('/api/files/start',{...scope,name:file.name,size:file.size});
+ localStorage.setItem(key,session.id);let offset=session.received;
+ while(offset<file.size){const end=Math.min(offset+4*1024**2,file.size),chunk=new Uint8Array(await file.slice(offset,end).arrayBuffer());let binary='';for(let i=0;i<chunk.length;i+=32768)binary+=String.fromCharCode(...chunk.subarray(i,i+32768));const result=await api('/api/files/chunk',{id:session.id,offset,content:btoa(binary)});offset=result.received;notice('Uploading '+file.name+' · '+Math.floor(offset/file.size*100)+'%');}
+ await api('/api/files/finish',{id:session.id});localStorage.removeItem(key);
+ }notice('Files saved privately. They have not been sent to AI or a client.');await loadConversationFiles();await updateFileStorage();$('conversation-files').open=true;
+ }catch(e){notice(e.message+' If interrupted, select the same file again to resume.',true);await loadConversationFiles()}finally{$('attach-file').disabled=false;$('chat-files').value=''}
+};
+updateFileStorage().catch(()=>{});

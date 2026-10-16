@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from huggingface_hub import HfApi, CommitOperationAdd
 SPACE = 'Dezz-9-10/OTU-Opportunity-Engine'
-FILES = ('app.py', 'engine.py', 'applications.py', 'mail_history.py', 'platform_browser.py', 'contra_mcp.py', 'document_review.py', 'document_preview.py', 'assistant_knowledge.json', 'matrix.js', 'ui.html', 'ui.js', 'ui.css', 'playbooks.json', 'requirements.txt', 'Dockerfile', 'README.md', 'VERSION', 'CHANGELOG.md')
+FILES = ('app.py', 'engine.py', 'applications.py', 'mail_history.py', 'platform_browser.py', 'contra_mcp.py', 'document_review.py', 'designed_resume.py', 'attachment_store.py', 'document_preview.py', 'assistant_knowledge.json', 'matrix.js', 'ui.html', 'ui.js', 'ui.css', 'playbooks.json', 'requirements.txt', 'Dockerfile', 'README.md', 'VERSION', 'CHANGELOG.md')
 def main():
     token = os.environ.get('HF_TOKEN')
     if not token:

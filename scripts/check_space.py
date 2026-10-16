@@ -1,5 +1,5 @@
 """Check runtime using GitHub's verified HF binding; publish no private records."""
-import os,json,time,urllib.request,urllib.error
+import os,json,time,urllib.request,urllib.error,base64
 from pathlib import Path
 from datetime import datetime,timezone
 from huggingface_hub import HfApi
@@ -21,6 +21,23 @@ for attempt in range(48):
                 if health.get('version')==VERSION:
                     report['health']='verified';status=request('/api/status')
                     report['storage']=status['storage'];report['opportunities']=status['counts']['opportunities'];report['last_discovery']=status.get('last_discovery',{});report['documents']=status['counts']['documents'];report['gmail_connected']=status['gmail'];report['ai_configured']=status['ai_configured']
+                    # Exercise the actual private HF proxy with bounded chunks, then remove the partial fixture.
+                    upload_id=None
+                    try:
+                        limits=request('/api/files/storage')
+                        fixture=request('/api/files/start',{'workspace':'assistant','name':'otu-deployment-upload-check.zip','size':1024**3});upload_id=fixture['id']
+                        raw=base64.b64encode(b'0'*(4*1024**2)).decode()
+                        first=request('/api/files/chunk',{'id':upload_id,'offset':0,'content':raw})
+                        retry=request('/api/files/chunk',{'id':upload_id,'offset':0,'content':raw})
+                        second=request('/api/files/chunk',{'id':upload_id,'offset':4*1024**2,'content':base64.b64encode(b'1'*1024**2).decode()})
+                        report['large_upload_route']='passed' if first['received']==retry['received']==4*1024**2 and second['received']==5*1024**2 else 'failed'
+                        report['upload_max_bytes']=limits['max_file']
+                        report['upload_check_scope']='1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.'
+                    except Exception:report['large_upload_route']='not verified; check storage allowance and runtime'
+                    finally:
+                        if upload_id:
+                            try:request('/api/files/cancel',{'id':upload_id});report['upload_fixture_cleanup']='passed'
+                            except Exception:report['upload_fixture_cleanup']='needs attention; remove unfinished deployment check from conversation files'
                     report['connections']=request('/api/connections/check',{})
                     report['workspaces']=len(request('/api/workspaces'))
                     report['assistant_knowledge_version']=request('/api/project-knowledge')['version']

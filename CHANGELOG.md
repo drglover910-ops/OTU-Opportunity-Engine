@@ -1,3 +1,10 @@
+## v0.13.0
+
+- Simplify navigation into New chat, Opportunities, Library, Connections and Explore, with Help/settings below; enlarge navigation/chat text and keep recents focused on conversation names.
+- Add the composer file picker, scoped attachment lists and private decoded photo previews. Device-configured cloud providers are accessible through the native Files picker; no new Drive OAuth integration is claimed.
+- Add resumable/idempotent 4 MiB upload chunks, up to 1 GiB per file, a default 5 GiB app allowance, progress, partial cancellation, persistence, streamed downloads and a storage meter. Actual bucket capacity still applies. Conversation uploads are stored separately from legacy backup ZIPs and never automatically sent to AI.
+- Add a navy/gold two-column PDF résumé design and matching styled editable Word layout. Use actual master contact details, chronology, education and capabilities; preserve prior files and generate only for a selected opportunity.
+
 ## v0.12.0
 
 - Anchor the app to Safari's visible viewport and keyboard pan offset; coalesce resize events, prevent programmatic focus scrolling and use readable input sizes without disabling pinch zoom.

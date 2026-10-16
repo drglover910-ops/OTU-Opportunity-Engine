@@ -32,12 +32,12 @@ class Applications(unittest.TestCase):
         result=self.e.create_package({'id':self.oid});self.assertTrue(result['checks']['passed']);self.assertEqual(len(result['files']),4)
         draft=self.e.draft(result['draft_id']);self.assertEqual(draft['status'],'Draft');self.assertEqual(len(__import__('json').loads(draft['attachments'])),2)
         with self.e.connect() as c:row=c.execute('SELECT * FROM documents WHERE id=?',(result['files']['resume_pdf'],)).fetchone()
-        text='\n'.join(p.extract_text() for p in PdfReader(row['path']).pages)
+        text=' '.join(' '.join(p.extract_text() for p in PdfReader(row['path']).pages).split())
         self.assertIn('Jun 2025',text);self.assertIn('private beta deployment',text);self.assertNotIn('110 leads',text);self.assertNotIn('confirm measurement',text)
     def test_unfinished_projects_keep_their_status(self):
         source=MASTER.replace('Image Host: developed and deployed an image-hosting service.','')
         files,checks=build_package(source,self.e.get(self.oid),[])
-        text='\n'.join(p.extract_text() for p in PdfReader(io.BytesIO(files['resume_pdf'])).pages)
+        text=' '.join(' '.join(p.extract_text() for p in PdfReader(io.BytesIO(files['resume_pdf'])).pages).split())
         self.assertIn('implementation is ongoing',text)
     def test_master_preserved_and_new_facts_versioned(self):
         self.e.add_career_update({'fact':'Completed a CRM workflow audit.','category':'CRM / GoHighLevel','confirmed':True})
@@ -47,7 +47,7 @@ class Applications(unittest.TestCase):
         with self.assertRaises(ValueError):self.e.add_career_update({'fact':'Unconfirmed achievement'})
     def test_coaching_counts_and_uncertain_dates_not_reconstructed(self):
         row=self.e.get(self.oid);row['category']='Coaching'
-        files,checks=build_package(MASTER,row,[]);text='\n'.join(p.extract_text() for p in PdfReader(io.BytesIO(files['resume_pdf'])).pages)
+        files,checks=build_package(MASTER,row,[]);text=' '.join(' '.join(p.extract_text() for p in PdfReader(io.BytesIO(files['resume_pdf'])).pages).split())
         self.assertIn('18+',text);self.assertIn('Assistant / Volunteer',text);self.assertNotIn('four championships',text)
     def test_missing_master_or_requirements_fails(self):
         other=Engine(tempfile.mkdtemp());oid=other.add({'company':'X','title':'CRM role','description':'CRM workflow'})['id']

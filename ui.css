@@ -32,3 +32,16 @@ body{position:fixed;top:var(--app-top,0px);left:0;right:0;width:100%;margin:0;ov
 #dictation-status:empty{display:none}
 #dictate-message[aria-pressed="true"]{background:#763728;color:white}
 #conversation-feed,main,#app-sidebar,.document-pane{overscroll-behavior:contain}
+
+/* Familiar, readable navigation and uncluttered conversations. */
+.app-header{padding:10px 22px}.brand{font-size:20px;min-width:220px}
+#app-sidebar{padding:18px 12px}#app-sidebar>button{font-size:16px;min-height:46px;border-radius:10px}
+.recent-heading{font-size:14px;margin-top:28px}.recent-chat .recent-open{font-size:15px;line-height:1.45;padding:12px 10px}.recent-chat small{display:none}
+#chat-search{background:transparent;border:0;border-bottom:1px solid #304238;border-radius:0;padding:8px 10px;font-size:16px}
+#conversation{max-width:900px}#conversation-title{font-size:22px;margin:8px 0}#conversation-description:empty{display:none}
+#conversation-feed .message-text{font-size:17px;line-height:1.7}.chat-tools{font-size:14px}#conversation-tools{border:0;background:transparent;padding:4px 0}
+#conversation-form{padding:14px 16px}#conversation-text{font-size:17px;line-height:1.55}#conversation-feed .panel{border:0;box-shadow:none}
+#conversation-files{font-size:14px;max-height:180px;overflow:auto;flex-shrink:0;margin:6px 0}.file-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:8px;border-bottom:1px solid #2b3b30}.file-row button{margin:0}
+#photo-dialog{max-width:92vw;background:#101812;color:#f0f4f1;border:1px solid #536347;border-radius:15px}#photo-preview{display:block;max-width:85vw;max-height:75dvh;object-fit:contain}
+#file-storage-meter{font-size:15px;padding:12px;background:#142319;border-radius:10px}.sidebar-help{color:var(--text);background:transparent;border:0;text-align:left}
+@media(max-width:760px){#conversation-feed .message-text{font-size:16px}#conversation-title{font-size:19px}.app-header{padding:8px 12px}.composer-toolbar{gap:6px}#attach-file{min-width:40px;padding:8px}#dictate-message{padding:8px}.brand{min-width:0}.file-row{font-size:13px}}

@@ -11,6 +11,8 @@ on:
       - platform_browser.py
       - contra_mcp.py
       - document_review.py
+      - designed_resume.py
+      - attachment_store.py
       - document_preview.py
       - assistant_knowledge.json
       - ui.html

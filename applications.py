@@ -105,6 +105,9 @@ def cover_paragraphs(data,row):
             paragraphs.append('At '+employer+', I '+proof[0].lower()+proof[1:])
     return paragraphs+[close,'Sincerely,',data['name']]
 def pdf_document(data,sections,is_cover=False):
+    if not is_cover:
+        from designed_resume import render
+        return render(data)
     out=io.BytesIO();styles=getSampleStyleSheet()
     styles.add(ParagraphStyle(name='NameOTU',fontName='OTUBold',fontSize=23,leading=27,textColor=colors.HexColor(NAVY),spaceAfter=7))
     styles.add(ParagraphStyle(name='ContactOTU',fontName='OTURegular',fontSize=9,leading=12,textColor=colors.HexColor(NAVY),spaceAfter=10))
@@ -131,6 +134,9 @@ def pdf_document(data,sections,is_cover=False):
     SimpleDocTemplate(out,pagesize=letter,rightMargin=42,leftMargin=42,topMargin=44,bottomMargin=34).build(story,onFirstPage=page,onLaterPages=page)
     return out.getvalue()
 def docx_document(data,sections,is_cover=False):
+    if not is_cover:
+        from designed_resume import word
+        return word(data,sections)
     doc=Document();sec=doc.sections[0];sec.top_margin=Inches(.65);sec.bottom_margin=Inches(.6);sec.left_margin=sec.right_margin=Inches(.6)
     style=doc.styles['Normal'];style.font.name='Calibri';style.font.size=Pt(10);style.paragraph_format.space_after=Pt(5)
     p=doc.add_paragraph();run=p.add_run(data['name']);run.bold=True;run.font.size=Pt(23);run.font.color.rgb=RGBColor.from_string(NAVY[1:]);doc.add_paragraph(data['contact'])
@@ -159,7 +165,7 @@ def tailor(data,row):
     return data
 
 def build_package(master,row,updates):
-    data=tailor(profile(master,row['category'],updates),row);data['target']=row['title'];sections=resume_sections(data);cover=cover_paragraphs(data,row)
+    data=tailor(profile(master,row['category'],updates),row);data['target']=row['title'];data['source_tools']=' '.join(clean(x) for x in section(master,'TECHNOLOGY & PLATFORMS','MASTER RECORD INTEGRITY / TAILORING NOTES') if clean(x));sections=resume_sections(data);cover=cover_paragraphs(data,row)
     result={'resume_pdf':pdf_document(data,sections),'resume_docx':docx_document(data,sections),'cover_pdf':pdf_document(data,cover,True),'cover_docx':docx_document(data,cover,True)}
     pages={};texts=[]
     for key in ['resume_pdf','cover_pdf']:

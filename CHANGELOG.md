@@ -1,3 +1,10 @@
+## v0.12.0
+
+- Anchor the app to Safari's visible viewport and keyboard pan offset; coalesce resize events, prevent programmatic focus scrolling and use readable input sizes without disabling pinch zoom.
+- Add browser speech dictation with editable text, visible listening/stop state, permission/error guidance and keyboard dictation fallback. No automatic send or paid transcription provider.
+- Generate fresh opportunity-specific application packages; rank source facts against listing requirements, preserve versions, label past examples, remove old résumé auto-attachments and block unrelated résumé/cover-letter attachments during approval.
+- Keep application generation visible inside opportunity conversations. Master files remain unchanged; existing confirmed-update controls remain in place.
+
 # Release history
 
 ## 0.11.0 — 2026-10-15

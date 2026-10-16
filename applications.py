@@ -147,8 +147,19 @@ def docx_document(data,sections,is_cover=False):
                     for bullet in item['bullets'][:2]:doc.add_paragraph(bullet,style='List Bullet')
                 else:doc.add_paragraph(item)
     out=io.BytesIO();doc.save(out);return out.getvalue()
+def tailor(data,row):
+    """Select and order verified source facts for this exact listing, without inventing claims."""
+    words=set(re.findall(r'[a-z]{3,}',(row['title']+' '+row.get('description','')).lower()))-{'the','and','with','for','you','your','our','are','that','will','from','this','have'}
+    def relevance(text):return len(words & set(re.findall(r'[a-z]{3,}',text.lower())))
+    for role in data['roles']:
+        role['bullets']=sorted(role['bullets'],key=lambda x:-relevance(x))[:2]
+    data['roles']=sorted(data['roles'],key=lambda r:-relevance(r['heading']+' '+' '.join(r['bullets'])))
+    data['skills']=sorted(data['skills'],key=lambda x:-relevance(x))
+    data['projects']=sorted(data['projects'],key=lambda x:-relevance(x))
+    return data
+
 def build_package(master,row,updates):
-    data=profile(master,row['category'],updates);data['target']=row['title'];sections=resume_sections(data);cover=cover_paragraphs(data,row)
+    data=tailor(profile(master,row['category'],updates),row);data['target']=row['title'];sections=resume_sections(data);cover=cover_paragraphs(data,row)
     result={'resume_pdf':pdf_document(data,sections),'resume_docx':docx_document(data,sections),'cover_pdf':pdf_document(data,cover,True),'cover_docx':docx_document(data,cover,True)}
     pages={};texts=[]
     for key in ['resume_pdf','cover_pdf']:
@@ -159,7 +170,7 @@ def build_package(master,row,updates):
         if phrase in text:raise ValueError('Internal source text found; document generation stopped for correction.')
     for required in [data['name'],row['company'],row['title']]:
         if required.lower() not in text:raise ValueError('Generated document is missing a required name or role.')
-    return result,{'passed':True,'resume_pages':pages['resume_pdf'],'cover_pages':pages['cover_pdf'],'source':'Imported master career record; wording and dates preserved','ai_used':False}
+    return result,{'passed':True,'resume_pages':pages['resume_pdf'],'cover_pages':pages['cover_pdf'],'source':'Imported master career record; wording and dates preserved','ai_used':False,'opportunity_id':row.get('id'),'tailoring':'Listing-based selection of master facts; past application files are never reused'}
 
 def master_document(record):
     doc=Document();doc.styles['Normal'].font.name='Calibri';doc.styles['Normal'].font.size=Pt(10)

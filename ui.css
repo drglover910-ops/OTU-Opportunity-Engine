@@ -23,3 +23,12 @@ body{height:var(--app-height,100dvh)}.layout{height:calc(var(--app-height,100dvh
 @media(max-width:760px){.layout,#app-sidebar,.document-pane{height:calc(var(--app-height,100dvh) - 58px)}}
 
 #document-frame,.document-pane #document-frame{height:auto;background:#f9faf9;padding:8px}#pdf-page-image{display:block;width:100%;height:auto}#pdf-page-status{color:#172b42;font-size:12px}.pdf-page-controls{display:flex;align-items:center;justify-content:space-between;background:#e5ebe7;padding:4px 8px;gap:8px}.pdf-page-controls button{margin:0;min-width:44px}#pdf-page-error{color:#6e291c}
+
+/* The document never scrolls behind independently scrollable app panes. */
+html{height:100%;overflow:hidden;overscroll-behavior:none}
+body{position:fixed;top:var(--app-top,0px);left:0;right:0;width:100%;margin:0;overscroll-behavior:none}
+#chat-search,input,select,textarea{font-size:16px}
+#dictation-status{margin:4px 0 0;max-height:56px;overflow:auto}
+#dictation-status:empty{display:none}
+#dictate-message[aria-pressed="true"]{background:#763728;color:white}
+#conversation-feed,main,#app-sidebar,.document-pane{overscroll-behavior:contain}

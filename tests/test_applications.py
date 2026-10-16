@@ -54,3 +54,22 @@ class Applications(unittest.TestCase):
         with self.assertRaises(ValueError):other.create_package({'id':oid})
     def test_generated_package_and_master_updates_survive_restore(self):
         self.e.create_package({'id':self.oid});target=Engine(tempfile.mkdtemp());target.restore(self.e.backup());self.assertEqual(len(target.packages()),1);self.assertTrue(target.career_updates());self.assertEqual(len(target.packages()[0]['files'])>0,True)
+
+    def test_past_examples_never_auto_attach_and_cross_opportunity_is_blocked(self):
+        import json
+        old=self.e.import_file('Past_Resume.txt',b'Past application example','resume')['id']
+        draft=self.e.create_draft({'id':self.oid,'mode':'template'})
+        self.assertEqual(draft['attachments'],[])
+        package=self.e.create_package({'id':self.oid})
+        other=self.e.add({'company':'Other client','title':'Sales role','description':'sales'})['id']
+        otherdraft=self.e.create_draft({'id':other,'mode':'template'})
+        row=self.e.draft(otherdraft['id']);row['attachments']=[package['files']['resume_pdf']];self.e.edit_draft(row)
+        self.assertTrue(any('past examples' in warning for warning in self.e.checks(self.e.draft(row['id']))))
+        self.assertNotIn(old,json.loads(self.e.draft(package['draft_id'])['attachments']))
+
+    def test_requirement_ranking_preserves_actual_words(self):
+        from applications import tailor
+        data={'roles':[{'heading':'Customer support','bullets':['Managed support records.','Built automation workflows.'],'dates':'2020'}], 'skills':['Sales','Automation'], 'projects':[]}
+        result=tailor(data,{'title':'Automation workflows','description':'Build automation workflows'})
+        self.assertEqual(result['roles'][0]['bullets'][0],'Built automation workflows.')
+        self.assertEqual(result['skills'][0],'Automation')

@@ -1,3 +1,12 @@
+## v0.14.0
+
+- Rebuild the viewport shell around one persistent chat, with a collapsible desktop icon rail and tablet/phone navigation overlay.
+- Move supporting sections into an independent side pane: chat, draft text and scroll position are preserved when browsing tools. Separate workspace browsing state from active conversation scope.
+- Remove inherited dashboard centering and repeated chat headings/actions; align panes with the screen edges, use compact anchored menus and a lower-profile composer, and quiet the Matrix background.
+- Coalesce visible-viewport changes, preserve message scroll anchoring and account for Safari pan offsets without programmatic page scrolling. Keep pinch zoom enabled and avoid opening the keyboard automatically on New chat.
+- Add responsive panel focus/escape/backdrop behavior, tablet document-to-chat dismissal, native-dialog precedence and persistent version access through the conversation menu.
+- Save a reproducible localhost-only browser fixture at scripts/check_workspace_ui.py. No inference is called by the fixture.
+
 ## v0.13.0
 
 - Simplify navigation into New chat, Opportunities, Library, Connections and Explore, with Help/settings below; enlarge navigation/chat text and keep recents focused on conversation names.

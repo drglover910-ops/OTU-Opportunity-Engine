@@ -51,6 +51,8 @@ for attempt in range(48):
                             report['designed_document_preview']='passed' if image.headers.get('Content-Type')=='image/png' and image.read(8)==b'\x89PNG\r\n\x1a\n' else 'unverified'
                     with urllib.request.urlopen(urllib.request.Request(base+'/matrix.js',headers=headers),timeout=30) as asset:
                         report['matrix_asset']='available' if b'matrix-rain' in asset.read(1000) else 'unverified'
+                    with urllib.request.urlopen(urllib.request.Request(base+'/ui.js',headers=headers),timeout=30) as shell:
+                        source=shell.read(200000);report['workspace_shell']='available' if b'closeWorkspacePanel' in source and b'browsingWorkspace' in source else 'unverified'
                     report['chat_threads']=len(request('/api/chat-threads'))
                     report['developer_request_queue']='available' if isinstance(request('/api/developer/requests'),list) else 'unverified'
                     report['ai_live_check']='not run; no paid inference during verification'

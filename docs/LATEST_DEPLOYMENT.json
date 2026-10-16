@@ -1,7 +1,7 @@
 {
-  "commit": "d0df6540bfcf1c7618a0d520dbbfbf6d3fb9c480",
-  "version": "0.15.0",
-  "checked_at": "2026-10-16T21:06:15.236838+00:00",
+  "commit": "5a3576ce9d96fdf6a5c71d24077c613e6be94732",
+  "version": "0.16.0",
+  "checked_at": "2026-10-16T23:57:38.786983+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-16T21:06:57.819767+00:00",
+    "checked_at": "2026-10-16T23:58:21.941381+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -58,6 +58,44 @@
   "workspace_shell": "available",
   "read_aloud_controls": "asset available; device audio not tested",
   "chat_threads": 5,
+  "projects": 9,
+  "recovery_checkpoint": {
+    "checkpoint": true,
+    "bytes": 1280829,
+    "preserved": true,
+    "checks": {
+      "work_notes": true,
+      "conversation_memory": true,
+      "conversation_threads": true,
+      "documents": true,
+      "attachment_uploads": true
+    },
+    "counts": {
+      "work_notes": {
+        "before": 3,
+        "now": 3
+      },
+      "conversation_memory": {
+        "before": 0,
+        "now": 0
+      },
+      "conversation_threads": {
+        "before": 3,
+        "now": 3
+      },
+      "documents": {
+        "before": 29,
+        "now": 29
+      },
+      "attachment_uploads": {
+        "before": 0,
+        "now": 0
+      }
+    },
+    "credentials_included": false
+  },
+  "mail_workspace": "local drafts readable",
+  "gmail_mailbox_read": "passed",
   "developer_request_queue": "available",
   "ai_live_check": "not run; no paid inference during verification",
   "ai_budget": {
@@ -75,7 +113,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-16T21:07:01.378204+00:00",
+    "checked_at": "2026-10-16T23:58:26.617226+00:00",
     "tools": 120,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -5960,8 +5998,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792184826.634753,
-    "checked_at": "2026-10-16T21:07:06.634767+00:00",
+    "finished_epoch": 1792195112.1773698,
+    "checked_at": "2026-10-16T23:58:32.177384+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",
@@ -6261,14 +6299,20 @@
             "type"
           ],
           [
-            "countryId",
-            "name"
-          ],
-          [
             "approvedAt",
             "externalUrl",
             "jobPostingId",
             "status"
+          ],
+          [
+            "isVerified",
+            "name",
+            "organizationId",
+            "slug"
+          ],
+          [
+            "countryId",
+            "name"
           ],
           [
             "languageName",
@@ -6283,12 +6327,6 @@
           [
             "amount",
             "interval"
-          ],
-          [
-            "isVerified",
-            "name",
-            "organizationId",
-            "slug"
           ]
         ],
         "unavailable": false,
@@ -6455,6 +6493,73 @@
           ],
           [
             "backgroundColor",
+            "isToggleable",
+            "level",
+            "textAlignment",
+            "textColor"
+          ],
+          [
+            "styles",
+            "text",
+            "type"
+          ],
+          [],
+          [
+            "backgroundColor",
+            "textAlignment",
+            "textColor"
+          ],
+          [
+            "bold"
+          ],
+          [
+            "estimatedHours",
+            "feeMax",
+            "feeMin",
+            "type"
+          ],
+          [
+            "jobPostingId",
+            "status"
+          ],
+          [
+            "name",
+            "organizationId",
+            "slug"
+          ]
+        ],
+        "unavailable": false
+      },
+      "detail_get_job_by_slug:1": {
+        "shapes": [
+          [
+            "job",
+            "ok"
+          ],
+          [
+            "blocknoteDescription",
+            "budget",
+            "duration",
+            "hiringAsIndividual",
+            "jobId",
+            "jobPosting",
+            "numberOfOpenPositions",
+            "organization",
+            "owner",
+            "publicUrl",
+            "slug",
+            "status",
+            "title"
+          ],
+          [
+            "children",
+            "content",
+            "id",
+            "props",
+            "type"
+          ],
+          [
+            "backgroundColor",
             "textAlignment",
             "textColor"
           ],
@@ -6486,7 +6591,7 @@
         ],
         "unavailable": false
       },
-      "detail_get_job_by_slug:1": {
+      "detail_get_job_by_slug:2": {
         "shapes": [
           [
             "job",
@@ -6554,91 +6659,26 @@
           ]
         ],
         "unavailable": false
-      },
-      "detail_get_job_by_slug:2": {
-        "shapes": [
-          [
-            "job",
-            "ok"
-          ],
-          [
-            "blocknoteDescription",
-            "budget",
-            "duration",
-            "hiringAsIndividual",
-            "jobId",
-            "jobPosting",
-            "numberOfOpenPositions",
-            "organization",
-            "owner",
-            "publicUrl",
-            "slug",
-            "status",
-            "title"
-          ],
-          [
-            "children",
-            "content",
-            "id",
-            "props",
-            "type"
-          ],
-          [
-            "backgroundColor",
-            "isToggleable",
-            "level",
-            "textAlignment",
-            "textColor"
-          ],
-          [
-            "styles",
-            "text",
-            "type"
-          ],
-          [],
-          [
-            "backgroundColor",
-            "textAlignment",
-            "textColor"
-          ],
-          [
-            "children",
-            "id",
-            "props",
-            "type"
-          ],
-          [
-            "coverImageAnimated",
-            "coverImageChecksum",
-            "coverImageHeight",
-            "coverImageOriginalFormat",
-            "coverImageSizeBytes",
-            "coverImageUid",
-            "coverImageUrl",
-            "coverImageWidth",
-            "placeholderId",
-            "url"
-          ],
-          [
-            "estimatedHours",
-            "feeMax",
-            "feeMin",
-            "type"
-          ],
-          [
-            "jobPostingId",
-            "status"
-          ],
-          [
-            "name",
-            "organizationId",
-            "slug"
-          ]
-        ],
-        "unavailable": false
       }
     },
     "public_opportunities": [
+      {
+        "title": "Senior Visual Communication Designers ",
+        "url": "https://contra.com/opportunity/3XeBEk2l-senior-visual-communication-designers",
+        "kind": "Job / contract",
+        "source": "Contra",
+        "description": "We're expanding our network of senior designers.\nAt \nPointblank Presentations\n, we're looking to connect with experienced designers for future project-based collaborations.\nWhile presentations are at the core of what we do, we occasionally receive client briefs that fall outside our primary focus. We're looking to build a trusted network of specialists across \nbranding, editorial design, motion design, illustration, UI/UX, and other creative disciplines.\nWho we're looking for\nExperienced specialists\n with strong expertise in their respective design disciplines.\nDesigners with a strong visual eye\n who can communicate ideas clearly and creatively.\nIndependent professionals\n who are comfortable collaborating with our team on a project-by-project basis.\nSenior presentation designers\n who can support our core team when additional capacity is needed.\nHow it works\nThis isn't a full-time position. We're building a network of independent designers we can collaborate with when relevant projects come in.\nEach opportunity will have its own scope, timeline, and deliverables.\nInterested in collaborating?\nApply with your \nbest work or portfolio, your hourly rate, and your time zone.",
+        "budget": {
+          "estimatedHours": 10,
+          "feeMax": "USD:50.00000000",
+          "feeMin": "USD:25.00000000",
+          "type": "HourlyRateJobBudget"
+        },
+        "prize": null,
+        "deadline": null,
+        "status": "POSTED",
+        "requirements_verified": false
+      },
       {
         "title": "Freelance Social Media Content Designer | Hair Wellness Brand",
         "url": "https://contra.com/opportunity/OUXve7UX-freelance-social-media-content-designer-or-hair-wellness-brand",
@@ -6667,23 +6707,6 @@
           "feeMax": "USD:450.00000000",
           "feeMin": "USD:250.00000000",
           "type": "FixedPriceJobBudget"
-        },
-        "prize": null,
-        "deadline": null,
-        "status": "POSTED",
-        "requirements_verified": false
-      },
-      {
-        "title": "Video Editor for Short-Form Social Media Storytelling Videos",
-        "url": "https://contra.com/opportunity/cUcMRog2-video-editor-for-short-form-social-media-storytelling-videos",
-        "kind": "Job / contract",
-        "source": "Contra",
-        "description": "Overview\nPhoenix Dorninger Multimedia is looking for a video editor to create short social media storytelling videos with a highly aesthetic style. The work calls for creative editing choices, motion graphics, strong pacing, and careful attention to sound design, Da Vinci Resolve, color grading, and music selection.\nResponsibilities\nThe specific scope and deliverables were not fully provided, but the role centers on editing short-form social media storytelling content with a polished, cinematic feel.\nEdit short social media storytelling videos\nUse motion graphics and creative editing choices to support an aesthetic look\nApply sound design, color grading, and quality music selection\nWork in Da Vinci Resolve\nEnsure strong pacing and overall visual aesthetics\nReference Videos:\n",
-        "budget": {
-          "estimatedHours": 10,
-          "feeMax": "USD:40.00000000",
-          "feeMin": "USD:25.00000000",
-          "type": "HourlyRateJobBudget"
         },
         "prize": null,
         "deadline": null,

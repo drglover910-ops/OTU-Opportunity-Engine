@@ -1,7 +1,7 @@
 {
-  "commit": "f2633bf28bf9634dfad7d462667c18120a53fda4",
-  "version": "0.12.0",
-  "checked_at": "2026-10-16T01:25:29.310338+00:00",
+  "commit": "37182ae27bcd58463cc9ecbc460a28337e7af4dc",
+  "version": "0.13.0",
+  "checked_at": "2026-10-16T03:52:19.999485+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -12,22 +12,26 @@
     "restart_verified": true,
     "message": "Mounted storage detected; verify a saved record survives a restart."
   },
-  "opportunities": 160,
+  "opportunities": 164,
   "last_discovery": {
-    "added": 12,
-    "seen": 53,
+    "added": 4,
+    "seen": 54,
     "errors": [],
     "sources_ok": [
       "We Work Remotely RSS",
       "Remotive"
     ],
-    "finished": "2026-10-15T15:27:18.875616+00:00"
+    "finished": "2026-10-16T03:28:10.625092+00:00"
   },
   "documents": 25,
   "gmail_connected": true,
   "ai_configured": true,
+  "large_upload_route": "passed",
+  "upload_max_bytes": 1073741824,
+  "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
+  "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-16T01:26:00.144786+00:00",
+    "checked_at": "2026-10-16T03:52:52.592875+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -46,11 +50,11 @@
     }
   },
   "workspaces": 9,
-  "assistant_knowledge_version": "2026-10-15.1",
+  "assistant_knowledge_version": "2026-10-15.2",
   "document_preview": "passed",
   "designed_document_preview": "passed",
   "matrix_asset": "available",
-  "chat_threads": 2,
+  "chat_threads": 4,
   "developer_request_queue": "available",
   "ai_live_check": "not run; no paid inference during verification",
   "ai_budget": {
@@ -68,7 +72,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-16T01:26:03.281426+00:00",
+    "checked_at": "2026-10-16T03:52:55.598837+00:00",
     "tools": 120,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -5953,8 +5957,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792113969.3778374,
-    "checked_at": "2026-10-16T01:26:09.377848+00:00",
+    "finished_epoch": 1792122780.7536948,
+    "checked_at": "2026-10-16T03:53:00.753706+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",

@@ -1,7 +1,7 @@
 {
-  "commit": "08ae9e5cd0da43e004cc3fd82b6b51932189c145",
-  "version": "0.14.0",
-  "checked_at": "2026-10-16T05:40:04.968416+00:00",
+  "commit": "d0df6540bfcf1c7618a0d520dbbfbf6d3fb9c480",
+  "version": "0.15.0",
+  "checked_at": "2026-10-16T21:06:15.236838+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -12,18 +12,18 @@
     "restart_verified": true,
     "message": "Mounted storage detected; verify a saved record survives a restart."
   },
-  "opportunities": 164,
+  "opportunities": 180,
   "last_discovery": {
-    "added": 4,
-    "seen": 54,
+    "added": 16,
+    "seen": 59,
     "errors": [],
     "sources_ok": [
       "We Work Remotely RSS",
       "Remotive"
     ],
-    "finished": "2026-10-16T03:28:10.625092+00:00"
+    "finished": "2026-10-16T15:28:52.298850+00:00"
   },
-  "documents": 25,
+  "documents": 29,
   "gmail_connected": true,
   "ai_configured": true,
   "large_upload_route": "passed",
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-16T05:40:37.509866+00:00",
+    "checked_at": "2026-10-16T21:06:57.819767+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -50,12 +50,14 @@
     }
   },
   "workspaces": 9,
-  "assistant_knowledge_version": "2026-10-15.2",
+  "assistant_knowledge_version": "2026-10-16.1",
+  "working_status_report": "available",
   "document_preview": "passed",
   "designed_document_preview": "passed",
   "matrix_asset": "available",
   "workspace_shell": "available",
-  "chat_threads": 4,
+  "read_aloud_controls": "asset available; device audio not tested",
+  "chat_threads": 5,
   "developer_request_queue": "available",
   "ai_live_check": "not run; no paid inference during verification",
   "ai_budget": {
@@ -73,7 +75,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-16T05:40:40.932471+00:00",
+    "checked_at": "2026-10-16T21:07:01.378204+00:00",
     "tools": 120,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -5958,8 +5960,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792129246.136963,
-    "checked_at": "2026-10-16T05:40:46.136974+00:00",
+    "finished_epoch": 1792184826.634753,
+    "checked_at": "2026-10-16T21:07:06.634767+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",
@@ -6259,16 +6261,14 @@
             "type"
           ],
           [
+            "countryId",
+            "name"
+          ],
+          [
             "approvedAt",
             "externalUrl",
             "jobPostingId",
             "status"
-          ],
-          [
-            "isVerified",
-            "name",
-            "organizationId",
-            "slug"
           ],
           [
             "languageName",
@@ -6279,6 +6279,16 @@
             "firstName",
             "lastName",
             "userProfileId"
+          ],
+          [
+            "amount",
+            "interval"
+          ],
+          [
+            "isVerified",
+            "name",
+            "organizationId",
+            "slug"
           ]
         ],
         "unavailable": false,
@@ -6408,59 +6418,10 @@
             "hasNextPage",
             "ok",
             "totalCount"
-          ],
-          [
-            "job",
-            "jobFeedEntryId",
-            "visitorDidApply",
-            "visitorDidBookmark",
-            "visitorDidDismiss",
-            "visitorDidView",
-            "visitorWasMatched"
-          ],
-          [
-            "budget",
-            "country",
-            "createdAt",
-            "duration",
-            "hiringAsIndividual",
-            "jobId",
-            "jobPosting",
-            "languages",
-            "numberOfOpenPositions",
-            "organization",
-            "owner",
-            "publicUrl",
-            "roles",
-            "slug",
-            "startTimeframe",
-            "status",
-            "timezoneOffsetTolerance",
-            "timezonePrimaryUtcOffset",
-            "title",
-            "tools"
-          ],
-          [
-            "estimatedHours",
-            "feeMax",
-            "feeMin",
-            "type"
-          ],
-          [
-            "approvedAt",
-            "externalUrl",
-            "jobPostingId",
-            "status"
-          ],
-          [
-            "isVerified",
-            "name",
-            "organizationId",
-            "slug"
           ]
         ],
         "unavailable": false,
-        "returned": 1,
+        "returned": 0,
         "has_more": false,
         "access_limited": true
       },
@@ -6504,10 +6465,7 @@
           ],
           [],
           [
-            "backgroundColor",
-            "start",
-            "textAlignment",
-            "textColor"
+            "bold"
           ],
           [
             "estimatedHours",
@@ -6520,9 +6478,10 @@
             "status"
           ],
           [
-            "name",
-            "organizationId",
-            "slug"
+            "displayUsername",
+            "firstName",
+            "lastName",
+            "userProfileId"
           ]
         ],
         "unavailable": false
@@ -6580,13 +6539,18 @@
             "type"
           ],
           [
+            "amount",
+            "interval"
+          ],
+          [
             "jobPostingId",
             "status"
           ],
           [
-            "name",
-            "organizationId",
-            "slug"
+            "displayUsername",
+            "firstName",
+            "lastName",
+            "userProfileId"
           ]
         ],
         "unavailable": false
@@ -6631,22 +6595,29 @@
             "text",
             "type"
           ],
-          [
-            "bold"
-          ],
+          [],
           [
             "backgroundColor",
             "textAlignment",
             "textColor"
           ],
-          [],
           [
-            "content",
-            "href",
+            "children",
+            "id",
+            "props",
             "type"
           ],
           [
-            "underline"
+            "coverImageAnimated",
+            "coverImageChecksum",
+            "coverImageHeight",
+            "coverImageOriginalFormat",
+            "coverImageSizeBytes",
+            "coverImageUid",
+            "coverImageUrl",
+            "coverImageWidth",
+            "placeholderId",
+            "url"
           ],
           [
             "estimatedHours",
@@ -6659,10 +6630,9 @@
             "status"
           ],
           [
-            "displayUsername",
-            "firstName",
-            "lastName",
-            "userProfileId"
+            "name",
+            "organizationId",
+            "slug"
           ]
         ],
         "unavailable": false
@@ -6670,16 +6640,16 @@
     },
     "public_opportunities": [
       {
-        "title": "AI Search Visibility (GEO) Specialist for B2B SaaS \u2014 Get RedirHub Recommended by ChatGPT",
-        "url": "https://contra.com/opportunity/RmQWWAvk-ai-search-visibility-geo-specialist-for-b2-b-saa-s-get-redir-hub-recommended-by-chat-gpt",
+        "title": "Freelance Social Media Content Designer | Hair Wellness Brand",
+        "url": "https://contra.com/opportunity/OUXve7UX-freelance-social-media-content-designer-or-hair-wellness-brand",
         "kind": "Job / contract",
         "source": "Contra",
-        "description": "About RedirHub\nRedirHub helps businesses manage domain and URL redirects at scale: 301 redirects, HTTPS on redirected domains, branded links and website migrations. Our customers are SEO consultants, agencies and teams moving or consolidating websites.\nWhy we're hiring\nPeople who find us through AI assistants (ChatGPT, Gemini, Perplexity) are already our best users. They sign up and set up a domain at a much higher rate than visitors from any other channel. But AI assistants still mention us far less often than they should, especially ChatGPT, and almost never for SEO and website-migration questions, which are our strongest use case. We want someone to fix that.\nWhat we already have (you won't start from zero)\nAI visibility tracking: an automated system that asks ChatGPT and Gemini 60 buyer questions on a schedule and records whether RedirHub is mentioned, our position, competitors and cited sources. You'll see the baseline on day one and measure your impact against it.\nProduct Facts: an internal library of verified, approved product facts (pricing, limits, SLA, infrastructure, features), so every claim you make is accurate.\nllms.txt: a structured index of our site for AI models.\nAbout 30 comparison pages already live (redirect.pizza, Cloudflare, urllo, redirection.io, Bitly, Short.io, Rebrandly, Dub and more), plus how-to guides and support docs.\nGrowth engineers who ship page changes quickly, and analytics that show AI-referred sign-ups.\nWe don't need another audit. We need someone to execute.\nWhat you'll do\nGet RedirHub into the third-party sources AI assistants cite: \"best tools\" lists and comparison articles, G2, Capterra, AlternativeTo, SaaSHub, Reddit and community threads, Q&A sites. Honestly earned, no spam, no fake reviews, no undisclosed paid posts.\nClose the SEO and website-migration gap: plan and help produce the definitive guides AI should cite for questions like \"how to preserve SEO during a site migration\" or \"how to redirect thousands of URLs\".\nKeep our own pages and llms.txt easy for AI to quote, using our approved Product Facts.\nReport every two weeks on mentions, citations and AI-referred sign-ups, using our tracking data.\nEngagement: part-time, about 10-15 hrs/week, ongoing. $30-60/hr depending on proven results.\nYou're likely a fit if you\nHave measurably increased a brand's mentions or citations in AI assistants, ideally for B2B SaaS or a developer or marketing tool. Show us before-and-after evidence.\nKnow where LLM answers in our category pull from, and how to earn placements there honestly.\nDo the hands-on work yourself: outreach to list owners and editors, listings, community participation, content briefs.\nWrite short, plain English and will tell us when something isn't worth doing.\nHow to apply (about 20 minutes)\nStart your application with the word \"Cited\" so we know you read this far. Then\ud83d\ude0d 1. Your proof. One example where you increased a brand's visibility in AI answers: what you did, over what time period, and the before-and-after numbers. A screenshot or link helps.\nPick one question. Ask ChatGPT \"How do I preserve SEO during a website migration?\" or \"Best redirect tool for website migration\". Name 2-3 sources the answer relies on, and tell us how you'd get RedirHub into one of them.\nYour first 30 days. The three actions you'd take first, and why each one matters.\nApplications that skip these questions won't be reviewed.\nOur process\nApplication (the questions above).\nPaid starter sprint, fixed fee $200 (about one week): pick 3 target questions where we're missing, and secure or submit at least 3 third-party placements or listings for them, with a short plan for the next 30 days.\nPaid 30-day sprint, measured on new mentions and citations in our tracking and on AI-referred sign-ups.\nOngoing contract if the numbers move.You're likely a fit if you",
+        "description": "KeraFactor is a hair wellness brand looking for a freelance social media content designer to help shape and execute our Instagram presence on an ongoing basis.\nWe will provide UGC videos and static images, before-and-after imagery, product photography, and original shoot content, but we\u2019re looking for someone who can \ndesign original social content from scratch\n, including static posts, educational graphics, carousels, and other brand-led concepts.\nMonthly scope\nApproximately 20\u201322 feed posts per month\nPlan and design a cohesive monthly Instagram grid\nCreate original static posts and social graphics\nCreate approximately 2\u20134 carousels per month\nThoughtfully incorporate supplied UGC, before-and-afters, product photography, and campaign assets\nMaintain strong visual consistency across typography, layout, spacing, and overall feed composition\nThis is a \ndesign-focused role only\n. You would \nnot\n be responsible for scheduling posts, publishing, community management, DMs, engagement, influencer outreach, or reporting.\nBeauty, wellness, fashion, or lifestyle experience preferred. U.S.-based is ideal.\nBudget: up to $1,500/month based on experience and portfolio.",
         "budget": {
-          "estimatedHours": 15,
-          "feeMax": "USD:60.00000000",
-          "feeMin": "USD:30.00000000",
-          "type": "HourlyRateJobBudget"
+          "estimatedHours": null,
+          "feeMax": "USD:1500.00000000",
+          "feeMin": "USD:750.00000000",
+          "type": "MonthlyRateJobBudget"
         },
         "prize": null,
         "deadline": null,
@@ -6687,32 +6657,32 @@
         "requirements_verified": false
       },
       {
-        "title": "Freelance Motion Designer for SaaS Product Demos",
-        "url": "https://contra.com/opportunity/ALsNMeZR-freelance-motion-designer-for-saa-s-product-demos",
+        "title": "Packaging Designer Needed for Hair Care Stimulating Brush",
+        "url": "https://contra.com/opportunity/vPQZk6WQ-packaging-designer-needed-for-hair-care-stimulating-brush",
         "kind": "Job / contract",
         "source": "Contra",
-        "description": "Overview:\nGlaise Studio is looking to hire a reliable intermediate Motion Designer to help animate SaaS product demo videos for AI and tech companies. This freelance role is focused on execution, with storyboard, Figma files, assets, and creative direction already provided. The work centers on creating polished motion design in After Effects, with potential for ongoing collaboration if the first project is a strong fit. The motion designer must have storyboarding skills to eventually be able to help with storyboards. \nExpectations:\nThe main responsibility is to bring provided concepts and assets to life through clean, professional animation that supports the product demo narrative.\nAnimate SaaS product demo videos in After Effects\nStrong design principles skills\nStoryboarding skills\nCreate UI animations, transitions, and polished motion design\nFollow the established visual direction provided through storyboards, Figma files, assets, and creative direction\nDeliver strong timing, smooth transitions, and visual polish\nCommunicate reliably and meet deadlines\nStart with a small paid test, with initial engagement of 3-5 hours and potential for recurring work (20 hours)\nSkills with AI video generation and tools (optional)",
+        "description": "Job Overview\nWe\u2019re looking for a packaging designer to help refine the packaging for a new scalp stimulating brush from KeraFactor, a hair wellness brand. We already have a visual mock-up and copy direction, and are looking for someone to polish the design, make a few thoughtful enhancements, and bring it to a finished, cohesive place.\nKey Responsibilities\nReview and refine our existing packaging mock-up.\nAdd subtle design enhancements that align with our brand's minimalistic and clean style.\nDevelop production-ready artwork suitable for mass production.\nRequirements\nProven experience in packaging design.\nProficiency with design tools relevant to refining and finalizing packaging artwork.\nAttention to detail and a strong sense of modern, clean aesthetics.",
         "budget": {
-          "estimatedHours": 20,
-          "feeMax": "USD:50.00000000",
+          "estimatedHours": null,
+          "feeMax": "USD:450.00000000",
+          "feeMin": "USD:250.00000000",
+          "type": "FixedPriceJobBudget"
+        },
+        "prize": null,
+        "deadline": null,
+        "status": "POSTED",
+        "requirements_verified": false
+      },
+      {
+        "title": "Video Editor for Short-Form Social Media Storytelling Videos",
+        "url": "https://contra.com/opportunity/cUcMRog2-video-editor-for-short-form-social-media-storytelling-videos",
+        "kind": "Job / contract",
+        "source": "Contra",
+        "description": "Overview\nPhoenix Dorninger Multimedia is looking for a video editor to create short social media storytelling videos with a highly aesthetic style. The work calls for creative editing choices, motion graphics, strong pacing, and careful attention to sound design, Da Vinci Resolve, color grading, and music selection.\nResponsibilities\nThe specific scope and deliverables were not fully provided, but the role centers on editing short-form social media storytelling content with a polished, cinematic feel.\nEdit short social media storytelling videos\nUse motion graphics and creative editing choices to support an aesthetic look\nApply sound design, color grading, and quality music selection\nWork in Da Vinci Resolve\nEnsure strong pacing and overall visual aesthetics\nReference Videos:\n",
+        "budget": {
+          "estimatedHours": 10,
+          "feeMax": "USD:40.00000000",
           "feeMin": "USD:25.00000000",
-          "type": "HourlyRateJobBudget"
-        },
-        "prize": null,
-        "deadline": null,
-        "status": "POSTED",
-        "requirements_verified": false
-      },
-      {
-        "title": "Website & Digital Course Designer (Wix + Canva)",
-        "url": "https://contra.com/opportunity/2gN6MY2Q-website-and-digital-course-designer-wix-canva",
-        "kind": "Job / contract",
-        "source": "Contra",
-        "description": "Website & Digital Course Designer (Wix + Canva)\nTTWH is hiring a long-term Website & Digital Course Designer to maintain and expand an established Wix-based website, online course system, and Canva learning ecosystem.\nBefore Applying\nReview:\nTTWH web + social presence\nRole details + application process:\nhttps://docs.google.com/document/d/1g0lbO6t9ckFRm2mZkmectbNE_btTEeGYy6FAhmYecOc/edit?usp=sharing",
-        "budget": {
-          "estimatedHours": 2,
-          "feeMax": "USD:60.00000000",
-          "feeMin": "USD:40.00000000",
           "type": "HourlyRateJobBudget"
         },
         "prize": null,
@@ -6733,6 +6703,22 @@
           "formatted": "$10,000.00"
         },
         "deadline": "2026-10-20T06:59:00.000Z",
+        "status": "ACTIVE",
+        "requirements_verified": false
+      },
+      {
+        "title": "CapCut World LA Challenge",
+        "url": "https://contra.com/community/topic/capcutworldlachallenge",
+        "kind": "Challenge / prize",
+        "source": "Contra",
+        "description": "",
+        "budget": null,
+        "prize": {
+          "amount": "USD:10000.00000000",
+          "currency": "USD",
+          "formatted": "$10,000.00"
+        },
+        "deadline": "2026-10-27T06:59:00.000Z",
         "status": "ACTIVE",
         "requirements_verified": false
       }

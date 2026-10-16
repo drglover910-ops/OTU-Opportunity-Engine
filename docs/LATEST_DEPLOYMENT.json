@@ -1,7 +1,7 @@
 {
-  "commit": "e8f8f6c1d8454ab44015b57e7b5c49e36d6f63e2",
-  "version": "0.11.0",
-  "checked_at": "2026-10-15T20:01:19.788134+00:00",
+  "commit": "f2633bf28bf9634dfad7d462667c18120a53fda4",
+  "version": "0.12.0",
+  "checked_at": "2026-10-16T01:25:29.310338+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -23,11 +23,11 @@
     ],
     "finished": "2026-10-15T15:27:18.875616+00:00"
   },
-  "documents": 21,
+  "documents": 25,
   "gmail_connected": true,
   "ai_configured": true,
   "connections": {
-    "checked_at": "2026-10-15T20:02:21.107116+00:00",
+    "checked_at": "2026-10-16T01:26:00.144786+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -54,10 +54,10 @@
   "developer_request_queue": "available",
   "ai_live_check": "not run; no paid inference during verification",
   "ai_budget": {
-    "count": 1,
-    "reserved_tokens": 15073,
-    "actual_tokens": 3182,
-    "date": "2026-10-15",
+    "date": "2026-10-16",
+    "count": 0,
+    "reserved_tokens": 0,
+    "actual_tokens": 0,
     "daily_requests": 5,
     "daily_tokens": 60000,
     "paused": false,
@@ -68,7 +68,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-15T20:02:24.719199+00:00",
+    "checked_at": "2026-10-16T01:26:03.281426+00:00",
     "tools": 120,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -5953,8 +5953,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792094551.4996567,
-    "checked_at": "2026-10-15T20:02:31.499668+00:00",
+    "finished_epoch": 1792113969.3778374,
+    "checked_at": "2026-10-16T01:26:09.377848+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",
@@ -6260,20 +6260,20 @@
             "status"
           ],
           [
-            "displayUsername",
-            "firstName",
-            "lastName",
-            "userProfileId"
-          ],
-          [
-            "amount",
-            "interval"
-          ],
-          [
             "isVerified",
             "name",
             "organizationId",
             "slug"
+          ],
+          [
+            "languageName",
+            "proficiency"
+          ],
+          [
+            "displayUsername",
+            "firstName",
+            "lastName",
+            "userProfileId"
           ]
         ],
         "unavailable": false,
@@ -6403,14 +6403,190 @@
             "hasNextPage",
             "ok",
             "totalCount"
+          ],
+          [
+            "job",
+            "jobFeedEntryId",
+            "visitorDidApply",
+            "visitorDidBookmark",
+            "visitorDidDismiss",
+            "visitorDidView",
+            "visitorWasMatched"
+          ],
+          [
+            "budget",
+            "country",
+            "createdAt",
+            "duration",
+            "hiringAsIndividual",
+            "jobId",
+            "jobPosting",
+            "languages",
+            "numberOfOpenPositions",
+            "organization",
+            "owner",
+            "publicUrl",
+            "roles",
+            "slug",
+            "startTimeframe",
+            "status",
+            "timezoneOffsetTolerance",
+            "timezonePrimaryUtcOffset",
+            "title",
+            "tools"
+          ],
+          [
+            "estimatedHours",
+            "feeMax",
+            "feeMin",
+            "type"
+          ],
+          [
+            "approvedAt",
+            "externalUrl",
+            "jobPostingId",
+            "status"
+          ],
+          [
+            "isVerified",
+            "name",
+            "organizationId",
+            "slug"
           ]
         ],
         "unavailable": false,
-        "returned": 0,
+        "returned": 1,
         "has_more": false,
         "access_limited": true
       },
       "detail_get_job_by_slug:0": {
+        "shapes": [
+          [
+            "job",
+            "ok"
+          ],
+          [
+            "blocknoteDescription",
+            "budget",
+            "duration",
+            "hiringAsIndividual",
+            "jobId",
+            "jobPosting",
+            "numberOfOpenPositions",
+            "organization",
+            "owner",
+            "publicUrl",
+            "slug",
+            "status",
+            "title"
+          ],
+          [
+            "children",
+            "content",
+            "id",
+            "props",
+            "type"
+          ],
+          [
+            "backgroundColor",
+            "textAlignment",
+            "textColor"
+          ],
+          [
+            "styles",
+            "text",
+            "type"
+          ],
+          [],
+          [
+            "backgroundColor",
+            "start",
+            "textAlignment",
+            "textColor"
+          ],
+          [
+            "estimatedHours",
+            "feeMax",
+            "feeMin",
+            "type"
+          ],
+          [
+            "jobPostingId",
+            "status"
+          ],
+          [
+            "name",
+            "organizationId",
+            "slug"
+          ]
+        ],
+        "unavailable": false
+      },
+      "detail_get_job_by_slug:1": {
+        "shapes": [
+          [
+            "job",
+            "ok"
+          ],
+          [
+            "blocknoteDescription",
+            "budget",
+            "duration",
+            "hiringAsIndividual",
+            "jobId",
+            "jobPosting",
+            "numberOfOpenPositions",
+            "organization",
+            "owner",
+            "publicUrl",
+            "slug",
+            "status",
+            "title"
+          ],
+          [
+            "children",
+            "content",
+            "id",
+            "props",
+            "type"
+          ],
+          [
+            "backgroundColor",
+            "isToggleable",
+            "level",
+            "textAlignment",
+            "textColor"
+          ],
+          [
+            "styles",
+            "text",
+            "type"
+          ],
+          [],
+          [
+            "backgroundColor",
+            "textAlignment",
+            "textColor"
+          ],
+          [
+            "estimatedHours",
+            "feeMax",
+            "feeMin",
+            "type"
+          ],
+          [
+            "jobPostingId",
+            "status"
+          ],
+          [
+            "name",
+            "organizationId",
+            "slug"
+          ]
+        ],
+        "unavailable": false
+      },
+      "detail_get_job_by_slug:2": {
         "shapes": [
           [
             "job",
@@ -6485,142 +6661,43 @@
           ]
         ],
         "unavailable": false
-      },
-      "detail_get_job_by_slug:1": {
-        "shapes": [
-          [
-            "job",
-            "ok"
-          ],
-          [
-            "blocknoteDescription",
-            "budget",
-            "duration",
-            "hiringAsIndividual",
-            "jobId",
-            "jobPosting",
-            "numberOfOpenPositions",
-            "organization",
-            "owner",
-            "publicUrl",
-            "slug",
-            "status",
-            "title"
-          ],
-          [
-            "children",
-            "content",
-            "id",
-            "props",
-            "type"
-          ],
-          [
-            "backgroundColor",
-            "isToggleable",
-            "level",
-            "textAlignment",
-            "textColor"
-          ],
-          [
-            "styles",
-            "text",
-            "type"
-          ],
-          [],
-          [
-            "backgroundColor",
-            "textAlignment",
-            "textColor"
-          ],
-          [
-            "estimatedHours",
-            "feeMax",
-            "feeMin",
-            "type"
-          ],
-          [
-            "amount",
-            "interval"
-          ],
-          [
-            "jobPostingId",
-            "status"
-          ],
-          [
-            "name",
-            "organizationId",
-            "slug"
-          ]
-        ],
-        "unavailable": false
-      },
-      "detail_get_job_by_slug:2": {
-        "shapes": [
-          [
-            "job",
-            "ok"
-          ],
-          [
-            "blocknoteDescription",
-            "budget",
-            "duration",
-            "hiringAsIndividual",
-            "jobId",
-            "jobPosting",
-            "numberOfOpenPositions",
-            "organization",
-            "owner",
-            "publicUrl",
-            "slug",
-            "status",
-            "title"
-          ],
-          [
-            "children",
-            "content",
-            "id",
-            "props",
-            "type"
-          ],
-          [
-            "backgroundColor",
-            "textAlignment",
-            "textColor"
-          ],
-          [
-            "styles",
-            "text",
-            "type"
-          ],
-          [],
-          [
-            "bold"
-          ],
-          [
-            "estimatedHours",
-            "feeMax",
-            "feeMin",
-            "type"
-          ],
-          [
-            "amount",
-            "interval"
-          ],
-          [
-            "jobPostingId",
-            "status"
-          ],
-          [
-            "displayUsername",
-            "firstName",
-            "lastName",
-            "userProfileId"
-          ]
-        ],
-        "unavailable": false
       }
     },
     "public_opportunities": [
+      {
+        "title": "AI Search Visibility (GEO) Specialist for B2B SaaS \u2014 Get RedirHub Recommended by ChatGPT",
+        "url": "https://contra.com/opportunity/RmQWWAvk-ai-search-visibility-geo-specialist-for-b2-b-saa-s-get-redir-hub-recommended-by-chat-gpt",
+        "kind": "Job / contract",
+        "source": "Contra",
+        "description": "About RedirHub\nRedirHub helps businesses manage domain and URL redirects at scale: 301 redirects, HTTPS on redirected domains, branded links and website migrations. Our customers are SEO consultants, agencies and teams moving or consolidating websites.\nWhy we're hiring\nPeople who find us through AI assistants (ChatGPT, Gemini, Perplexity) are already our best users. They sign up and set up a domain at a much higher rate than visitors from any other channel. But AI assistants still mention us far less often than they should, especially ChatGPT, and almost never for SEO and website-migration questions, which are our strongest use case. We want someone to fix that.\nWhat we already have (you won't start from zero)\nAI visibility tracking: an automated system that asks ChatGPT and Gemini 60 buyer questions on a schedule and records whether RedirHub is mentioned, our position, competitors and cited sources. You'll see the baseline on day one and measure your impact against it.\nProduct Facts: an internal library of verified, approved product facts (pricing, limits, SLA, infrastructure, features), so every claim you make is accurate.\nllms.txt: a structured index of our site for AI models.\nAbout 30 comparison pages already live (redirect.pizza, Cloudflare, urllo, redirection.io, Bitly, Short.io, Rebrandly, Dub and more), plus how-to guides and support docs.\nGrowth engineers who ship page changes quickly, and analytics that show AI-referred sign-ups.\nWe don't need another audit. We need someone to execute.\nWhat you'll do\nGet RedirHub into the third-party sources AI assistants cite: \"best tools\" lists and comparison articles, G2, Capterra, AlternativeTo, SaaSHub, Reddit and community threads, Q&A sites. Honestly earned, no spam, no fake reviews, no undisclosed paid posts.\nClose the SEO and website-migration gap: plan and help produce the definitive guides AI should cite for questions like \"how to preserve SEO during a site migration\" or \"how to redirect thousands of URLs\".\nKeep our own pages and llms.txt easy for AI to quote, using our approved Product Facts.\nReport every two weeks on mentions, citations and AI-referred sign-ups, using our tracking data.\nEngagement: part-time, about 10-15 hrs/week, ongoing. $30-60/hr depending on proven results.\nYou're likely a fit if you\nHave measurably increased a brand's mentions or citations in AI assistants, ideally for B2B SaaS or a developer or marketing tool. Show us before-and-after evidence.\nKnow where LLM answers in our category pull from, and how to earn placements there honestly.\nDo the hands-on work yourself: outreach to list owners and editors, listings, community participation, content briefs.\nWrite short, plain English and will tell us when something isn't worth doing.\nHow to apply (about 20 minutes)\nStart your application with the word \"Cited\" so we know you read this far. Then\ud83d\ude0d 1. Your proof. One example where you increased a brand's visibility in AI answers: what you did, over what time period, and the before-and-after numbers. A screenshot or link helps.\nPick one question. Ask ChatGPT \"How do I preserve SEO during a website migration?\" or \"Best redirect tool for website migration\". Name 2-3 sources the answer relies on, and tell us how you'd get RedirHub into one of them.\nYour first 30 days. The three actions you'd take first, and why each one matters.\nApplications that skip these questions won't be reviewed.\nOur process\nApplication (the questions above).\nPaid starter sprint, fixed fee $200 (about one week): pick 3 target questions where we're missing, and secure or submit at least 3 third-party placements or listings for them, with a short plan for the next 30 days.\nPaid 30-day sprint, measured on new mentions and citations in our tracking and on AI-referred sign-ups.\nOngoing contract if the numbers move.You're likely a fit if you",
+        "budget": {
+          "estimatedHours": 15,
+          "feeMax": "USD:60.00000000",
+          "feeMin": "USD:30.00000000",
+          "type": "HourlyRateJobBudget"
+        },
+        "prize": null,
+        "deadline": null,
+        "status": "POSTED",
+        "requirements_verified": false
+      },
+      {
+        "title": "Freelance Motion Designer for SaaS Product Demos",
+        "url": "https://contra.com/opportunity/ALsNMeZR-freelance-motion-designer-for-saa-s-product-demos",
+        "kind": "Job / contract",
+        "source": "Contra",
+        "description": "Overview:\nGlaise Studio is looking to hire a reliable intermediate Motion Designer to help animate SaaS product demo videos for AI and tech companies. This freelance role is focused on execution, with storyboard, Figma files, assets, and creative direction already provided. The work centers on creating polished motion design in After Effects, with potential for ongoing collaboration if the first project is a strong fit. The motion designer must have storyboarding skills to eventually be able to help with storyboards. \nExpectations:\nThe main responsibility is to bring provided concepts and assets to life through clean, professional animation that supports the product demo narrative.\nAnimate SaaS product demo videos in After Effects\nStrong design principles skills\nStoryboarding skills\nCreate UI animations, transitions, and polished motion design\nFollow the established visual direction provided through storyboards, Figma files, assets, and creative direction\nDeliver strong timing, smooth transitions, and visual polish\nCommunicate reliably and meet deadlines\nStart with a small paid test, with initial engagement of 3-5 hours and potential for recurring work (20 hours)\nSkills with AI video generation and tools (optional)",
+        "budget": {
+          "estimatedHours": 20,
+          "feeMax": "USD:50.00000000",
+          "feeMin": "USD:25.00000000",
+          "type": "HourlyRateJobBudget"
+        },
+        "prize": null,
+        "deadline": null,
+        "status": "POSTED",
+        "requirements_verified": false
+      },
       {
         "title": "Website & Digital Course Designer (Wix + Canva)",
         "url": "https://contra.com/opportunity/2gN6MY2Q-website-and-digital-course-designer-wix-canva",
@@ -6632,40 +6709,6 @@
           "feeMax": "USD:60.00000000",
           "feeMin": "USD:40.00000000",
           "type": "HourlyRateJobBudget"
-        },
-        "prize": null,
-        "deadline": null,
-        "status": "POSTED",
-        "requirements_verified": false
-      },
-      {
-        "title": "Framer Developer",
-        "url": "https://contra.com/opportunity/6lXZlNNm-framer-developer",
-        "kind": "Job / contract",
-        "source": "Contra",
-        "description": "About the job\nPixavix Studio, a UI/UX and web design studio, is looking for an experienced Framer developer for ongoing, project-based work. The role focuses on turning finished Figma designs into polished, responsive Framer websites with smooth animations, CMS setup, and clean handover. This is a long-term collaboration opportunity for the right person, with a budget of $30\u201345 per hour depending on experience and about 20 hours per week. A portfolio of live Framer sites is required.\nWhat you\u2019ll accomplish\nYou\u2019ll work from completed Figma designs and build them into high-quality Framer websites that are responsive, visually polished, and ready to launch. The specific project scope was not provided, so the main deliverables are the implementation of the design in Framer and the related site setup.\nConvert finished Figma designs into responsive Framer websites\nAdd smooth animations\nSet up CMS in Framer\nPrepare a clean handover\nShare a portfolio of live Framer sites",
-        "budget": {
-          "estimatedHours": 20,
-          "feeMax": "USD:45.00000000",
-          "feeMin": "USD:30.00000000",
-          "type": "HourlyRateJobBudget"
-        },
-        "prize": null,
-        "deadline": null,
-        "status": "POSTED",
-        "requirements_verified": false
-      },
-      {
-        "title": "Editorial Video Editor & Social Media Curator \u2014 Luxury Travel & Lifestyle",
-        "url": "https://contra.com/opportunity/cYNWqvEs-editorial-video-editor-and-social-media-curator-luxury-travel-and-lifestyle",
-        "kind": "Job / contract",
-        "source": "Contra",
-        "description": "I\u2019m seeking a talented freelance video editor and visual content curator to transform personal travel footage and photography from a recent trip to Japan into polished, cinematic content for my personal social media.\nThe vision\nI\u2019m building an elevated personal presence, not an influencer or commercial content brand. My references are the effortless, understated editorial styles of Kendall Jenner and Hailey Bieber: candid, fashionable, cinematic, aspirational, but authentic and approachable.\nI want content that feels like a beautifully curated personal photo diary rather than traditional influencer content. Think natural moments, beautiful environments, interesting details, subtle humor, and thoughtful storytelling.\nProject deliverables\nOne fully edited travel vlog, including footage selection, narrative development, music, audio, color grading, and final export.\n2\u20133 short-form videos/Reels created from existing footage.\n4\u20136 thoughtfully curated Instagram photo carousels.\nA four-week content calendar with recommended sequencing, captions, cover images, and optional Stories.\nOrganized, publication-ready assets and editable project files.\nCreative direction\nI\u2019m looking for someone with excellent visual judgment who can independently review a large collection of footage and photographs and identify the strongest moments.\nThe primary focus should be me, my experiences, style, and surroundings. My husband may appear naturally in limited moments, but this is not a couples\u2019 account.\nI prefer understated, cinematic editing over heavy filters, artificial effects, forced trends, or influencer-style storytelling.\nPrivacy and ownership\nAll materials are personal and confidential. The selected freelancer must agree to written confidentiality, intellectual property assignment, no unauthorized portfolio or third-party use, no generative AI manipulation or training, and secure handling and deletion of project files.\nI will retain full creative approval and publishing control.\nIdeal candidate\nExperience with fashion, lifestyle, travel, or editorial video is strongly preferred. I\u2019m looking for a creative collaborator with a distinctive aesthetic, strong storytelling abilities, and the confidence to make thoughtful editorial decisions.\nPlease submit 2\u20133 relevant video examples, examples of photography or social content curation, your estimated project fee, and anticipated timeline.\nThis is initially a one-time project with the potential for ongoing collaboration.",
-        "budget": {
-          "estimatedHours": null,
-          "feeMax": "USD:1500.00000000",
-          "feeMin": "USD:1500.00000000",
-          "type": "FixedPriceJobBudget"
         },
         "prize": null,
         "deadline": null,

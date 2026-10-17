@@ -114,3 +114,12 @@ body.sidebar-collapsed{--nav-width:64px}.sidebar-collapsed .sidebar-top{padding:
 @media(max-height:650px){#app-sidebar{overflow-y:auto}#recent-chats{flex:0 0 auto;max-height:180px;min-height:72px}#conversation-feed{padding-block:12px}.keyboard-open #conversation-form{margin-bottom:max(6px,env(safe-area-inset-bottom))}}
 /* Keep the voice menu and other header actions reachable above the keyboard. */
 .header-menu-content{max-height:min(450px,calc(var(--app-height,100dvh) - var(--bar-height) - 24px))}
+/* v0.17: immediate send acknowledgement and reachable response controls. */
+#conversation-feed .message-actions{display:flex;align-items:center;flex-wrap:wrap;gap:4px;position:sticky;bottom:0;z-index:3;background:#0c1710f5;border-radius:10px;padding:4px 0;margin-top:10px;width:fit-content;max-width:100%}
+#conversation-feed .message-actions button{margin:0;padding:8px 10px;min-height:44px;font-size:14px;border:0;background:transparent;color:#c7d8cc}
+#conversation-feed .message-actions [aria-pressed=true]{color:#a0ffc0!important;background:#294332}
+#conversation-feed .message-actions .message-menu{margin:0}#conversation-feed .message-actions .message-menu>summary{min-height:44px;margin:0}
+#conversation-feed .message-text strong{font:inherit;font-weight:650;color:inherit}#conversation-feed .user-actions button{margin:4px 0 0;padding:6px 10px;min-height:36px;font-size:13px}
+#conversation-feed .chat-request-status{padding:14px 0;margin:12px 0 20px;color:#c6ddce}#conversation-feed .chat-request-status .small{display:block;font-size:14px;line-height:1.5;color:#afc5b6;margin:8px 0}
+.chat-thinking .thinking-dots{display:inline-block;letter-spacing:3px;margin-right:8px;animation:isis-thinking 1.4s ease-in-out infinite}.chat-request-error .thinking-dots{display:none}.chat-request-error{border-left:2px solid #d6b66d!important;padding-left:14px!important}
+@keyframes isis-thinking{50%{opacity:.35}}@media(prefers-reduced-motion:reduce){.chat-thinking .thinking-dots{animation:none}}

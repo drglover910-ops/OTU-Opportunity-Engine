@@ -7,7 +7,7 @@ sdk: docker
 app_port: 7860
 ---
 
-# OTU Opportunity Engine — v0.16.2
+# OTU Opportunity Engine — v0.17.0
 
 A private opportunity workspace for Desmond Glover. Matrix-inspired responsive dashboard for discovery, fit ranking, career retrieval, draft preparation, approved email, replies and follow-ups. Contra-first contract workflow; coaching and employment alongside it.
 
@@ -45,3 +45,8 @@ Sent-history study reads career/contract Sent queries and all messages in matchi
 v0.16.0: Projects organize chats without changing their source workspace or opportunity context. Three dots, right-click or a stationary 600 ms press opens Rename, Pin, Move, Archive and recoverable Delete. Use the list selector for Archived or Trash; Restore never sends anything. On desktop drag a conversation onto the project selector to choose its destination; the Move menu works on touch devices. Creating a project does not create a platform account or connection.
 
 Mail reads Gmail Inbox/Sent/search and complete threads on demand. OTU drafts and approved/uncertain-delivery Outbox reuse existing draft review and sending. Local mail folders, opportunity links and dated follow-up flags do not modify Gmail labels/read state. Gmail-only drafts and attachment downloads remain in Open Gmail. Refresh/search is manual; it is not a continuously mirrored mailbox. Full mail bodies are plain text with remote content disabled. No new OAuth scopes or paid inference are used for mail browsing. Local folders are backed up; disposable Gmail body caches are fetched again after recovery.
+
+
+v0.17.0 chat: Send immediately places your question in the conversation and shows Isis thinking. Provider generation time still varies; this is a saved background request, not token streaming. Keep typing your next question while waiting, or browse another section. A refresh reconnects to acknowledged pending work. One request per conversation and up to three conversations can run at once under the existing AI allowance. Status polling does not call the model. After a restart, interrupted requests are shown for review and never restarted automatically. If delivery cannot be confirmed, check the conversation before resending; retrying the same unchanged question in that tab reuses its send ID.
+
+Copy, Read aloud and thumbs up/down sit under each saved response. Copy also works on your questions. Safari has a manual-copy window if clipboard permission is unavailable. Ratings are stored privately and passed with recent conversation context; they do not retrain the model or verify facts. Complete backups include question/answer receipts and ratings; recovery remaps message IDs and does not resume inference. `scripts/check_chat_ui.py` runs the delayed-provider localhost fixture without provider calls or external browsing.

@@ -12,6 +12,8 @@ backups=Backups(engine)
 backups.checkpoint()
 from workspace_ops import WorkspaceOps
 workspace_ops=WorkspaceOps(engine)
+from chat_service import ChatService
+chat_service=ChatService(engine)
 class Handler(BaseHTTPRequestHandler):
     developer_sessions={}
     def log_message(self,*args):pass  # No OAuth codes, inbox content, or credentials in logs.
@@ -47,6 +49,7 @@ class Handler(BaseHTTPRequestHandler):
             if path=='/api/projects':return self.output(workspace_ops.projects())
             if path=='/api/mail':return self.output(workspace_ops.mail_list({k:v[0] for k,v in query.items()}))
             if path=='/api/mail/thread':return self.output(workspace_ops.mail_thread(query['id'][0]))
+            if path=='/api/chat/request':return self.output(chat_service.row(query['id'][0]))
             if path=='/api/conversation':return self.output(engine.conversation({k:v[0] for k,v in query.items()}))
             if path=='/oauth/contra/start':
                 from contra_mcp import ContraConnection
@@ -159,6 +162,8 @@ class Handler(BaseHTTPRequestHandler):
             if self.path=='/api/document/revise':
                 from document_review import save
                 return self.output(save(engine,d))
+            if self.path=='/api/chat/request':return self.output(chat_service.start(d))
+            if self.path=='/api/conversation/feedback':return self.output(engine.response_feedback(d))
             if self.path=='/api/conversation/ask':return self.output(engine.ask_workspace(d))
             if self.path=='/api/conversation/memory':return self.output(engine.conversation_memory(d))
             if self.path=='/api/conversation/note':return self.output(engine.add_work_note(d))

@@ -2,7 +2,7 @@
 import hashlib,json,re,secrets,shutil,tempfile,zipfile
 from pathlib import Path
 from engine import VERSION,now
-TABLES=('opportunities','documents','activity','drafts','messages','career_updates','packages','email_threads','workspaces','conversation_threads','work_notes','conversation_memory','platforms','platform_profiles','developer_requests','projects','chat_organization','mail_folders','mail_organization','attachment_uploads')
+TABLES=('opportunities','documents','activity','drafts','messages','career_updates','packages','email_threads','workspaces','conversation_threads','work_notes','conversation_memory','platforms','platform_profiles','developer_requests','projects','chat_organization','mail_folders','mail_organization','attachment_uploads','response_feedback','chat_requests')
 UPLOAD_COLUMNS=('id','name','size','received','workspace','opportunity_id','chat_id','state','created','digest')
 EXTRA=('projects','chat_organization','mail_folders','mail_organization')
 def digest(path):
@@ -81,6 +81,18 @@ class Backups:
     if row.get('chat_id'):
      thread=threads.get(row['chat_id'])
      if not thread or thread['workspace']!=row['workspace'] or thread['opportunity_id']!=row.get('opportunity_id'):raise ValueError('Conversation scope mismatch.')
+   notes={r['id']:r for r in data.get('work_notes',[])}
+   for job in data.get('chat_requests',[]):
+    if not re.fullmatch(r'[a-zA-Z0-9-]{24,64}',str(job.get('id',''))) or job.get('status') not in ('queued','running','complete','failed','interrupted'):raise ValueError('Invalid chat request receipt.')
+    question=notes.get(job.get('user_note_id'))
+    scope=lambda row:(row.get('workspace'),row.get('opportunity_id'),row.get('chat_id'))
+    if not question or question.get('role')!='user' or scope(question)!=scope(job):raise ValueError('Backup request/question scope mismatch.')
+    if job.get('assistant_note_id'):
+     answer=notes.get(job['assistant_note_id'])
+     if not answer or answer.get('role')!='assistant' or scope(answer)!=scope(job):raise ValueError('Backup request/answer scope mismatch.')
+   for feedback in data.get('response_feedback',[]):
+    answer=notes.get(feedback.get('note_id'))
+    if not answer or answer.get('role')!='assistant' or type(feedback.get('rating')) is not int or feedback['rating'] not in (-1,1):raise ValueError('Invalid response rating in backup.')
    for r in uploads:
     if r.get('opportunity_id') and r['opportunity_id'] not in opps:raise ValueError('Missing upload opportunity.')
     if r.get('chat_id'):

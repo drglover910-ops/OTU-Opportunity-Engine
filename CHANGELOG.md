@@ -1,3 +1,12 @@
+## v0.17.0
+
+- Acknowledge Send immediately: show the question in chat, clear the composer, and display a real pending indicator. Save request receipts and questions before inference; poll status without additional model calls. Duplicate sends reuse the same request ID; no automatic provider retries.
+- Keep replies in their original chat, preserve the next typed draft and open panes, and reconnect to acknowledged pending requests after refresh. Interrupted server work is labeled rather than silently restarted.
+- Put Copy, Read aloud, thumbs up/down and More together in a reachable response toolbar. Support copying user messages and a message-specific manual-copy fallback on Safari. Render simple bold text safely.
+- Persist scoped per-response ratings, include recent ratings as conversational guidance, and preserve ratings/request receipts through backup recovery with note-ID remapping. Ratings are not factual verification or model training.
+- Strengthen grounding: prior AI replies do not verify identity/wallet/payout, agreed pay/hours or a prepared 90-day plan. Continue existing Contra materials and label unsupported claims as unverified.
+- Add delayed-provider browser coverage for immediate acknowledgement, preserved drafts, response controls, clipboard fallback, failures, no automatic retries, navigation isolation and reload recovery. No paid inference or client outreach used in checks.
+
 ## v0.16.2
 
 - Name the AI teammate Isis (she/her), with a warm, confident adult American persona; preserve OTU product branding and existing history.

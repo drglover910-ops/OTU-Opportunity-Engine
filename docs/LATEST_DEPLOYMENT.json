@@ -1,7 +1,7 @@
 {
-  "commit": "b3e6815336920abc10d338dfa535b4843cbff31c",
-  "version": "0.16.0",
-  "checked_at": "2026-10-17T00:04:07.850556+00:00",
+  "commit": "21a856fdfdebff31c1a03275d5b83a1dc84bbb30",
+  "version": "0.16.1",
+  "checked_at": "2026-10-17T00:43:39.381013+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-17T00:04:39.760395+00:00",
+    "checked_at": "2026-10-17T00:44:13.802255+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -57,7 +57,7 @@
   "matrix_asset": "available",
   "workspace_shell": "available",
   "read_aloud_controls": "asset available; device audio not tested",
-  "chat_threads": 5,
+  "chat_threads": 6,
   "projects": 9,
   "recovery_checkpoint": {
     "checkpoint": true,
@@ -81,7 +81,7 @@
       },
       "conversation_threads": {
         "before": 3,
-        "now": 3
+        "now": 4
       },
       "documents": {
         "before": 29,
@@ -113,8 +113,8 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-17T00:04:43.831723+00:00",
-    "tools": 120,
+    "checked_at": "2026-10-17T00:44:20.428078+00:00",
+    "tools": 123,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
   },
@@ -775,7 +775,7 @@
     },
     {
       "name": "agentic_work_list_projects",
-      "description": "Lists agentic work projects for the authenticated user. Optionally search by project name or client collaborator name/email. Supports pagination.",
+      "description": "Lists agentic work projects for the authenticated user. This excludes regular paid projects and contracts; use list_paid_projects for those. Optionally search by project name or client collaborator name/email. Supports pagination.",
       "inputSchema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
@@ -1310,7 +1310,7 @@
     },
     {
       "name": "get_job_by_slug",
-      "description": "Fetches a job (scoped opportunity) by its public slug, returning title, status, description, budget, duration, posting state, organization, owner profile, and a `publicUrl` for linking the user to the listing. This tool expects only the slug value, not a full URL. Use the returned jobId when referencing this job in send_inquiry_prepare. Always use `publicUrl` when sharing a link to the job with the user \u2014 do not construct URLs manually.",
+      "description": "Fetches a job by its public slug, including closed jobs, and returns its description, budget, status, canonical publicUrl, hiring organization, visible owner, and the signed-in user's viewerApplication.\n\nUse this tool when the user asks to review a proposal/application they already sent to a job. If the slug is unknown, first use list_job_feed with preset APPLIED, then pass the matching job slug here. Search matches job titles and descriptions, not company names. For a company-only lookup, omit search and match organization.name in the returned entries; follow endCursor while hasNextPage until you find the job. If a title search misses, retry without search before concluding there is no application. viewerApplication includes the stored message, rich text, application dates, calendar link, and attached portfolio projects with URLs. A null application means no application was returned for this viewer; appliedAt null means the application is pending, not sent. A closed job does not imply rejection and does not prevent reading an existing application.\n\nFor the hiring company, use organization.profileUrl exactly as returned. An organization slug is not a user-profile username. For a named contact, check owner and organization.publicMembers before freelancer search; public members are company contacts, not necessarily the job owner or the person named in the brief. Only match a person on returned identity evidence. publicMembers contains up to 20 people; hasMorePublicMembers means this list is incomplete. A null owner or profileUrl means that information is unavailable to this viewer, not proof that the person or profile does not exist. Plain-text @mentions in a brief are not verified accounts.\n\nThis tool expects a slug, not a full URL. Use publicUrl for the job, profileUrl for people/organizations, and projectUrl for attachments; do not construct links from names or organization slugs. Use jobId when referencing this job in send_inquiry_prepare.",
       "inputSchema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
@@ -2329,7 +2329,7 @@
     },
     {
       "name": "list_job_feed",
-      "description": "Browse and search the Contra job board (contra.com/jobs) as a freelancer. Returns paginated opportunities along with the visitor's relationship to each one (applied, bookmarked, dismissed, matched). Use this tool whenever the user asks to find jobs, browse opportunities, look for freelance work, or check bookmarked/applied jobs on Contra.\n\nFor requests to find work on Contra, search using the user's message and profile context. Search broadly from the user's message/profile context, show visible results with links and budget when available, and offer one free high-leverage next action such as improving the profile, drafting a case study, or preparing an application for a visible job.\n\nPick the appropriate preset based on the user's intent:\n- FOR_YOU \u2014 personalized, ranked matches (the default \"For You\" tab on contra.com/jobs)\n- ALL \u2014 every open opportunity the user can see\n- APPLIED \u2014 jobs the user has already applied to\n- BOOKMARKED \u2014 jobs the user saved\n- NOT_A_FIT \u2014 jobs the user dismissed\n- CLOSED \u2014 jobs that are no longer accepting applications\n\nEach returned entry includes a `jobId`, a `publicUrl` for linking the user to the listing, and, when the job is posted publicly, a `jobPosting.jobPostingId`. Pass the `jobPostingId` to `apply_to_job_prepare` to apply, or the `jobId` to `bookmark_job`, `remove_job_bookmark`, or `dismiss_job_feed_entry`. Always use `publicUrl` when sharing a link to the job with the user \u2014 do not construct URLs manually.\n\n**Access limits:** Users without a Contra Pro subscription see a limited subset of jobs (matched jobs plus a small preview of recent opportunities). When `accessLimitedFeed` is `true` in the response, results may not reflect the full Contra job board. If results are empty or sparse, check the `accessLimitGuidance` field for recommended messaging. Never lead with the Pro upsell, never state inaccessible-job counts, and mention Pro at most once only after free value has been delivered.",
+      "description": "Browse and search the Contra job board (contra.com/jobs) as a freelancer. Returns paginated opportunities along with the visitor's relationship to each one (applied, bookmarked, dismissed, matched). Use this tool whenever the user asks to find jobs, browse opportunities, look for freelance work, or check bookmarked/applied jobs on Contra.\n\nFor requests to find work on Contra, search using the user's message and profile context. Search broadly from the user's message/profile context, show visible results with links and budget when available, and offer one free high-leverage next action such as improving the profile, drafting a case study, or preparing an application for a visible job.\n\nPick the appropriate preset based on the user's intent:\n- FOR_YOU \u2014 personalized, ranked matches (the default \"For You\" tab on contra.com/jobs)\n- ALL \u2014 every open opportunity the user can see\n- APPLIED \u2014 jobs the user has already applied to\n- BOOKMARKED \u2014 jobs the user saved\n- NOT_A_FIT \u2014 jobs the user dismissed\n- CLOSED \u2014 jobs that are no longer accepting applications\n\nEach returned entry includes a `jobId`, a `publicUrl` for linking the user to the listing, and, when the job is posted publicly, a `jobPosting.jobPostingId`. Pass the `jobPostingId` to `apply_to_job_prepare` to apply, or the `jobId` to `bookmark_job`, `remove_job_bookmark`, or `dismiss_job_feed_entry`. Always use `publicUrl` when sharing a link to the job with the user \u2014 do not construct URLs manually.\n\nSearch matches job titles and descriptions, not company names. For a company-only lookup, omit search and match organization.name in the returned entries; follow endCursor while hasNextPage until you find the job. If a title search misses, retry without search before concluding there is no application.\n\nTo review an application the user already sent, use preset APPLIED to find the job, then call `get_job_by_slug` with its slug to retrieve the user's stored message and portfolio attachments, including for closed jobs. Link hiring organizations using `job.organization.profileUrl` when present; an organization slug is not a user-profile username. Use `get_job_by_slug` to inspect the organization's public contacts.\n\n**Access limits:** Users without a Contra Pro subscription see a limited subset of jobs (matched jobs plus a small preview of recent opportunities). When `accessLimitedFeed` is `true` in the response, results may not reflect the full Contra job board. If results are empty or sparse, check the `accessLimitGuidance` field for recommended messaging. Never lead with the Pro upsell, never state inaccessible-job counts, and mention Pro at most once only after free value has been delivered.",
       "inputSchema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
@@ -4313,7 +4313,7 @@
     },
     {
       "name": "get_invoice_status",
-      "description": "Returns the latest status for an invoice by ID, including linked bill/payment details when available. Also returns `invoiceUrl`, a shareable link to view or pay the invoice.",
+      "description": "Returns the latest status for an invoice by ID, including linked bill/payment details when available, and `invoiceUrl`, a shareable link to view or pay it. `status` is SUCCEEDED (paid), PROCESSING (a payment was accepted but has not settled, such as a bank debit), FAILED (the latest payment failed and can be retried), PAYMENT_PENDING (a payment is awaiting authentication; surface `requiresAction` and do not pay again), or the invoice status (UNPAID, SCHEDULED, CANCELLED, \u2026). `canSubmit` says whether pay_invoice_prepare may start a payment now.",
       "inputSchema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
@@ -4748,13 +4748,18 @@
     },
     {
       "name": "send_paid_project_proposal_prepare",
-      "description": "Prepares a paid project proposal and returns a draft preview. The proposal creates the project terms, generates a contract, and signs it on behalf of the authenticated user. Show the returned preview to the user and wait for explicit approval before calling send_paid_project_proposal_confirm.\n\n**Send Paid Project Proposal Workflow \u2014 guide the user naturally through these steps:**\n\n**Step 1 \u00b7 Use context first.** If the user clicks \"Send a proposal\" or says to send/draft a proposal, fetch recent project/message/client context and prepare the best draft you can from that context. Do not open with \"Who is this for?\" when there is a likely recipient. If the recipient is unclear after context lookup, ask one concise disambiguating question.\n\n**Step 2 \u00b7 Who is the other party?** Determine who the proposal is for. If they are an existing Contra user, use `get_user_profile_by_username` to get their userProfileId. Otherwise, ask for their email, first name, and last name. Also determine the recipient's role: CONTRACTOR (if the user is hiring) or CLIENT (if the user is proposing work to a client).\n\n**Step 3 \u00b7 Project details and assumptions.** Use the thread/project context for title, scope, start date, and end date. If a value is missing but inferable, state the assumption in the preview rather than asking a separate intake round.\n\n**Step 4 \u00b7 Payment structure.** Ask which payment type the user wants only if it is not already clear: FIXED_PRICE (one lump sum with optional upfront percentage), HOURLY_RATE (pay per hour worked), or MILESTONE (split into milestones with individual amounts and due dates). Then gather the specific details:\n- **FIXED_PRICE**: total amount (USD), upfront payment percentage (0-100), end date, and at least one deliverable (title + description).\n- **HOURLY_RATE**: hourly rate (USD), end date, maximum hours per submission, and at least one deliverable (title + description).\n- **MILESTONE**: at least one milestone, each with a title, amount (USD), and due date. Optionally a description per milestone.\n\n**Step 5 \u00b7 Fee allocation.** Ask who should cover the Contra platform fee and the payment processing fee only if missing. For each: PAYER means the client pays, RECIPIENT means the contractor absorbs it.\n\n**Step 6 \u00b7 Contract signing.** Ask for the signatory's full legal name (minimum 3 characters) only if not already known. Optionally ask if they are signing on behalf of a company \u2014 if so, collect the company name and the signatory's job title. Ask if a country-specific contract template is needed (defaults to STANDARD_AGREEMENT).\n\nBefore preparing proposals with unusually low pricing, flag the market signal once in the preview and offer a market-rate alternative. Never invent scope, credentials, metrics, or client facts to make the proposal stronger.\n\nOnce all information is gathered, call this tool to prepare the proposal draft. Show the returned preview to the user and wait for explicit approval before calling `send_paid_project_proposal_confirm`.",
+      "description": "Prepares a paid project proposal and returns a temporary preview. This does not save a draft in Contra; use save_paid_project_proposal_draft when the user wants to save and review later. Confirming this preview creates the project terms, generates a contract, signs it on behalf of the authenticated user, and sends it. Show the returned preview, including the selected agreement, and wait for explicit approval before calling send_paid_project_proposal_confirm.\n\n**Send Paid Project Proposal Workflow \u2014 guide the user naturally through these steps:**\n\n**Step 1 \u00b7 Use context first.** If the user clicks \"Send a proposal\" or says to send/draft a proposal, fetch recent project/message/client context and prepare the best draft you can from that context. Do not open with \"Who is this for?\" when there is a likely recipient. If the recipient is unclear after context lookup, ask one concise disambiguating question.\n\n**Step 2 \u00b7 Who is the other party?** Determine who the proposal is for. If they are an existing Contra user, use `get_user_profile_by_username` to get their userProfileId. Otherwise, ask for their email, first name, and last name. Also determine the recipient's role: CONTRACTOR (if the user is hiring) or CLIENT (if the user is proposing work to a client).\n\n**Step 3 \u00b7 Project details and assumptions.** Use the thread/project context for title, scope, start date, and end date. If a value is missing but inferable, state the assumption in the preview rather than asking a separate intake round.\n\n**Step 4 \u00b7 Payment structure.** Ask which payment type the user wants only if it is not already clear: FIXED_PRICE (one lump sum with optional upfront percentage), HOURLY_RATE (pay per hour worked), or MILESTONE (split into milestones with individual amounts and due dates). Then gather the specific details:\n- **FIXED_PRICE**: total amount (USD), upfront payment percentage (0-100), end date, and at least one deliverable (title + description).\n- **HOURLY_RATE**: hourly rate (USD), end date, maximum hours per submission, and at least one deliverable (title + description).\n- **MILESTONE**: at least one milestone, each with a title, amount (USD), and due date. Optionally a description per milestone.\n\n**Step 5 \u00b7 Fee allocation.** Ask who should cover the Contra platform fee and the payment processing fee only if missing. For each: PAYER means the client pays, RECIPIENT means the contractor absorbs it.\n\n**Step 6 \u00b7 Saved agreement.** Call list_paid_project_proposal_agreements for the proposal workspace. Show available documents and identify the default. Pass agreementTemplateId to choose a saved custom agreement. Omit both agreementTemplateId and contractTemplate to use the saved default. Explicitly set contractTemplate only when the user chooses a generated standard or country-specific contract. Never invent an uploaded file ID.\n\n**Step 7 \u00b7 Contract signing.** Ask for the signatory's full legal name (minimum 3 characters) only if not already known. Optionally ask if they are signing on behalf of a company \u2014 if so, collect the company name and the signatory's job title.\n\nBefore preparing proposals with unusually low pricing, flag the market signal once in the preview and offer a market-rate alternative. Never invent scope, credentials, metrics, or client facts to make the proposal stronger.\n\nOnce all information is gathered, call this tool to prepare the proposal draft. Show the returned preview to the user and wait for explicit approval before calling `send_paid_project_proposal_confirm`.",
       "inputSchema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
         "properties": {
+          "agreementTemplateId": {
+            "description": "Saved proposal agreement ID from list_paid_project_proposal_agreements. Uses its PDF as the custom contract. Omit both agreementTemplateId and contractTemplate to use the workspace default agreement, if one exists.",
+            "type": "string",
+            "minLength": 1
+          },
           "contractTemplate": {
-            "description": "Contract template to use. Defaults to STANDARD_AGREEMENT. Use a country-specific template when the contractor is based in a supported country.",
+            "description": "Explicitly choose a generated contract instead of the saved workspace default. STANDARD_AGREEMENT opts out of the default saved agreement. Cannot be combined with agreementTemplateId.",
             "type": "string",
             "enum": [
               "ARGENTINA",
@@ -4949,6 +4954,7 @@
           "title": {
             "type": "string",
             "minLength": 1,
+            "maxLength": 100,
             "description": "Project title."
           },
           "totalAmount": {
@@ -4974,6 +4980,332 @@
           "recipientRole",
           "signatoryFullLegalName",
           "startDate",
+          "title"
+        ]
+      },
+      "annotations": {
+        "destructiveHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "list_paid_projects",
+      "description": "Lists regular paid projects and contracts for an authorized workspace, including projects where the workspace is the client or contractor. Defaults to the active workspace; use list_workspaces for workspace IDs. Supports search, role/display-status filters, and cursor pagination. Without a status filter, the backend excludes declined inquiries, archived projects, and cancelled projects; archived proposals are excluded by default. These are paid-contract records, separate from agentic work projects and portfolio projects.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "after": {
+            "description": "Cursor returned in pageInfo.endCursor.",
+            "type": "string",
+            "minLength": 1
+          },
+          "first": {
+            "description": "Number of paid projects to return (default 20, max 50).",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "roles": {
+            "description": "The workspace role on the project. Omit or pass an empty array for both roles.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "CLIENT",
+                "CONTRACTOR"
+              ]
+            }
+          },
+          "search": {
+            "description": "Search paid projects by project title or counterparty.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "statuses": {
+            "description": "Display-status filters. Omit or pass an empty array to use normal backend exclusions. Returned status values are the underlying paid-project statuses.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "ACTIVE",
+                "ARCHIVED",
+                "CANCELLED",
+                "COMPLETED",
+                "IN_REVIEW",
+                "INQUIRY_DECLINED",
+                "ON_HOLD",
+                "PROPOSAL",
+                "PROPOSAL_DECLINED",
+                "REJECTED"
+              ]
+            }
+          },
+          "workspaceId": {
+            "description": "Workspace to read, from list_workspaces. Defaults to the active workspace.",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "annotations": {
+        "destructiveHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "list_paid_project_proposal_agreements",
+      "description": "Lists saved workspace document templates available as proposal agreements, including each document name, description, download link, and whether it is the default for proposals. Use the returned id as agreementTemplateId when saving or preparing a proposal. These are custom contracts that replace the generated standard agreement. This lists reusable saved templates, not arbitrary files attached to projects.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "workspaceId": {
+            "description": "Optional Contra workspace global ID. When provided, this workspace is used instead of the active workspace.",
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "annotations": {
+        "destructiveHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "save_paid_project_proposal_draft",
+      "description": "Saves a persistent proposal draft in Contra and returns an edit link for review. This does not create or sign a contract, invite the recipient, or send a proposal. Use this when the user asks to save a draft; send_paid_project_proposal_prepare only creates a temporary preview that expires.\n\n**Save Proposal Draft Workflow:**\n\n**Step 1 \u00b7 Draft context.** Gather the project title, the recipient's intended role (CLIENT when proposing work, CONTRACTOR when hiring), and the workspace. Reuse known context. Payment details can remain incomplete, and no signature is required. Omit recipient until known; when including one, provide userProfileId or email, firstName, and lastName so the editor can restore it.\n\n**Step 2 \u00b7 Agreement.** Call list_paid_project_proposal_agreements for that workspace. Show the saved documents and identify the default. Pass agreementTemplateId if the user selects a document. Omit both agreementTemplateId and contractTemplate to use the saved default, or explicitly pass contractTemplate to use a generated contract instead. A saved PDF becomes the custom agreement, not an extra attachment.\n\n**Step 3 \u00b7 Save and review.** Call this tool with the known details, then show the returned edit link. Each call creates a new draft; use that link to edit an existing draft. Saving does not authorize sending.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "agreementTemplateId": {
+            "description": "Saved proposal agreement ID from list_paid_project_proposal_agreements. Uses its PDF as the custom contract. Omit both agreementTemplateId and contractTemplate to use the workspace default agreement, if one exists.",
+            "type": "string",
+            "minLength": 1
+          },
+          "contractTemplate": {
+            "description": "Explicitly choose a generated contract instead of the saved workspace default. STANDARD_AGREEMENT opts out of the default saved agreement. Cannot be combined with agreementTemplateId.",
+            "type": "string",
+            "enum": [
+              "ARGENTINA",
+              "AUSTRALIA",
+              "BANGLADESH",
+              "CANADA",
+              "CZECH_REPUBLIC",
+              "FRANCE",
+              "INDIA",
+              "INDONESIA",
+              "ITALY",
+              "LEBANON",
+              "NIGERIA",
+              "PAKISTAN",
+              "PHILIPPINES",
+              "PORTUGAL",
+              "SPAIN",
+              "STANDARD_AGREEMENT",
+              "TURKEY",
+              "UK",
+              "UKRAINE",
+              "VENEZUELA"
+            ]
+          },
+          "deliverables": {
+            "description": "Project deliverables (title + description each). Required for FIXED_PRICE and HOURLY_RATE payment types.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Deliverable description."
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Deliverable title."
+                }
+              },
+              "required": [
+                "description",
+                "title"
+              ]
+            }
+          },
+          "endDate": {
+            "description": "Project end date in ISO 8601 format (e.g. \"2026-12-31\"). Required for FIXED_PRICE and HOURLY_RATE payment types.",
+            "type": "string"
+          },
+          "hourlyRate": {
+            "description": "Hourly rate in USD dollars. Required for HOURLY_RATE payment type.",
+            "type": "number",
+            "minimum": 0.01
+          },
+          "maxHoursPerSubmission": {
+            "description": "Maximum number of hours the contractor can submit per billing period. Required for HOURLY_RATE payment type.",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "milestones": {
+            "description": "Project milestones with amounts and due dates. Required for MILESTONE payment type.",
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "number",
+                  "minimum": 0.01,
+                  "description": "Milestone amount in USD dollars."
+                },
+                "description": {
+                  "description": "Optional milestone description.",
+                  "type": "string"
+                },
+                "dueDate": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Milestone due date in ISO 8601 format (e.g. \"2026-06-01\")."
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Milestone title."
+                }
+              },
+              "required": [
+                "amount",
+                "dueDate",
+                "title"
+              ]
+            }
+          },
+          "paymentType": {
+            "type": "string",
+            "enum": [
+              "FIXED_PRICE",
+              "HOURLY_RATE",
+              "MILESTONE"
+            ],
+            "description": "Payment structure for the project: FIXED_PRICE (one total amount), HOURLY_RATE (pay per hour), or MILESTONE (split into milestones with individual amounts and due dates)."
+          },
+          "platformFeePayer": {
+            "description": "Who pays the Contra platform fee. PAYER means the client pays it, RECIPIENT means the contractor absorbs it.",
+            "type": "string",
+            "enum": [
+              "PAYER",
+              "RECIPIENT"
+            ]
+          },
+          "processingFeePayer": {
+            "description": "Who pays the payment processing fee. PAYER means the client pays it, RECIPIENT means the contractor absorbs it.",
+            "type": "string",
+            "enum": [
+              "PAYER",
+              "RECIPIENT"
+            ]
+          },
+          "projectScope": {
+            "description": "Description of the project scope and expectations. Supports markdown links (e.g. [Scope Doc](https://example.com)) and basic formatting.",
+            "type": "string"
+          },
+          "recipient": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "description": "Email address of the recipient. Required when inviting a non-Contra user. Provide either userProfileId OR email+firstName+lastName.",
+                "type": "string",
+                "format": "email",
+                "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+              },
+              "firstName": {
+                "description": "First name of the recipient. Required when using email for a non-Contra user.",
+                "type": "string"
+              },
+              "lastName": {
+                "description": "Last name of the recipient. Required when using email for a non-Contra user.",
+                "type": "string"
+              },
+              "userProfileId": {
+                "description": "UserProfile ID of an existing Contra user. Use get_user_profile_by_username to look this up. Provide either userProfileId OR email+firstName+lastName.",
+                "type": "string"
+              }
+            },
+            "description": "The other party on the project (contractor or client being invited)."
+          },
+          "recipientRole": {
+            "type": "string",
+            "enum": [
+              "CLIENT",
+              "CONTRACTOR"
+            ],
+            "description": "The role of the recipient on the project. Use CONTRACTOR if the authenticated user is the client hiring someone. Use CLIENT if the authenticated user is the contractor proposing to a client."
+          },
+          "signOnBehalfOfCompany": {
+            "description": "If signing the contract on behalf of a company, provide the company name and your job title.",
+            "type": "object",
+            "properties": {
+              "companyName": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Name of the company being represented."
+              },
+              "jobTitle": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Job title of the person signing on behalf of the company."
+              }
+            },
+            "required": [
+              "companyName",
+              "jobTitle"
+            ]
+          },
+          "startDate": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Project start date in ISO 8601 format (e.g. \"2026-06-01\")."
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Project title."
+          },
+          "totalAmount": {
+            "description": "Total project amount in USD dollars. Required for FIXED_PRICE payment type.",
+            "type": "number",
+            "minimum": 0.01
+          },
+          "upfrontPaymentPercent": {
+            "description": "Percentage of total fee released before project completion (0-100). Required for FIXED_PRICE payment type.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "workspaceId": {
+            "description": "Optional Contra workspace global ID. When provided, this workspace is used instead of the active workspace.",
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "recipientRole",
           "title"
         ]
       },
@@ -5210,7 +5542,7 @@
     },
     {
       "name": "pay_invoice_prepare",
-      "description": "Prepares an invoice payment using a saved payment method and returns a draft preview, including the invoice payment terms that the payer must agree to.\n\n**Invoice Payment Workflow \u2014 guide the user naturally through these steps:**\n\n**Step 1 \u00b7 Which invoice?** Identify the invoice to pay. Use `list_invoices_receivable` to find outstanding invoices. Confirm the correct invoice with the user by showing its number, amount, and due date.\n\n**Step 2 \u00b7 Which payment method?** Call `list_payment_methods` to get the user's saved payment methods. If there is only one, confirm it with the user. If there are multiple, ask which one to use.\n\nOnce all information is gathered, call this tool to prepare the payment draft.\n\n**After this tool returns, you MUST:**\n\n1. Show the returned `preview` to the user \u2014 including the invoice details and selected payment method.\n2. Show the agreement to the user **verbatim**: render `preview.agreement.markdown` exactly as returned. Do not paraphrase, summarize, or omit any line.\n3. Ask the user explicitly whether they agree to the terms and want to proceed with the payment.\n4. Only call `pay_invoice_confirm` after the user replies in the affirmative. Pass the user's literal approval message as `acceptanceText` (do not paraphrase \u2014 this is recorded as click-wrap consent).",
+      "description": "Prepares one invoice payment using a saved payment method, including the full fee breakdown and payment terms. Supports standalone and off-terms project invoices, including approved Contra Labs engagement invoices. The billed workspace is derived from the invoice; an optional workspaceId must match it. Does not add payment methods or perform bulk checkout.\n\n**Invoice Payment Workflow \u2014 guide the user naturally through these steps:**\n\n**Step 1 \u00b7 Which invoice?** Identify the invoice to pay. Use `list_invoices_receivable` to find outstanding invoices. Confirm the correct invoice with the user by showing its number, amount, and due date.\n\n**Step 2 \u00b7 Which payment method?** Call `list_payment_methods` to get the user's saved payment methods. If there is only one, confirm it with the user. If there are multiple, ask which one to use.\n\nOnce all information is gathered, call this tool to prepare the payment draft.\n\n**After this tool returns, you MUST:**\n\n1. Show the returned `preview` to the user \u2014 including the invoice details and selected payment method.\n2. Show the agreement to the user **verbatim**: render `preview.agreement.markdown` exactly as returned. Do not paraphrase, summarize, or omit any line.\n3. Ask the user explicitly whether they agree to the terms and want to proceed with the payment.\n4. Only call `pay_invoice_confirm` after the user replies in the affirmative. Pass the user's literal approval message as `acceptanceText` (do not paraphrase \u2014 this is recorded as click-wrap consent).",
       "inputSchema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
@@ -5252,7 +5584,7 @@
     },
     {
       "name": "pay_invoice_confirm",
-      "description": "Executes a prepared invoice payment draft via chargeInvoice. Only call this after the user has explicitly approved the preview returned by pay_invoice_prepare AND confirmed they agree to the invoice payment terms (which were shown verbatim in the preview's `agreement.markdown`).\n\nPass the user's literal approval message as `acceptanceText` (e.g. \"yes, agree and pay\"). Do not paraphrase \u2014 this is recorded as legally-binding click-wrap consent.",
+      "description": "Executes a single prepared invoice payment draft via chargeInvoice. The draft can be submitted once only. After an error or UNKNOWN result, inspect get_invoice_status; never blindly retry or prepare another payment. PROCESSING and REQUIRES_ACTION are not completed payments. Surface any authentication redirect to the user and refresh status afterward. Only SUCCEEDED confirms the charge succeeded; it does not confirm arrival in the recipient\u2019s bank account. Only call this after the user has explicitly approved the preview returned by pay_invoice_prepare AND confirmed they agree to the invoice payment terms (which were shown verbatim in the preview's `agreement.markdown`).\n\nPass the user's literal approval message as `acceptanceText` (e.g. \"yes, agree and pay\"). Do not paraphrase \u2014 this is recorded as legally-binding click-wrap consent.",
       "inputSchema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
@@ -5998,8 +6330,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792195112.1773698,
-    "checked_at": "2026-10-16T23:58:32.177384+00:00",
+    "finished_epoch": 1792197866.3553874,
+    "checked_at": "2026-10-17T00:44:26.355400+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",
@@ -6308,6 +6640,7 @@
             "isVerified",
             "name",
             "organizationId",
+            "profileUrl",
             "slug"
           ],
           [
@@ -6482,7 +6815,8 @@
             "publicUrl",
             "slug",
             "status",
-            "title"
+            "title",
+            "viewerApplication"
           ],
           [
             "children",
@@ -6523,9 +6857,19 @@
             "status"
           ],
           [
+            "hasMorePublicMembers",
             "name",
             "organizationId",
+            "profileUrl",
+            "publicMembers",
             "slug"
+          ],
+          [
+            "displayUsername",
+            "firstName",
+            "lastName",
+            "profileUrl",
+            "userProfileId"
           ]
         ],
         "unavailable": false
@@ -6549,7 +6893,8 @@
             "publicUrl",
             "slug",
             "status",
-            "title"
+            "title",
+            "viewerApplication"
           ],
           [
             "children",
@@ -6586,6 +6931,7 @@
             "displayUsername",
             "firstName",
             "lastName",
+            "profileUrl",
             "userProfileId"
           ]
         ],
@@ -6610,7 +6956,8 @@
             "publicUrl",
             "slug",
             "status",
-            "title"
+            "title",
+            "viewerApplication"
           ],
           [
             "children",
@@ -6655,6 +7002,7 @@
             "displayUsername",
             "firstName",
             "lastName",
+            "profileUrl",
             "userProfileId"
           ]
         ],
@@ -6754,8 +7102,7 @@
         "applied": true
       }
     ],
-    "geekyants_application_recorded": true,
-    "cached": true
+    "geekyants_application_recorded": true
   },
   "platforms": 7,
   "browser": "hosting configuration needed",

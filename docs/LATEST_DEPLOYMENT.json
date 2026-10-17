@@ -1,7 +1,7 @@
 {
-  "commit": "cbab307e3a712b31b8def7cdd4d29a1b0ca1afc8",
-  "version": "0.17.0",
-  "checked_at": "2026-10-17T15:12:44.268600+00:00",
+  "commit": "ab4dc78acb8185fced973fd5f330ace19ede3668",
+  "version": "0.17.1",
+  "checked_at": "2026-10-17T16:44:07.408279+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -12,16 +12,16 @@
     "restart_verified": true,
     "message": "Mounted storage detected; verify a saved record survives a restart."
   },
-  "opportunities": 181,
+  "opportunities": 198,
   "last_discovery": {
-    "added": 1,
-    "seen": 59,
+    "added": 17,
+    "seen": 62,
     "errors": [],
     "sources_ok": [
       "We Work Remotely RSS",
       "Remotive"
     ],
-    "finished": "2026-10-17T03:29:25.619769+00:00"
+    "finished": "2026-10-17T15:30:19.362777+00:00"
   },
   "documents": 29,
   "gmail_connected": true,
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-17T15:13:28.936288+00:00",
+    "checked_at": "2026-10-17T16:44:38.374731+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -116,7 +116,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-17T15:13:36.459336+00:00",
+    "checked_at": "2026-10-17T16:44:41.965789+00:00",
     "tools": 123,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -6333,8 +6333,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792250022.8344843,
-    "checked_at": "2026-10-17T15:13:42.834497+00:00",
+    "finished_epoch": 1792255487.6660986,
+    "checked_at": "2026-10-17T16:44:47.666112+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",
@@ -6651,6 +6651,10 @@
             "slug"
           ],
           [
+            "countryId",
+            "name"
+          ],
+          [
             "displayUsername",
             "firstName",
             "lastName",
@@ -6784,10 +6788,63 @@
             "hasNextPage",
             "ok",
             "totalCount"
+          ],
+          [
+            "job",
+            "jobFeedEntryId",
+            "visitorDidApply",
+            "visitorDidBookmark",
+            "visitorDidDismiss",
+            "visitorDidView",
+            "visitorWasMatched"
+          ],
+          [
+            "budget",
+            "country",
+            "createdAt",
+            "duration",
+            "hiringAsIndividual",
+            "jobId",
+            "jobPosting",
+            "languages",
+            "numberOfOpenPositions",
+            "organization",
+            "owner",
+            "publicUrl",
+            "roles",
+            "slug",
+            "startTimeframe",
+            "status",
+            "timezoneOffsetTolerance",
+            "timezonePrimaryUtcOffset",
+            "title",
+            "tools"
+          ],
+          [
+            "estimatedHours",
+            "feeMax",
+            "feeMin",
+            "type"
+          ],
+          [
+            "countryId",
+            "name"
+          ],
+          [
+            "approvedAt",
+            "externalUrl",
+            "jobPostingId",
+            "status"
+          ],
+          [
+            "displayUsername",
+            "firstName",
+            "lastName",
+            "userProfileId"
           ]
         ],
         "unavailable": false,
-        "returned": 0,
+        "returned": 1,
         "has_more": false,
         "access_limited": true
       },
@@ -6897,8 +6954,6 @@
           ],
           [
             "backgroundColor",
-            "isToggleable",
-            "level",
             "textAlignment",
             "textColor"
           ],
@@ -6907,21 +6962,18 @@
             "text",
             "type"
           ],
+          [
+            "bold"
+          ],
           [],
           [
-            "backgroundColor",
-            "textAlignment",
-            "textColor"
+            "italic"
           ],
           [
             "estimatedHours",
             "feeMax",
             "feeMin",
             "type"
-          ],
-          [
-            "amount",
-            "interval"
           ],
           [
             "jobPostingId",
@@ -6968,6 +7020,8 @@
           ],
           [
             "backgroundColor",
+            "isToggleable",
+            "level",
             "textAlignment",
             "textColor"
           ],
@@ -6978,14 +7032,7 @@
           ],
           [],
           [
-            "content",
-            "href",
-            "type"
-          ],
-          [
             "backgroundColor",
-            "isToggleable",
-            "level",
             "textAlignment",
             "textColor"
           ],
@@ -7002,14 +7049,6 @@
           [
             "jobPostingId",
             "status"
-          ],
-          [
-            "hasMorePublicMembers",
-            "name",
-            "organizationId",
-            "profileUrl",
-            "publicMembers",
-            "slug"
           ],
           [
             "displayUsername",
@@ -7041,6 +7080,23 @@
         "requirements_verified": false
       },
       {
+        "title": "Junior Graphic Designer",
+        "url": "https://contra.com/opportunity/YWe3ZNNA-junior-graphic-designer",
+        "kind": "Job / contract",
+        "source": "Contra",
+        "description": "About House of Ari Jogiel\nWe are a Los Angeles-based creative studio, garment developer, and manufacturing company designing and making garments with intention.\nFounded in 2017, we've partnered with over 400 brands, including the WNBA, The North Face, Liquid Death, and Penguin. Through our verticals: Strategy, Design, Development, and Manufacturing, we help brands turn ideas into finished garments in days.\nWe're a tight-knit, ambitious team driven by creativity, craftsmanship, and a passion for ethical manufacturing, with big goals to grow and make a meaningful impact in the fashion industry.\nAbout the Role\nWe're looking for a driven, creative, and detail-oriented \nJunior Graphic Designer\n to join our growing creative team and work directly with our Founder.\nThis is an opportunity to work on exciting projects for established global brands and emerging labels, with exposure to the entire creative and garment development process, from concept to production.\nThe ideal candidate has a strong eye for design, is versatile across different creative styles, and can bring ideas to life while adapting to each brand's unique identity.\nRemote contract position | 10\u201315 hours per week to start, with room to grow.\nWe're looking for someone available to start within the next few days.\nWhat You'll Do\nBranding & Identity:\n Create and refine logos, visual identities, branding proposals, and presentations that reflect each brand's unique direction.\nFashion & Apparel Design:\n Develop garment graphics, artwork, patterns, technical sketches, and creative assets for a diverse range of fashion projects.\nDigital & Marketing:\n Design engaging social media and marketing assets for House of Ari Jogiel and our clients.\nCreative Collaboration:\n Work closely with our Founder to translate creative direction into polished designs, explore variations, and bring fresh ideas to the table.\nProject Execution:\n Manage multiple projects, meet deadlines, and maintain organized design files with clear version control.\nWhat We're Looking For\n2+ years of experience with Adobe Illustrator and Adobe Photoshop.\nA strong creative eye, attention to detail, and versatility across different design styles.\nAbility to understand creative direction, think critically, and execute independently while maintaining each brand's identity.\nProactive, organized, and comfortable managing multiple projects in a fast-paced environment with shifting priorities.\nStrong communication skills and ability to collaborate virtually, including screen-sharing for creative reviews.\nFluency in English is required.\nExperience in fashion, apparel graphics, or garment development is a plus.\nJoin the Team\nWork with exciting brands:\n Contribute to creative projects for globally recognized names and up-and-coming fashion labels.\nLearn directly from our Founder:\n Gain mentorship, creative guidance, and firsthand exposure to the fashion industry.\nMake a real impact:\n Take ownership of meaningful projects where your creativity and contributions are valued.\nExpand your experience:\n Work across branding, fashion, digital design, and the garment development process, gaining knowledge beyond traditional graphic design.\nGrow with us:\n Take on new creative challenges and opportunities for greater responsibility as our team expands.\nHow to Apply\nInterested in joining our creative team? Apply directly through Contra.\nWe will only review applications submitted through this job posting. For follow-ups, feel free to message us on Instagram at @ARIJOGIEL.",
+        "budget": {
+          "estimatedHours": 15,
+          "feeMax": "USD:40.00000000",
+          "feeMin": "USD:25.00000000",
+          "type": "HourlyRateJobBudget"
+        },
+        "prize": null,
+        "deadline": null,
+        "status": "POSTED",
+        "requirements_verified": false
+      },
+      {
         "title": "Interview-Based LinkedIn Ghostwriter for Founder Profile",
         "url": "https://contra.com/opportunity/PBqXX3MP-interview-based-linked-in-ghostwriter-for-founder-profile",
         "kind": "Job / contract",
@@ -7050,23 +7106,6 @@
           "estimatedHours": null,
           "feeMax": "USD:350.00000000",
           "feeMin": "USD:300.00000000",
-          "type": "FixedPriceJobBudget"
-        },
-        "prize": null,
-        "deadline": null,
-        "status": "POSTED",
-        "requirements_verified": false
-      },
-      {
-        "title": "VSL Editor + Motion Graphics for a High-Ticket Coaching Offer ",
-        "url": "https://contra.com/opportunity/ev7NFmEU-vsl-editor-motion-graphics-for-a-high-ticket-coaching-offer",
-        "kind": "Job / contract",
-        "source": "Contra",
-        "description": "I'm looking for a skilled editor to turn a Video Sales Letter (VSL) for a high-ticket coaching program into a polished, high-converting video with motion graphics. The finished video will run about 15 minutes and should closely follow the style of Matt Gray's VSLs (reference: \nwww.founderos.com/apply\n). The goal is a clean, premium, story-driven video that positions the coach as the clear authority, with graphics that highlight the key messages and frameworks.\nThe editor should work in the brand's colors and fonts so the video stays consistent with existing brand assets. It should feel more elevated and polished than the brand's vibrant short-form content, not copy it.\nResponsibilities\nEdit the VSL for tight pacing and a strong narrative flow.\nCreate motion graphics, text callouts, and visuals that strengthen the storytelling and reinforce the coaching frameworks.\nMake sure every visual element fits the brand.\nAdd captions and handle light color and audio cleanup.\nDeliver a premium-quality final video within the project timeline.\nQualifications\nProven video editing experience, with a portfolio of completed VSLs, ideally for coaches, consultants, or high-ticket offers.\nStrong motion graphics and visual storytelling skills.\nExperience working within existing brand materials to keep things consistent.\nThe ability to closely match a reference style.\nExperience with Matt Gray-style VSLs is highly desirable.Interested freelancers should respond with their three best VSL examples, including any performance results, along with their availability and previous relevant experience with similar styles.\nIf you're interested, please reply with your three best VSL examples and any performance results, along with your availability, your price and turnaround time, and any experience you have with similar styles.",
-        "budget": {
-          "estimatedHours": null,
-          "feeMax": "USD:1000.00000000",
-          "feeMin": "USD:500.00000000",
           "type": "FixedPriceJobBudget"
         },
         "prize": null,

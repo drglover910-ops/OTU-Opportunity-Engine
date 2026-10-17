@@ -86,3 +86,29 @@ body.sidebar-collapsed{--nav-width:64px}.sidebar-collapsed .sidebar-top{padding:
 /* v0.16: quiet project controls, touch menus and readable mail. */
 #project-controls{display:grid;grid-template-columns:minmax(0,1fr) 40px;gap:5px;padding:4px 10px 8px}#project-controls select{width:100%;min-width:0;padding:7px;font-size:13px}#chat-view{grid-column:1/-1}#project-controls button{margin:0;padding:4px}body.sidebar-collapsed #project-controls{display:none}.recent-chat{touch-action:pan-y}.recent-rename{min-width:40px;min-height:40px}#chat-actions-dialog,#organize-dialog{width:min(360px,90vw);max-height:85dvh;overflow:auto;border:1px solid #365544;background:#101b16;color:#edf5ef;border-radius:16px;padding:20px}#chat-actions-buttons{display:grid;gap:6px}#chat-actions-buttons button{text-align:left;margin:0}dialog::backdrop{background:#0009}.mail-toolbar{display:flex;flex-wrap:wrap;align-items:end;gap:8px}.mail-toolbar label{flex:1;min-width:130px}.mail-item{display:block;text-align:left;width:100%;margin:6px 0;overflow-wrap:anywhere}.mail-item small{display:block}#mail-reader{border-top:1px solid #355445;margin-top:18px;padding-top:12px}#mail .message-text{white-space:pre-wrap;overflow-wrap:anywhere}#complete-restore-form{margin:18px 0;border-top:1px solid #355445;padding-top:16px}
 @media(max-width:1100px){body:not(.sidebar-open) #project-controls{display:none}}
+
+/* v0.16.1 — reference proportions without changing the viewport or pane behavior. */
+@media(min-width:1101px){body:not(.sidebar-collapsed){--nav-width:clamp(248px,20vw,280px)}}
+#pane-title{font-size:clamp(16px,1.3vw,18px);line-height:1.35}
+#app-sidebar>button,.sidebar-help,.recent-chat .recent-open{font-size:16px;line-height:1.4;min-height:46px}
+.recent-chat .recent-open{padding:10px}.recent-chat small{font-size:12px;line-height:1.4;margin-top:2px}
+.recent-rename{width:44px;min-width:44px;min-height:44px}.recent-heading{font-size:14px;margin-top:22px}
+#project-controls select,#chat-search{font-size:16px;min-height:44px;line-height:1.35}
+#project-controls select{padding:8px}#project-controls button{min-height:44px}
+#conversation{max-width:860px}#conversation-feed{padding-block:24px 20px}
+#conversation-feed .message-text{font-size:18px;line-height:1.65}
+#conversation-feed>.user-message{max-width:85%;padding:14px 20px;border-radius:22px}
+#conversation-feed>.assistant-message{margin-block:20px 30px}
+#conversation-feed button,#conversation-feed .answer-audio button{font-size:14px;min-height:44px;line-height:1.35}
+#conversation-form{padding:12px 16px 10px}#conversation-text{font-size:18px;line-height:1.5;min-height:44px;height:44px}
+.composer-toolbar{min-height:44px;gap:8px}.composer-toolbar>button,.composer-options>summary{min-height:44px}
+#attach-file{width:44px}#dictate-message{font-size:15px}.composer-options>summary{font-size:14px}
+.composer-toolbar>#ask-workspace{width:44px;min-width:44px;height:44px}
+#workspace-panel p,#workspace-panel label,.document-pane p{font-size:16px;line-height:1.55}
+#workspace-panel button,#workspace-panel a.button,.document-pane button{font-size:15px;min-height:44px;line-height:1.35}
+#workspace-panel input:not([type=checkbox]):not([type=radio]),#workspace-panel select{min-height:44px;font-size:16px}
+#workspace-panel textarea,.composer-options-content textarea,.composer-options-content select,.document-pane #document-editor{font-size:16px}
+#workspace-panel h1{font-size:clamp(22px,2vw,26px);line-height:1.25}#workspace-panel h2{font-size:19px;line-height:1.35}
+#chat-actions-dialog button,#organize-dialog button,#organize-dialog input,#organize-dialog select{min-height:44px;font-size:16px}
+@media(max-width:600px){#conversation-feed .message-text,#conversation-text{font-size:17px}#conversation-feed{padding-block:18px 16px}#conversation-feed>.user-message{padding:12px 16px;max-width:90%}#conversation-form{padding:10px 12px 8px}#workspace-panel-content{padding:16px}.composer-toolbar{gap:6px}}
+@media(max-height:650px){#app-sidebar{overflow-y:auto}#recent-chats{flex:0 0 auto;max-height:180px;min-height:72px}#conversation-feed{padding-block:12px}.keyboard-open #conversation-form{margin-bottom:max(6px,env(safe-area-inset-bottom))}}

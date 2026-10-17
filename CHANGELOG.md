@@ -1,3 +1,9 @@
+## v0.16.1
+
+- Balance reference-inspired proportions: 18 px conversation text (17 px on phones), readable sidebar labels and project fields, a compact composer, and consistent side-panel typography.
+- Keep editable controls at least 16 px to avoid iPad focus zoom, and use 44 px action targets without removing controls. Keep pinch zoom, pane behavior and keyboard positioning intact.
+- Let navigation scroll on short screens so controls stay reachable when the keyboard reduces the visible area. Preserve all existing conversations, projects, mail, files and settings; no data migration.
+
 ## v0.16.0
 
 - Add project grouping, multiple chats per project and a Move menu for touch/desktop; preserve original workspace, opportunity, messages and file links, including older conversations.

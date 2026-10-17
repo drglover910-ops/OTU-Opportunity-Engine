@@ -68,3 +68,6 @@ v0.17.0 corrects the owner's Oct17 screen-recorded send flow. Durable acknowledg
 
 
 v0.17.1 prioritizes the conversation sidebar on short multitasking windows. Workspace shortcuts move into Workspace tools below 800 px visible height, leaving a flexible independently scrolling list, project/view filters and clear conversation counts. Current chat is revealed when lists refresh. No data migration or deletion: the owner will manually remove the duplicate Contra thread.
+
+
+v0.18.0 adds bounded local lexical retrieval for the current master, confirmed career updates and exact-chat owner notes (up to 1,500), plus explicitly enabled small UTF-8 TXT/MD uploads. Returned references retain dates, digests, offsets and excerpts, and are persisted on assistant notes. AI answers are excluded from retrieval; source authority is labeled and source content remains untrusted. New additive file_knowledge table and work_notes.sources column are included in complete recovery. Enabling text reading calls no model; relevant excerpts may enter the existing single budgeted writing request after owner confirmation. PDF/DOCX/photo/audio/video uploads are still unread in chat. 28 offline retrieval cases do not measure model answer quality or platform execution. No model switch, hardware upgrade, public datasets, paid test calls, account actions or extra supervisor agents added.

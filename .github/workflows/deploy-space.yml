@@ -6,6 +6,7 @@ on:
     paths:
       - app.py
       - engine.py
+      - knowledge_store.py
       - chat_service.py
       - workspace_ops.py
       - backup_store.py

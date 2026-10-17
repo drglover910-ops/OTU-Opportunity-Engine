@@ -7,7 +7,7 @@ sdk: docker
 app_port: 7860
 ---
 
-# OTU Opportunity Engine — v0.17.1
+# OTU Opportunity Engine — v0.18.0
 
 Short windows keep conversations in their own scrolling list. **Tools** opens workspace shortcuts and the Recent/Archived/Trash selector; the project picker stays above the list. New chat clears search/archive filters so the new conversation is visible. Existing chats are preserved.
 
@@ -52,3 +52,6 @@ Mail reads Gmail Inbox/Sent/search and complete threads on demand. OTU drafts an
 v0.17.0 chat: Send immediately places your question in the conversation and shows Isis thinking. Provider generation time still varies; this is a saved background request, not token streaming. Keep typing your next question while waiting, or browse another section. A refresh reconnects to acknowledged pending work. One request per conversation and up to three conversations can run at once under the existing AI allowance. Status polling does not call the model. After a restart, interrupted requests are shown for review and never restarted automatically. If delivery cannot be confirmed, check the conversation before resending; retrying the same unchanged question in that tab reuses its send ID.
 
 Copy, Read aloud and thumbs up/down sit under each saved response. Copy also works on your questions. Safari has a manual-copy window if clipboard permission is unavailable. Ratings are stored privately and passed with recent conversation context; they do not retrain the model or verify facts. Complete backups include question/answer receipts and ratings; recovery remaps message IDs and does not resume inference. `scripts/check_chat_ui.py` runs the delayed-provider localhost fixture without provider calls or external browsing.
+
+
+v0.18.0: Isis can retrieve relevant excerpts from the current career master, owner-confirmed career updates and older owner notes in the exact conversation. Expand **Sources for this reply** to inspect the references supplied to the model. In Files, choose **Let Isis read this** for a UTF-8 TXT/MD file (256 KiB / 50,000 characters maximum). Confirm before relevant text may be sent to the configured AI provider with future questions. Other uploads remain saved for viewing; PDF/Word/images/audio/video are not analyzed in chat. Stop using in chat stops future retrieval, not prior saved replies. No embedding service, training, new model or extra inference round is added. `python scripts/evaluate_otu.py` runs the 28-case offline retrieval baseline, not a model-quality benchmark.

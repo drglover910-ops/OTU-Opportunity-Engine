@@ -66,6 +66,8 @@ for attempt in range(48):
                     report['developer_request_queue']='available' if isinstance(request('/api/developer/requests'),list) else 'unverified'
                     report['ai_live_check']='not run; no paid inference during verification'
                     report['ai_budget']=status.get('ai_budget',{})
+                    report['source_retrieval']=status.get('source_retrieval',{'status':'not available'})
+                    report['source_controls']='asset available; local fixture tested separately' if b'answerSourcesHTML' in source and b'read-file' in source else 'unverified'
                     try:
                         ready=request('/api/contra/prepare',{})
                         report['contra_signin_ready']=bool(ready.get('ready'))

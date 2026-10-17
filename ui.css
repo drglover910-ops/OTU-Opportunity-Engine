@@ -161,3 +161,6 @@ body.sidebar-collapsed #sidebar-actions>.new-chat{justify-content:center;padding
 @media(max-height:800px) and (max-width:1100px){body:not(.sidebar-open) #sidebar-actions{display:block}.sidebar-open #sidebar-actions{display:flex}}
 @media(max-height:800px){#workspace-navigation.tools-expanded #workspace-links{max-height:calc(100% - 72px)}#workspace-navigation.tools-expanded #workspace-links>button{margin:0;min-height:44px;padding:8px 12px}}
 .sidebar-open #app-sidebar .recent-heading{display:flex}
+
+/* v0.18: inspect supplied references without expanding the normal chat. */
+.answer-sources{max-width:100%;margin-top:8px;color:var(--muted);font-size:14px}.answer-sources>summary{font-size:14px;min-height:44px;padding:10px 4px}.answer-sources p,.answer-sources small{display:block;font-size:13px;line-height:1.5}.answer-sources div{padding:12px 0;border-top:1px solid var(--line)}.answer-sources blockquote{margin:8px 0;padding-left:12px;border-left:2px solid #687a4a;white-space:pre-wrap;overflow-wrap:anywhere}.answer-sources strong{font-size:14px!important;color:var(--text)!important}

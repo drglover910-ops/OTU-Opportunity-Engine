@@ -1,3 +1,10 @@
+## v0.18.0
+
+- Retrieve bounded source-labeled excerpts from the current career master, confirmed career updates, exact-conversation owner notes and explicitly enabled TXT/MD files. Exclude AI replies as factual evidence and keep other threads/platforms isolated.
+- Save supplied references with each response and show a collapsed Sources section. Preserve source dates, version digests and uncertainty; no automatic career edits or model training.
+- Add Let Isis read this / Stop using in chat for small UTF-8 text files with explicit provider-sharing confirmation. Other formats stay stored/previewable and clearly unread by chat. Complete backups preserve opt-in records and answer references.
+- Add 28 synthetic offline retrieval scenarios, source/persistence/privacy/budget tests and browser checks. Keep existing model, hardware, inference-call limits, approval controls and original data.
+
 ## v0.17.1
 
 - Reserve independently scrolling conversation space in short windows; move workspace shortcuts into an accessible Workspace tools menu below 800 px height. Keep New chat, project filters, Help and Settings visible. Clear stale search/archive filters when creating a conversation so it cannot disappear from its list.

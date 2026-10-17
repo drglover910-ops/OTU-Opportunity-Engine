@@ -22,3 +22,8 @@ Prepared proposals have a **Discuss or revise this proposal** button. The correc
 The header menu now includes Where we stand, backed by the reconciled, dated shared working record. It does not perform a live account audit or use inference. Conversational context includes the relevant working status, personality and platform operating policy. A selected opportunity excludes unrelated status records; revisions use a smaller knowledge payload. Latest owner corrections and verified records take precedence over old snapshots. No raw ZIPs, inbox transcripts or master contact documents are added to the shared knowledge file.
 
 Assistant replies include Read aloud, Pause/Resume and Stop, using browser speech synthesis. A local voice is preferred where available; available voices and whether browser/vendor speech processing is online vary by device. No Hugging Face/OpenAI speech endpoint is called. Reading stops on conversation changes/background, and dictation/playback stop each other. No audio is recorded or stored by this feature. Actual Safari speech quality and playback support require owner-device confirmation; Chromium tests mock speech interfaces rather than claiming microphone/speaker hardware validation.
+
+
+## v0.18.0 source lookup
+
+See [the capability contract](CAPABILITY_MANIFEST.md). Chat now receives bounded relevant career/owner-note excerpts and explicitly enabled TXT/MD reference text. Sources for this reply exposes the supplied references. Retrieval is local and makes no extra inference call; adding excerpts can increase the tokens in the one existing request. Other upload formats remain unread in chat. No platform action tools or model training are added.

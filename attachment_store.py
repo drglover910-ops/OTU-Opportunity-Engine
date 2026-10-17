@@ -68,7 +68,7 @@ class AttachmentStore:
   return {'cancelled':True}
  def listing(self,d):
   w,o,chat=self.scope(d)
-  with self.e.connect() as c:return [dict(r) for r in c.execute('SELECT * FROM attachment_uploads WHERE workspace=? AND opportunity_id IS ? AND chat_id IS ? ORDER BY created DESC',(w,o,chat))]
+  with self.e.connect() as c:return [dict(r) for r in c.execute('SELECT a.*,EXISTS(SELECT 1 FROM file_knowledge k WHERE k.upload_id=a.id AND k.digest=a.digest) AS readable_by_isis FROM attachment_uploads a WHERE workspace=? AND opportunity_id IS ? AND chat_id IS ? ORDER BY created DESC',(w,o,chat))]
  def file(self,key):
   r=self.row(key)
   if r['state']!='complete':raise ValueError('File is still uploading.')
@@ -92,5 +92,5 @@ class AttachmentStore:
   with self.e.lock,self.e.connect() as c:
    r=self.row(d.get('id'))
    if r['state']!='complete':raise ValueError('Cancel an unfinished upload instead.')
-   (self.root/r['id']).unlink(missing_ok=True);c.execute('DELETE FROM attachment_uploads WHERE id=?',(r['id'],))
+   (self.root/r['id']).unlink(missing_ok=True);c.execute('DELETE FROM attachment_uploads WHERE id=?',(r['id'],));c.execute('DELETE FROM file_knowledge WHERE upload_id=?',(r['id'],))
   return {'removed':True}

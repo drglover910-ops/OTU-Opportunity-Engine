@@ -2,7 +2,7 @@
 import hashlib,json,re,secrets,shutil,tempfile,zipfile
 from pathlib import Path
 from engine import VERSION,now
-TABLES=('opportunities','documents','activity','drafts','messages','career_updates','packages','email_threads','workspaces','conversation_threads','work_notes','conversation_memory','platforms','platform_profiles','developer_requests','projects','chat_organization','mail_folders','mail_organization','attachment_uploads','response_feedback','chat_requests')
+TABLES=('opportunities','documents','activity','drafts','messages','career_updates','packages','email_threads','workspaces','conversation_threads','work_notes','conversation_memory','platforms','platform_profiles','developer_requests','projects','chat_organization','mail_folders','mail_organization','attachment_uploads','response_feedback','chat_requests','file_knowledge')
 UPLOAD_COLUMNS=('id','name','size','received','workspace','opportunity_id','chat_id','state','created','digest')
 EXTRA=('projects','chat_organization','mail_folders','mail_organization')
 def digest(path):
@@ -21,6 +21,7 @@ class Backups:
     exists={r[0] for r in c.execute("SELECT name FROM sqlite_master WHERE type='table'")}
     data={t:[dict(r) for r in c.execute('SELECT * FROM '+t)] for t in TABLES if t in exists}
     data['attachment_uploads']=[r for r in data.get('attachment_uploads',[]) if r['state']=='complete' and r['id']!=exclude_upload_id]
+    data['file_knowledge']=[r for r in data.get('file_knowledge',[]) if r['upload_id'] in {u['id'] for u in data['attachment_uploads']}]
     manifest={};files=[]
     for row in data.get('documents',[]):
      path=Path(row['path']);row['path']=path.name;files.append(('career/'+path.name,path,row['digest']))
@@ -73,6 +74,9 @@ class Backups:
     if z.getinfo('attachments/'+r['id']).file_size!=r['size']:raise ValueError('Upload size mismatch.')
     expected['attachments/'+r['id']]=r['digest']
    if manifest!=expected:raise ValueError('Backup file references do not match.')
+   for row in data.get('file_knowledge',[]):
+    upload=next((u for u in uploads if u['id']==row.get('upload_id')),None)
+    if not upload or row.get('digest')!=upload['digest'] or not isinstance(row.get('text'),str) or len(row['text'])>50000:raise ValueError('Invalid readable-file reference.')
    threads={r['id']:r for r in data.get('conversation_threads',[])};opps={r['id']:r for r in data.get('opportunities',[])}
    workspaces={r['id'] for r in data.get('workspaces',[])}
    for row in list(threads.values())+data.get('work_notes',[])+data.get('conversation_memory',[])+uploads:
@@ -117,7 +121,7 @@ class Backups:
    with tempfile.TemporaryDirectory(dir=self.e.data) as tmp:
     core=Path(tmp)/'core.zip'
     with zipfile.ZipFile(core,'w',zipfile.ZIP_DEFLATED) as out:
-     out.writestr('records.json',json.dumps({k:v for k,v in data.items() if k not in EXTRA+('attachment_uploads','format')}))
+     out.writestr('records.json',json.dumps({k:v for k,v in data.items() if k not in EXTRA+('attachment_uploads','file_knowledge','format')}))
      for r in docs:out.writestr('career/'+r['path'],z.read('career/'+r['path']))
     result=self.e.restore(core.read_bytes(),complete=True)
     with self.e.connect() as c:
@@ -150,4 +154,5 @@ class Backups:
        with z.open('attachments/'+r['id']) as source,partial.open('wb') as out:shutil.copyfileobj(source,out,1024**2)
        partial.replace(dest)
       columns=UPLOAD_COLUMNS;c.execute('INSERT OR IGNORE INTO attachment_uploads('+','.join(columns)+') VALUES('+','.join('?' for _ in columns)+')',[r[k] for k in columns])
+     for r in data.get('file_knowledge',[]):c.execute('INSERT OR IGNORE INTO file_knowledge VALUES(?,?,?,?)',(r['upload_id'],r['digest'],r['text'],r['created']))
    result['message']='Saved work and conversation uploads merged. Existing work preserved; sending approvals reset. Reconnect accounts if needed.';return result

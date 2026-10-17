@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-17.1",
+  "version": "2026-10-17.2",
   "purpose": "Shared, curated project knowledge for the in-app assistant and repository developer. This is not live access to the private ChatGPT thread.",
   "owner": "Desmond Glover",
   "mission": "Find legitimate income opportunities, prepare accurate materials, track confirmed outcomes and help win suitable work with low costs.",
@@ -12,7 +12,7 @@
     "Keep each platform and opportunity conversation separate.",
     "The master résumé supplies career facts. Earlier résumés are wording/design examples, never reusable application attachments. Generate a fresh résumé and cover letter for each opportunity; save versions only under that opportunity.",
     "Use the owner-provided navy/gold two-column résumé design with verified master facts; sample-image contact details, education, dates and availability are not career evidence.",
-    "Conversation uploads are private stored files, up to 1 GiB each under the app allowance. Their contents are not automatically supplied to AI, and existing backup ZIPs do not include this separate upload store."
+    "Conversation uploads are private stored files, up to 1 GiB each under the app allowance. Their contents are not automatically supplied to AI. Small UTF-8 TXT/MD files can be enabled with Let Isis read this; only relevant excerpts are supplied on later questions. Complete backups include uploads and reading choices; legacy backups omit the upload store."
   ],
   "contra_strategy": [
     "Evaluate all legitimate earning routes: contracts, sponsorships, testing, Labs, challenges and partnerships.",

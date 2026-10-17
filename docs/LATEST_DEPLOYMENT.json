@@ -1,7 +1,7 @@
 {
-  "commit": "21a856fdfdebff31c1a03275d5b83a1dc84bbb30",
-  "version": "0.16.1",
-  "checked_at": "2026-10-17T00:43:39.381013+00:00",
+  "commit": "ed486ff91da7cf9ab99b55e03a85ec5bae70703a",
+  "version": "0.16.2",
+  "checked_at": "2026-10-17T01:21:32.751323+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-17T00:44:13.802255+00:00",
+    "checked_at": "2026-10-17T01:22:05.246137+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -57,7 +57,8 @@
   "matrix_asset": "available",
   "workspace_shell": "available",
   "read_aloud_controls": "asset available; device audio not tested",
-  "chat_threads": 6,
+  "isis_voice_controls": "available; device preview required",
+  "chat_threads": 7,
   "projects": 9,
   "recovery_checkpoint": {
     "checkpoint": true,
@@ -81,7 +82,7 @@
       },
       "conversation_threads": {
         "before": 3,
-        "now": 4
+        "now": 5
       },
       "documents": {
         "before": 29,
@@ -113,7 +114,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-17T00:44:20.428078+00:00",
+    "checked_at": "2026-10-17T01:22:10.342180+00:00",
     "tools": 123,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -6330,8 +6331,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792197866.3553874,
-    "checked_at": "2026-10-17T00:44:26.355400+00:00",
+    "finished_epoch": 1792200135.8191135,
+    "checked_at": "2026-10-17T01:22:15.819128+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",

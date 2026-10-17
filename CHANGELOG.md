@@ -1,3 +1,8 @@
+## v0.16.2
+
+- Name the AI teammate Isis (she/her), with a warm, confident adult American persona; preserve OTU product branding and existing history.
+- Prefer known female American English voice names when available and add a saved per-browser voice choice, preview and Stop under Isis’s voice. Voice gender/age cannot be guaranteed by the browser; show the selected voice and a transparent fallback. No paid speech API, new token or conversation migration.
+
 ## v0.16.1
 
 - Balance reference-inspired proportions: 18 px conversation text (17 px on phones), readable sidebar labels and project fields, a compact composer, and consistent side-panel typography.

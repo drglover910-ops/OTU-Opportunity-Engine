@@ -59,3 +59,6 @@ v0.16.0 implements approved conversation organization and Mail. Projects are sep
 
 
 v0.16.1 adjusts screen proportions against the owner's reference: readable 18 px chat / 17 px phone text, 16 px project/input fields to avoid iPad focus zoom, consistent 44 px action targets, modest desktop navigation width and short-screen navigation scrolling. Existing viewport/keyboard, pane, dictation, read-aloud, project/Mail and persistence behavior stay intact. No data migration. Browser checks cover desktop/tablet/phone plus 1366×1024, 1024×768, 320×640 and a short 1440×420 viewport; actual iPad Safari behavior still needs owner observation.
+
+
+v0.16.2: The owner names the conversational AI Isis (she/her), with a fictional 33-year-old American adult persona and a warm, confident, relaxed delivery. OTU remains the product name. Device read-aloud prefers known female en-US voices and offers browser-local selection/preview; browser APIs do not expose gender or age, so actual sound requires an owner preview. No paid speech API or data migration. Keep the assistant honest about being AI without repeating disclaimers in routine conversation.

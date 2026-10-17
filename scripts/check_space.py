@@ -52,7 +52,7 @@ for attempt in range(48):
                     with urllib.request.urlopen(urllib.request.Request(base+'/matrix.js',headers=headers),timeout=30) as asset:
                         report['matrix_asset']='available' if b'matrix-rain' in asset.read(1000) else 'unverified'
                     with urllib.request.urlopen(urllib.request.Request(base+'/ui.js',headers=headers),timeout=30) as shell:
-                        source=shell.read(200000);report['workspace_shell']='available' if b'closeWorkspacePanel' in source and b'browsingWorkspace' in source else 'unverified';report['read_aloud_controls']='asset available; device audio not tested' if b'readAnswer' in source else 'unverified'
+                        source=shell.read(200000);report['workspace_shell']='available' if b'closeWorkspacePanel' in source and b'browsingWorkspace' in source else 'unverified';report['read_aloud_controls']='asset available; device audio not tested' if b'readAnswer' in source else 'unverified';report['isis_voice_controls']='available; device preview required' if b'configureIsisVoice' in source and b'renderIsisVoices' in source else 'unverified'
                     report['chat_threads']=len(request('/api/chat-threads'))
                     report['projects']=len(request('/api/projects'))
                     report['recovery_checkpoint']=request('/api/recovery-status')

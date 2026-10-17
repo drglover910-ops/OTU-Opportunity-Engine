@@ -112,3 +112,5 @@ body.sidebar-collapsed{--nav-width:64px}.sidebar-collapsed .sidebar-top{padding:
 #chat-actions-dialog button,#organize-dialog button,#organize-dialog input,#organize-dialog select{min-height:44px;font-size:16px}
 @media(max-width:600px){#conversation-feed .message-text,#conversation-text{font-size:17px}#conversation-feed{padding-block:18px 16px}#conversation-feed>.user-message{padding:12px 16px;max-width:90%}#conversation-form{padding:10px 12px 8px}#workspace-panel-content{padding:16px}.composer-toolbar{gap:6px}}
 @media(max-height:650px){#app-sidebar{overflow-y:auto}#recent-chats{flex:0 0 auto;max-height:180px;min-height:72px}#conversation-feed{padding-block:12px}.keyboard-open #conversation-form{margin-bottom:max(6px,env(safe-area-inset-bottom))}}
+/* Keep the voice menu and other header actions reachable above the keyboard. */
+.header-menu-content{max-height:min(450px,calc(var(--app-height,100dvh) - var(--bar-height) - 24px))}

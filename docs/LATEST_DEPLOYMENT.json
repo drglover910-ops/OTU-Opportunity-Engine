@@ -1,7 +1,7 @@
 {
-  "commit": "83f9d850268b3c773dc32ec62a45e27219d704d2",
+  "commit": "b3e6815336920abc10d338dfa535b4843cbff31c",
   "version": "0.16.0",
-  "checked_at": "2026-10-17T00:01:58.429295+00:00",
+  "checked_at": "2026-10-17T00:04:07.850556+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-17T00:02:53.750282+00:00",
+    "checked_at": "2026-10-17T00:04:39.760395+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -113,7 +113,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-17T00:02:57.730258+00:00",
+    "checked_at": "2026-10-17T00:04:43.831723+00:00",
     "tools": 120,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."

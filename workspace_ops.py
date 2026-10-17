@@ -98,7 +98,12 @@ CREATE TABLE IF NOT EXISTS mail_cache(thread_id TEXT PRIMARY KEY,payload TEXT,up
   if page:params['pageToken']=page
   # Folder views are local cached membership, so Gmail requires no label-write scope.
   if box not in ('inbox','sent','all'):
-   with self.e.connect() as c:items=[json.loads(r['payload']) for r in c.execute('SELECT payload FROM mail_cache JOIN mail_organization USING(thread_id) WHERE folder_id=? ORDER BY updated DESC',(box,))]
+   with self.e.connect() as c:
+    rows=c.execute('SELECT mail_organization.thread_id,payload FROM mail_organization LEFT JOIN mail_cache USING(thread_id) WHERE folder_id=? ORDER BY updated DESC',(box,)).fetchall()
+    items=[]
+    for row in rows:
+     cached=json.loads(row['payload']) if row['payload'] else {}
+     items.append({k:cached.get(k,'') for k in ('subject','snippet')}|{'id':row['thread_id']})
    items=[r for r in items if search.lower() in json.dumps(r).lower()];next_page=None
   else:
    raw=fetch_json('https://gmail.googleapis.com/gmail/v1/users/me/threads?'+urllib.parse.urlencode(params),headers=headers)

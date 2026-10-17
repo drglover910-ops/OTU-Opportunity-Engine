@@ -64,6 +64,8 @@ class WorkspaceOperations(unittest.TestCase):
   with self.assertRaises(ValueError):self.ops.organize_mail({'thread_id':'abc123','opportunity_id':other})
   with patch.object(self.e,'gmail_token',return_value='fixture'),patch('workspace_ops.fetch_json') as fetch:
    result=self.ops.mail_list({'box':folder});self.assertEqual(result['items'][0]['organization']['followup'],'2026-10-20');fetch.assert_not_called()
+   with self.e.connect() as c:c.execute('DELETE FROM mail_cache')
+   recovered=self.ops.mail_list({'box':folder});self.assertEqual(recovered['items'][0]['id'],'abc123');self.assertNotIn('messages',recovered['items'][0]);fetch.assert_not_called()
 
  def test_restore_without_url_and_project_name_collision(self):
   oid=self.e.add({'company':'No URL client','title':'Workflow','workspace':'contra'})['id']

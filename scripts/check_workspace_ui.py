@@ -56,7 +56,7 @@ try:
   page.evaluate("tab('status-report')");expect(page.locator('#status-report-items')).to_contain_text('GeekyAnts');expect(page.locator('#status-report-items')).to_contain_text('not sent');page.locator('#close-workspace-panel').click()
   page.locator('#conversation-text').fill('Keep this unfinished message.');chat_before=page.evaluate('[selectedWorkspace,selectedOpportunity,selectedChat]')
   page.locator('#sidebar-toggle').click();assert page.evaluate('document.body.classList.contains("sidebar-collapsed")');assert page.locator('#app-sidebar').bounding_box()['width']==64
-  page.locator('#app-sidebar>[data-tab=board]').click();expect(page.locator('#workspace-panel')).to_be_visible();expect(page.locator('#conversation')).to_be_visible();expect(page.locator('#conversation-text')).to_have_value('Keep this unfinished message.')
+  page.locator('#app-sidebar [data-tab=board]').click();expect(page.locator('#workspace-panel')).to_be_visible();expect(page.locator('#conversation')).to_be_visible();expect(page.locator('#conversation-text')).to_have_value('Keep this unfinished message.')
   page.evaluate("openWorkspace('contra')");assert page.evaluate('[selectedWorkspace,selectedOpportunity,selectedChat]')==chat_before
   page.keyboard.press('Escape');expect(page.locator('#workspace-panel')).to_be_hidden();expect(page.locator('#conversation-text')).to_have_value('Keep this unfinished message.')
   page.locator('#app-sidebar .nav-tools > summary').click();expect(page.locator('#app-sidebar .nav-tools')).to_contain_text('Ready to review');page.locator('#workspace-menu > summary').click();page.locator('#workspace-menu').evaluate('(el)=>el.open=false')
@@ -84,7 +84,7 @@ try:
   page.wait_for_timeout(950);page.locator('.recent-rename').click();page.locator('[data-ops=chat-archive]').click();expect(page.locator('.recent-chat')).to_have_count(0);page.locator('#chat-view').select_option('archived');expect(page.locator('.recent-chat')).to_have_count(1)
   page.once('dialog',lambda d:d.accept());page.locator('.recent-rename').click();page.locator('[data-ops=chat-trash]').click();expect(page.locator('.recent-chat')).to_have_count(0);page.locator('#chat-view').select_option('trash');expect(page.locator('.recent-chat')).to_have_count(1);page.locator('.recent-rename').click();page.locator('[data-ops=chat-restore]').click();page.locator('#chat-view').select_option('active');expect(page.locator('.recent-chat')).to_have_count(1);expect(page.locator('#conversation-feed')).to_contain_text('Original opportunity history retained.');expect(page.locator('#conversation-text')).to_have_value('Keep my unfinished reply.')
   # The Mail panel uses the existing draft flow and does not interrupt the chat.
-  page.locator('#app-sidebar>[data-tab=mail]').click();page.locator('#mail-box').select_option('drafts');expect(page.locator('#mail-status')).to_contain_text('Unsent drafts');expect(page.locator('#mail-items')).to_contain_text('Review draft');expect(page.locator('#conversation-text')).to_have_value('Keep my unfinished reply.');page.locator('[data-ops=mail-folder]').click();page.locator('#organize-text').fill('Important follow-ups');page.locator('#organize-form button').first.click();expect(page.locator('#mail-box option[data-custom-folder]')).to_have_text('Important follow-ups');page.locator('#close-workspace-panel').click();expect(page.locator('#conversation-text')).to_have_value('Keep my unfinished reply.')
+  page.locator('#app-sidebar [data-tab=mail]').click();page.locator('#mail-box').select_option('drafts');expect(page.locator('#mail-status')).to_contain_text('Unsent drafts');expect(page.locator('#mail-items')).to_contain_text('Review draft');expect(page.locator('#conversation-text')).to_have_value('Keep my unfinished reply.');page.locator('[data-ops=mail-folder]').click();page.locator('#organize-text').fill('Important follow-ups');page.locator('#organize-form button').first.click();expect(page.locator('#mail-box option[data-custom-folder]')).to_have_text('Important follow-ups');page.locator('#close-workspace-panel').click();expect(page.locator('#conversation-text')).to_have_value('Keep my unfinished reply.')
   page.evaluate("tab('chat-settings');renderIsisVoices()");expect(page.locator('#isis-voice-status')).to_contain_text('Samantha');page.locator('#isis-voice-preview').click();assert page.evaluate('testUtterance.text').startswith('Hi Desmond, I’m Isis');assert page.evaluate('testUtterance.voice.name')=='Samantha';page.locator('#isis-voice').select_option('fixture-alex');page.locator('#isis-voice-preview').click();assert page.evaluate('testUtterance.voice.name')=='Alex';page.locator('#isis-voice').select_option('');page.locator('#isis-voice-stop').click();page.locator('#close-workspace-panel').click()
   page.locator('#conversation-text').fill('Message OTU…');page.locator('#status').evaluate('(el)=>el.textContent=""');page.screenshot(path='/tmp/otu-proportions-after.png')
   for width,height in [(1366,1024),(1024,768),(320,640),(1440,420)]:
@@ -95,7 +95,30 @@ try:
    assert page.locator('#conversation-feed').bounding_box()['height']>=120,(width,height,'reading space')
    if width>1100:
     page.locator('#app-sidebar .sidebar-help').scroll_into_view_if_needed();expect(page.locator('#app-sidebar .sidebar-help')).to_be_in_viewport()
+  # Short multitasking windows must expose chats without scrolling the entire sidebar.
+  page.evaluate("""()=>{window.sidebarFixtureOriginal=chatThreads;const sample=chatThreads[0];chatThreads=Array.from({length:24},(_,i)=>({...sample,id:'sidebar-fixture-'+i,key:'chat:sidebar-fixture-'+i,title:'Planning conversation '+i,archived:false,trashed:false,project_id:''})).concat(chatThreads);document.body.classList.remove('search-open','sidebar-collapsed','sidebar-open');$('chat-search').value='';$('project-filter').value='';$('chat-view').value='active';renderSidebar()}""")
+  for width,height in [(1440,420),(1180,600),(820,520),(600,420),(390,640)]:
+   page.set_viewport_size({'width':width,'height':height});page.wait_for_timeout(120)
+   if width<=1100:page.locator('#sidebar-toggle').click()
+   page.evaluate("$('recent-chats').dataset.active='';renderSidebar()")
+   sidebar=page.locator('#app-sidebar');listing=page.locator('#recent-chats');bounds=listing.bounding_box()
+   page.screenshot(path=f'/tmp/otu-sidebar-{width}x{height}.png')
+   assert bounds['height']>=125,(width,height,'conversation list squeezed',bounds,page.locator('#app-sidebar').evaluate('(el)=>[...el.children].map(x=>[x.id||x.className,x.getBoundingClientRect().height,getComputedStyle(x).margin])'))
+   assert sidebar.evaluate('(el)=>el.scrollHeight<=el.clientHeight+1'),(width,height,'whole sidebar scrolls')
+   expect(page.locator('.recent-chat.selected')).to_be_in_viewport()
+   expect(page.locator('[data-action=new-chat]')).to_be_in_viewport();expect(page.locator('#project-filter')).to_be_in_viewport();expect(page.locator('.sidebar-help')).to_be_in_viewport()
+   listing.evaluate('(el)=>el.scrollTop=0');expect(page.locator('.recent-open').first).to_be_in_viewport()
+   listing.evaluate('(el)=>el.scrollTop=el.scrollHeight');expect(page.locator('.recent-open').last).to_be_in_viewport()
+   page.locator('#workspace-tools-toggle').click();expect(page.locator('#workspace-links [data-tab=mail]')).to_be_in_viewport();expect(page.locator('#chat-view')).to_be_in_viewport()
+   page.locator('#chat-view').select_option('archived');expect(page.locator('#conversation-count')).to_have_text('0');page.locator('#chat-view').select_option('active');page.locator('#workspace-tools-toggle').click()
+   page.evaluate('renderSidebar()');page.screenshot(path=f'/tmp/otu-sidebar-{width}x{height}.png')
+   if width<=1100:page.locator('#sidebar-toggle').click()
+  page.evaluate('chatThreads=window.sidebarFixtureOriginal;renderSidebar()')
+  page.set_viewport_size({'width':1440,'height':600});page.wait_for_timeout(120)
+  page.evaluate("$('chat-search').value='no-matching-conversation';$('chat-view').value='archived';renderSidebar()")
+  expect(page.locator('.recent-chat')).to_have_count(0);page.locator('[data-action=new-chat]').click();expect(page.locator('.recent-chat.selected')).to_be_in_viewport();expect(page.locator('#chat-search')).to_have_value('');expect(page.locator('#chat-view')).to_have_value('active')
+
   page.set_viewport_size({'width':820,'height':1180});page.locator('#sidebar-toggle').click();page.locator('#project-filter').focus();assert float(page.locator('#project-filter').evaluate('(el)=>getComputedStyle(el).fontSize').replace('px',''))>=16;expect(page.locator('#project-filter')).to_be_in_viewport();page.locator('#sidebar-toggle').click()
   reduced=browser.new_context(viewport={'width':390,'height':844},reduced_motion='reduce');reduced.route('**/*',lambda r:r.continue_() if r.request.url.startswith(base) else r.abort());static=reduced.new_page();static.goto(base);expect(static.locator('#matrix-rain')).to_have_attribute('data-mode','reduced');assert not static.evaluate('otuMatrixStatus().running');reduced.close()
-  assert not errors,errors;assert not downloads;browser.close();print('Workspace shell passed: desktop/tablet/phone, rail, independent panels, preserved chat/draft scope, bounds, keyboard viewport simulation, uploads/photos, mocked dictation/read-aloud controls, status report, reviewed documents, projects, long-press menus, Trash recovery and Mail drafts/folders. No paid inference or client messages.')
+  assert not errors,errors;assert not downloads;browser.close();print('Workspace shell passed: desktop/tablet/phone, rail, independent panels, preserved chat/draft scope, bounds, short-window conversation space and new-chat visibility, keyboard viewport simulation, uploads/photos, mocked dictation/read-aloud controls, status report, reviewed documents, projects, long-press menus, Trash recovery and Mail drafts/folders. No paid inference or client messages.')
 finally:server.terminate();server.wait(timeout=10)

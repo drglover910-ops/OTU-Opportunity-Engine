@@ -7,7 +7,9 @@ sdk: docker
 app_port: 7860
 ---
 
-# OTU Opportunity Engine — v0.17.0
+# OTU Opportunity Engine — v0.17.1
+
+Short windows keep conversations in their own scrolling list. **Tools** opens workspace shortcuts and the Recent/Archived/Trash selector; the project picker stays above the list. New chat clears search/archive filters so the new conversation is visible. Existing chats are preserved.
 
 A private opportunity workspace for Desmond Glover. Matrix-inspired responsive dashboard for discovery, fit ranking, career retrieval, draft preparation, approved email, replies and follow-ups. Contra-first contract workflow; coaching and employment alongside it.
 

@@ -1,3 +1,8 @@
+## v0.17.1
+
+- Reserve independently scrolling conversation space in short windows; move workspace shortcuts into an accessible Workspace tools menu below 800 px height. Keep New chat, project filters, Help and Settings visible. Clear stale search/archive filters when creating a conversation so it cannot disappear from its list.
+- Clarify conversation counts, project labels and the selected thread; keep the active conversation visible after list refresh. Preserve all threads and allow the owner to remove duplicates manually.
+
 ## v0.17.0
 
 - Acknowledge Send immediately: show the question in chat, clear the composer, and display a real pending indicator. Save request receipts and questions before inference; poll status without additional model calls. Duplicate sends reuse the same request ID; no automatic provider retries.

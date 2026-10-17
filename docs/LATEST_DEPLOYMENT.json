@@ -1,7 +1,7 @@
 {
-  "commit": "ab4dc78acb8185fced973fd5f330ace19ede3668",
-  "version": "0.17.1",
-  "checked_at": "2026-10-17T16:44:07.408279+00:00",
+  "commit": "dfeeba9d87a5a3c680ee6ad4c536cbbe84113905",
+  "version": "0.18.0",
+  "checked_at": "2026-10-17T21:35:35.237188+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-17T16:44:38.374731+00:00",
+    "checked_at": "2026-10-17T21:36:08.090567+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -39,7 +39,7 @@
     "writing": {
       "status": "configured",
       "message": "AI settings are saved. A paid writing request has not been made by this connection check.",
-      "last_success": "2026-10-17T14:50:12.690797+00:00"
+      "last_success": "2026-10-17T20:06:44.000491+00:00"
     },
     "saving": {
       "status": "connected"
@@ -50,7 +50,7 @@
     }
   },
   "workspaces": 9,
-  "assistant_knowledge_version": "2026-10-17.1",
+  "assistant_knowledge_version": "2026-10-17.2",
   "working_status_report": "available",
   "document_preview": "passed",
   "designed_document_preview": "passed",
@@ -76,7 +76,7 @@
     "counts": {
       "work_notes": {
         "before": 3,
-        "now": 7
+        "now": 9
       },
       "conversation_memory": {
         "before": 0,
@@ -102,9 +102,9 @@
   "developer_request_queue": "available",
   "ai_live_check": "not run; no paid inference during verification",
   "ai_budget": {
-    "count": 2,
-    "reserved_tokens": 28194,
-    "actual_tokens": 5721,
+    "count": 3,
+    "reserved_tokens": 43196,
+    "actual_tokens": 8784,
     "date": "2026-10-17",
     "daily_requests": 5,
     "daily_tokens": 60000,
@@ -113,10 +113,23 @@
     "cost": "Dollar cost unavailable; provider billing is authoritative.",
     "reset": "UTC midnight"
   },
+  "source_retrieval": {
+    "method": "local lexical retrieval",
+    "max_references": 4,
+    "max_evidence_bytes": 4800,
+    "chat_scope": "exact conversation",
+    "file_formats": [
+      "txt",
+      "md"
+    ],
+    "file_reading": "explicit opt-in",
+    "extra_inference_calls": 0
+  },
+  "source_controls": "asset available; local fixture tested separately",
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-17T16:44:41.965789+00:00",
+    "checked_at": "2026-10-17T21:36:13.516793+00:00",
     "tools": 123,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -6333,8 +6346,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792255487.6660986,
-    "checked_at": "2026-10-17T16:44:47.666112+00:00",
+    "finished_epoch": 1792272979.345875,
+    "checked_at": "2026-10-17T21:36:19.345886+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",
@@ -6634,31 +6647,24 @@
             "type"
           ],
           [
-            "amount",
-            "interval"
-          ],
-          [
             "approvedAt",
             "externalUrl",
             "jobPostingId",
             "status"
           ],
           [
-            "isVerified",
-            "name",
-            "organizationId",
-            "profileUrl",
-            "slug"
-          ],
-          [
-            "countryId",
-            "name"
+            "languageName",
+            "proficiency"
           ],
           [
             "displayUsername",
             "firstName",
             "lastName",
             "userProfileId"
+          ],
+          [
+            "countryId",
+            "name"
           ]
         ],
         "unavailable": false,
@@ -6879,6 +6885,8 @@
           ],
           [
             "backgroundColor",
+            "isToggleable",
+            "level",
             "textAlignment",
             "textColor"
           ],
@@ -6887,10 +6895,12 @@
             "text",
             "type"
           ],
-          [
-            "bold"
-          ],
           [],
+          [
+            "backgroundColor",
+            "textAlignment",
+            "textColor"
+          ],
           [
             "estimatedHours",
             "feeMax",
@@ -6898,20 +6908,8 @@
             "type"
           ],
           [
-            "amount",
-            "interval"
-          ],
-          [
             "jobPostingId",
             "status"
-          ],
-          [
-            "hasMorePublicMembers",
-            "name",
-            "organizationId",
-            "profileUrl",
-            "publicMembers",
-            "slug"
           ],
           [
             "displayUsername",
@@ -6924,6 +6922,73 @@
         "unavailable": false
       },
       "detail_get_job_by_slug:1": {
+        "shapes": [
+          [
+            "job",
+            "ok"
+          ],
+          [
+            "blocknoteDescription",
+            "budget",
+            "duration",
+            "hiringAsIndividual",
+            "jobId",
+            "jobPosting",
+            "numberOfOpenPositions",
+            "organization",
+            "owner",
+            "publicUrl",
+            "slug",
+            "status",
+            "title",
+            "viewerApplication"
+          ],
+          [
+            "children",
+            "content",
+            "id",
+            "props",
+            "type"
+          ],
+          [
+            "backgroundColor",
+            "isToggleable",
+            "level",
+            "textAlignment",
+            "textColor"
+          ],
+          [
+            "styles",
+            "text",
+            "type"
+          ],
+          [],
+          [
+            "backgroundColor",
+            "textAlignment",
+            "textColor"
+          ],
+          [
+            "estimatedHours",
+            "feeMax",
+            "feeMin",
+            "type"
+          ],
+          [
+            "jobPostingId",
+            "status"
+          ],
+          [
+            "displayUsername",
+            "firstName",
+            "lastName",
+            "profileUrl",
+            "userProfileId"
+          ]
+        ],
+        "unavailable": false
+      },
+      "detail_get_job_by_slug:2": {
         "shapes": [
           [
             "job",
@@ -6988,91 +7053,37 @@
           ]
         ],
         "unavailable": false
-      },
-      "detail_get_job_by_slug:2": {
-        "shapes": [
-          [
-            "job",
-            "ok"
-          ],
-          [
-            "blocknoteDescription",
-            "budget",
-            "duration",
-            "hiringAsIndividual",
-            "jobId",
-            "jobPosting",
-            "numberOfOpenPositions",
-            "organization",
-            "owner",
-            "publicUrl",
-            "slug",
-            "status",
-            "title",
-            "viewerApplication"
-          ],
-          [
-            "children",
-            "content",
-            "id",
-            "props",
-            "type"
-          ],
-          [
-            "backgroundColor",
-            "isToggleable",
-            "level",
-            "textAlignment",
-            "textColor"
-          ],
-          [
-            "styles",
-            "text",
-            "type"
-          ],
-          [],
-          [
-            "backgroundColor",
-            "textAlignment",
-            "textColor"
-          ],
-          [
-            "estimatedHours",
-            "feeMax",
-            "feeMin",
-            "type"
-          ],
-          [
-            "amount",
-            "interval"
-          ],
-          [
-            "jobPostingId",
-            "status"
-          ],
-          [
-            "displayUsername",
-            "firstName",
-            "lastName",
-            "profileUrl",
-            "userProfileId"
-          ]
-        ],
-        "unavailable": false
       }
     },
     "public_opportunities": [
       {
-        "title": "ML Engineer for AI-Powered CV Skill Analysis",
-        "url": "https://contra.com/opportunity/sRmOgAAe-ml-engineer-for-ai-powered-cv-skill-analysis",
+        "title": "Senior Wedding Film Editor",
+        "url": "https://contra.com/opportunity/EQBFBLg6-senior-wedding-film-editor",
         "kind": "Job / contract",
         "source": "Contra",
-        "description": "About the Project:\nNovel job-matching platform that evaluates candidates based on demonstrated skills and experience. The platform uses AI to extract and assess skills from CVs, rather than the traditional approach that tries to match summary against summary.\nCurrent Project Status:\nThe core matching database is built and has been tested at scale. The web application is partially implemented, and the skills framework is in place.\nThe main priority is developing and validating the skill-assessment pipeline, including follow-up optimization.\nYour Scope:\n\n\n[This Project]\nComplete (Fill in) a project specification that documents what needs to be built.\n[Follow-Up Project]\nDesign and implement an AI-powered system to extract skills and assess proficiency from CVs.\nDevelop a scoring methodology that produces consistent, reliable skill assessments (warning: this means applied mathematics).\nRequirements:\nExperience building AI/ML or NLP systems, particularly for unstructured text.\nUnderstanding of LLM, beyond simply deploying a llama server.\nStrong understanding of written language.\nExperience with skills taxonomies, recruitment technology, or semantic matching is a plus.\nThe Opportunity:\nThis is not a passion project; it exists because LinkedIn is an AI Slop Shop that long ago stopped caring about job matching, yet they continue to be the market leader. Yet another r\u00e9sum\u00e9-matching website isn't going to cut it...that market is already saturated with data harvesting clones.\nIt is time to fundamentally change the job search process. We have the technology, but not your niche skill-set.",
+        "description": "About the job\nVeridian Films is hiring a senior wedding film editor to cut a luxury wedding film at the level of Plus Two Films and other top studios. The edit should be an emotional, story-driven highlight film centered on vows, speeches, and letters, with cinematic pacing, careful music choice, color grading, and sound design. Footage is ready now, the first cut is due within 2 weeks, and the budget is $700\u20131,000 for this film, with ongoing work for the right editor.\nWhat you\u2019ll do\nYou\u2019ll edit the wedding footage into a polished highlight film that feels cinematic and narrative-driven, while keeping the emotional moments front and center. Please share 2\u20133 wedding or narrative films you edited yourself, along with your availability.\nCut a luxury wedding highlight film around vows, speeches, and letters\nApply cinematic pacing, music choice, color grading, and sound design\nDeliver the first cut within 2 weeks\nShare 2\u20133 self-edited wedding or narrative films and your availability",
         "budget": {
           "estimatedHours": null,
-          "feeMax": "USD:5000.00000000",
-          "feeMin": "USD:2500.00000000",
-          "type": "FixedPriceJobBudget"
+          "feeMax": "USD:4000.00000000",
+          "feeMin": "USD:2100.00000000",
+          "type": "MonthlyRateJobBudget"
+        },
+        "prize": null,
+        "deadline": null,
+        "status": "POSTED",
+        "requirements_verified": false
+      },
+      {
+        "title": "AI Video Producer for Ads and Brand ",
+        "url": "https://contra.com/opportunity/PE7MWoEN-ai-video-producer-for-ads-and-brand",
+        "kind": "Job / contract",
+        "source": "Contra",
+        "description": "Introduction\nSearch Atlas is hiring a video producer to create concept-driven ads and brand videos for technical products. The role focuses on taking projects end to end\u2014from script to final cut\u2014writing scroll-stopping openings, making software easy to understand for new viewers, building multiple versions for testing, and using performance results to shape the next round of ideas.\nResponsibilities\nIn this role, you will meet daily with the paid team to review ad performance and plan new launches, then pitch concepts, produce and edit videos, and iterate based on results. The request emphasizes original concept development, strong performance-focused openings, and AI video tools as a default part of the workflow.\nCome up with concepts for ads and brand videos.\nUse AI to write scripts, create content, and analyze what's working across themes and individual videos.\nProduce videos end to end, from script to final cut.\nWrite openings strong enough to stop people scrolling.\nMake software understandable for people who have never seen it.\nBuild several versions of an idea for testing.\nTrack video performance and apply what you learn to the next idea.",
+        "budget": {
+          "estimatedHours": 40,
+          "feeMax": "USD:30.00000000",
+          "feeMin": "USD:25.00000000",
+          "type": "HourlyRateJobBudget"
         },
         "prize": null,
         "deadline": null,
@@ -7090,23 +7101,6 @@
           "feeMax": "USD:40.00000000",
           "feeMin": "USD:25.00000000",
           "type": "HourlyRateJobBudget"
-        },
-        "prize": null,
-        "deadline": null,
-        "status": "POSTED",
-        "requirements_verified": false
-      },
-      {
-        "title": "Interview-Based LinkedIn Ghostwriter for Founder Profile",
-        "url": "https://contra.com/opportunity/PBqXX3MP-interview-based-linked-in-ghostwriter-for-founder-profile",
-        "kind": "Job / contract",
-        "source": "Contra",
-        "description": "Paid trial for an ongoing LinkedIn ghostwriting retainer on my personal profile. English posts.\nDeliverables\nOne 30-minute interview with me (video call, recorded; I provide the transcript)\nTwo LinkedIn posts written from that interview, ready to publish\nOne round of revisions per post\nProcess\nI send background material and a short question list before the call\nYou run the interview and dig for concrete stories and opinions\nYou deliver both drafts within 5 business days after the call\nWriting rules\nEvery post must come from something I actually said in the interview\nNo invented numbers, no claims about customers or results\nNo hooks, emojis, engagement bait or one-sentence-per-line formatting\nPlain text, ready to paste into LinkedIn\nConfidentiality and rights\nThe recording and transcript are confidential. Do not paste them into AI tools that train on inputs\nAll rights to the posts transfer to me on payment. They are published under my name only\nPlease don't list this work publicly without asking first\nFee: $300 flat for the trial. If it works, we move to a monthly retainer of about 12 posts including two interviews.",
-        "budget": {
-          "estimatedHours": null,
-          "feeMax": "USD:350.00000000",
-          "feeMin": "USD:300.00000000",
-          "type": "FixedPriceJobBudget"
         },
         "prize": null,
         "deadline": null,

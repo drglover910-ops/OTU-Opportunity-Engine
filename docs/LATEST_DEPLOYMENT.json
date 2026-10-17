@@ -1,7 +1,7 @@
 {
-  "commit": "ed486ff91da7cf9ab99b55e03a85ec5bae70703a",
-  "version": "0.16.2",
-  "checked_at": "2026-10-17T01:21:32.751323+00:00",
+  "commit": "cbab307e3a712b31b8def7cdd4d29a1b0ca1afc8",
+  "version": "0.17.0",
+  "checked_at": "2026-10-17T15:12:44.268600+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -12,16 +12,16 @@
     "restart_verified": true,
     "message": "Mounted storage detected; verify a saved record survives a restart."
   },
-  "opportunities": 180,
+  "opportunities": 181,
   "last_discovery": {
-    "added": 16,
+    "added": 1,
     "seen": 59,
     "errors": [],
     "sources_ok": [
       "We Work Remotely RSS",
       "Remotive"
     ],
-    "finished": "2026-10-16T15:28:52.298850+00:00"
+    "finished": "2026-10-17T03:29:25.619769+00:00"
   },
   "documents": 29,
   "gmail_connected": true,
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-17T01:22:05.246137+00:00",
+    "checked_at": "2026-10-17T15:13:28.936288+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -39,7 +39,7 @@
     "writing": {
       "status": "configured",
       "message": "AI settings are saved. A paid writing request has not been made by this connection check.",
-      "last_success": "2026-10-15T03:39:39.110903+00:00"
+      "last_success": "2026-10-17T14:50:12.690797+00:00"
     },
     "saving": {
       "status": "connected"
@@ -50,7 +50,7 @@
     }
   },
   "workspaces": 9,
-  "assistant_knowledge_version": "2026-10-16.1",
+  "assistant_knowledge_version": "2026-10-17.1",
   "working_status_report": "available",
   "document_preview": "passed",
   "designed_document_preview": "passed",
@@ -58,7 +58,9 @@
   "workspace_shell": "available",
   "read_aloud_controls": "asset available; device audio not tested",
   "isis_voice_controls": "available; device preview required",
-  "chat_threads": 7,
+  "acknowledged_chat_requests": "API available",
+  "response_actions": "asset available; local browser checks passed separately",
+  "chat_threads": 8,
   "projects": 9,
   "recovery_checkpoint": {
     "checkpoint": true,
@@ -74,7 +76,7 @@
     "counts": {
       "work_notes": {
         "before": 3,
-        "now": 3
+        "now": 7
       },
       "conversation_memory": {
         "before": 0,
@@ -82,7 +84,7 @@
       },
       "conversation_threads": {
         "before": 3,
-        "now": 5
+        "now": 6
       },
       "documents": {
         "before": 29,
@@ -100,10 +102,10 @@
   "developer_request_queue": "available",
   "ai_live_check": "not run; no paid inference during verification",
   "ai_budget": {
+    "count": 2,
+    "reserved_tokens": 28194,
+    "actual_tokens": 5721,
     "date": "2026-10-17",
-    "count": 0,
-    "reserved_tokens": 0,
-    "actual_tokens": 0,
     "daily_requests": 5,
     "daily_tokens": 60000,
     "paused": false,
@@ -114,7 +116,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-17T01:22:10.342180+00:00",
+    "checked_at": "2026-10-17T15:13:36.459336+00:00",
     "tools": 123,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -6331,8 +6333,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792200135.8191135,
-    "checked_at": "2026-10-17T01:22:15.819128+00:00",
+    "finished_epoch": 1792250022.8344843,
+    "checked_at": "2026-10-17T15:13:42.834497+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",
@@ -6510,7 +6512,7 @@
         ],
         "unavailable": false,
         "projects_returned": 2,
-        "drafts_returned": 1
+        "drafts_returned": 0
       },
       "list_job_feed:3": {
         "shapes": [
@@ -6632,6 +6634,10 @@
             "type"
           ],
           [
+            "amount",
+            "interval"
+          ],
+          [
             "approvedAt",
             "externalUrl",
             "jobPostingId",
@@ -6645,22 +6651,10 @@
             "slug"
           ],
           [
-            "countryId",
-            "name"
-          ],
-          [
-            "languageName",
-            "proficiency"
-          ],
-          [
             "displayUsername",
             "firstName",
             "lastName",
             "userProfileId"
-          ],
-          [
-            "amount",
-            "interval"
           ]
         ],
         "unavailable": false,
@@ -6828,8 +6822,6 @@
           ],
           [
             "backgroundColor",
-            "isToggleable",
-            "level",
             "textAlignment",
             "textColor"
           ],
@@ -6838,20 +6830,19 @@
             "text",
             "type"
           ],
-          [],
-          [
-            "backgroundColor",
-            "textAlignment",
-            "textColor"
-          ],
           [
             "bold"
           ],
+          [],
           [
             "estimatedHours",
             "feeMax",
             "feeMin",
             "type"
+          ],
+          [
+            "amount",
+            "interval"
           ],
           [
             "jobPostingId",
@@ -6876,69 +6867,6 @@
         "unavailable": false
       },
       "detail_get_job_by_slug:1": {
-        "shapes": [
-          [
-            "job",
-            "ok"
-          ],
-          [
-            "blocknoteDescription",
-            "budget",
-            "duration",
-            "hiringAsIndividual",
-            "jobId",
-            "jobPosting",
-            "numberOfOpenPositions",
-            "organization",
-            "owner",
-            "publicUrl",
-            "slug",
-            "status",
-            "title",
-            "viewerApplication"
-          ],
-          [
-            "children",
-            "content",
-            "id",
-            "props",
-            "type"
-          ],
-          [
-            "backgroundColor",
-            "textAlignment",
-            "textColor"
-          ],
-          [
-            "styles",
-            "text",
-            "type"
-          ],
-          [],
-          [
-            "bold"
-          ],
-          [
-            "estimatedHours",
-            "feeMax",
-            "feeMin",
-            "type"
-          ],
-          [
-            "jobPostingId",
-            "status"
-          ],
-          [
-            "displayUsername",
-            "firstName",
-            "lastName",
-            "profileUrl",
-            "userProfileId"
-          ]
-        ],
-        "unavailable": false
-      },
-      "detail_get_job_by_slug:2": {
         "shapes": [
           [
             "job",
@@ -7008,20 +6936,104 @@
           ]
         ],
         "unavailable": false
+      },
+      "detail_get_job_by_slug:2": {
+        "shapes": [
+          [
+            "job",
+            "ok"
+          ],
+          [
+            "blocknoteDescription",
+            "budget",
+            "duration",
+            "hiringAsIndividual",
+            "jobId",
+            "jobPosting",
+            "numberOfOpenPositions",
+            "organization",
+            "owner",
+            "publicUrl",
+            "slug",
+            "status",
+            "title",
+            "viewerApplication"
+          ],
+          [
+            "children",
+            "content",
+            "id",
+            "props",
+            "type"
+          ],
+          [
+            "backgroundColor",
+            "textAlignment",
+            "textColor"
+          ],
+          [
+            "styles",
+            "text",
+            "type"
+          ],
+          [],
+          [
+            "content",
+            "href",
+            "type"
+          ],
+          [
+            "backgroundColor",
+            "isToggleable",
+            "level",
+            "textAlignment",
+            "textColor"
+          ],
+          [
+            "estimatedHours",
+            "feeMax",
+            "feeMin",
+            "type"
+          ],
+          [
+            "amount",
+            "interval"
+          ],
+          [
+            "jobPostingId",
+            "status"
+          ],
+          [
+            "hasMorePublicMembers",
+            "name",
+            "organizationId",
+            "profileUrl",
+            "publicMembers",
+            "slug"
+          ],
+          [
+            "displayUsername",
+            "firstName",
+            "lastName",
+            "profileUrl",
+            "userProfileId"
+          ]
+        ],
+        "unavailable": false
       }
     },
     "public_opportunities": [
       {
-        "title": "Senior Visual Communication Designers ",
-        "url": "https://contra.com/opportunity/3XeBEk2l-senior-visual-communication-designers",
+        "title": "ML Engineer for AI-Powered CV Skill Analysis",
+        "url": "https://contra.com/opportunity/sRmOgAAe-ml-engineer-for-ai-powered-cv-skill-analysis",
         "kind": "Job / contract",
         "source": "Contra",
-        "description": "We're expanding our network of senior designers.\nAt \nPointblank Presentations\n, we're looking to connect with experienced designers for future project-based collaborations.\nWhile presentations are at the core of what we do, we occasionally receive client briefs that fall outside our primary focus. We're looking to build a trusted network of specialists across \nbranding, editorial design, motion design, illustration, UI/UX, and other creative disciplines.\nWho we're looking for\nExperienced specialists\n with strong expertise in their respective design disciplines.\nDesigners with a strong visual eye\n who can communicate ideas clearly and creatively.\nIndependent professionals\n who are comfortable collaborating with our team on a project-by-project basis.\nSenior presentation designers\n who can support our core team when additional capacity is needed.\nHow it works\nThis isn't a full-time position. We're building a network of independent designers we can collaborate with when relevant projects come in.\nEach opportunity will have its own scope, timeline, and deliverables.\nInterested in collaborating?\nApply with your \nbest work or portfolio, your hourly rate, and your time zone.",
+        "description": "About the Project:\nNovel job-matching platform that evaluates candidates based on demonstrated skills and experience. The platform uses AI to extract and assess skills from CVs, rather than the traditional approach that tries to match summary against summary.\nCurrent Project Status:\nThe core matching database is built and has been tested at scale. The web application is partially implemented, and the skills framework is in place.\nThe main priority is developing and validating the skill-assessment pipeline, including follow-up optimization.\nYour Scope:\n\n\n[This Project]\nComplete (Fill in) a project specification that documents what needs to be built.\n[Follow-Up Project]\nDesign and implement an AI-powered system to extract skills and assess proficiency from CVs.\nDevelop a scoring methodology that produces consistent, reliable skill assessments (warning: this means applied mathematics).\nRequirements:\nExperience building AI/ML or NLP systems, particularly for unstructured text.\nUnderstanding of LLM, beyond simply deploying a llama server.\nStrong understanding of written language.\nExperience with skills taxonomies, recruitment technology, or semantic matching is a plus.\nThe Opportunity:\nThis is not a passion project; it exists because LinkedIn is an AI Slop Shop that long ago stopped caring about job matching, yet they continue to be the market leader. Yet another r\u00e9sum\u00e9-matching website isn't going to cut it...that market is already saturated with data harvesting clones.\nIt is time to fundamentally change the job search process. We have the technology, but not your niche skill-set.",
         "budget": {
-          "estimatedHours": 10,
-          "feeMax": "USD:50.00000000",
-          "feeMin": "USD:25.00000000",
-          "type": "HourlyRateJobBudget"
+          "estimatedHours": null,
+          "feeMax": "USD:5000.00000000",
+          "feeMin": "USD:2500.00000000",
+          "type": "FixedPriceJobBudget"
         },
         "prize": null,
         "deadline": null,
@@ -7029,16 +7041,16 @@
         "requirements_verified": false
       },
       {
-        "title": "Freelance Social Media Content Designer | Hair Wellness Brand",
-        "url": "https://contra.com/opportunity/OUXve7UX-freelance-social-media-content-designer-or-hair-wellness-brand",
+        "title": "Interview-Based LinkedIn Ghostwriter for Founder Profile",
+        "url": "https://contra.com/opportunity/PBqXX3MP-interview-based-linked-in-ghostwriter-for-founder-profile",
         "kind": "Job / contract",
         "source": "Contra",
-        "description": "KeraFactor is a hair wellness brand looking for a freelance social media content designer to help shape and execute our Instagram presence on an ongoing basis.\nWe will provide UGC videos and static images, before-and-after imagery, product photography, and original shoot content, but we\u2019re looking for someone who can \ndesign original social content from scratch\n, including static posts, educational graphics, carousels, and other brand-led concepts.\nMonthly scope\nApproximately 20\u201322 feed posts per month\nPlan and design a cohesive monthly Instagram grid\nCreate original static posts and social graphics\nCreate approximately 2\u20134 carousels per month\nThoughtfully incorporate supplied UGC, before-and-afters, product photography, and campaign assets\nMaintain strong visual consistency across typography, layout, spacing, and overall feed composition\nThis is a \ndesign-focused role only\n. You would \nnot\n be responsible for scheduling posts, publishing, community management, DMs, engagement, influencer outreach, or reporting.\nBeauty, wellness, fashion, or lifestyle experience preferred. U.S.-based is ideal.\nBudget: up to $1,500/month based on experience and portfolio.",
+        "description": "Paid trial for an ongoing LinkedIn ghostwriting retainer on my personal profile. English posts.\nDeliverables\nOne 30-minute interview with me (video call, recorded; I provide the transcript)\nTwo LinkedIn posts written from that interview, ready to publish\nOne round of revisions per post\nProcess\nI send background material and a short question list before the call\nYou run the interview and dig for concrete stories and opinions\nYou deliver both drafts within 5 business days after the call\nWriting rules\nEvery post must come from something I actually said in the interview\nNo invented numbers, no claims about customers or results\nNo hooks, emojis, engagement bait or one-sentence-per-line formatting\nPlain text, ready to paste into LinkedIn\nConfidentiality and rights\nThe recording and transcript are confidential. Do not paste them into AI tools that train on inputs\nAll rights to the posts transfer to me on payment. They are published under my name only\nPlease don't list this work publicly without asking first\nFee: $300 flat for the trial. If it works, we move to a monthly retainer of about 12 posts including two interviews.",
         "budget": {
           "estimatedHours": null,
-          "feeMax": "USD:1500.00000000",
-          "feeMin": "USD:750.00000000",
-          "type": "MonthlyRateJobBudget"
+          "feeMax": "USD:350.00000000",
+          "feeMin": "USD:300.00000000",
+          "type": "FixedPriceJobBudget"
         },
         "prize": null,
         "deadline": null,
@@ -7046,15 +7058,15 @@
         "requirements_verified": false
       },
       {
-        "title": "Packaging Designer Needed for Hair Care Stimulating Brush",
-        "url": "https://contra.com/opportunity/vPQZk6WQ-packaging-designer-needed-for-hair-care-stimulating-brush",
+        "title": "VSL Editor + Motion Graphics for a High-Ticket Coaching Offer ",
+        "url": "https://contra.com/opportunity/ev7NFmEU-vsl-editor-motion-graphics-for-a-high-ticket-coaching-offer",
         "kind": "Job / contract",
         "source": "Contra",
-        "description": "Job Overview\nWe\u2019re looking for a packaging designer to help refine the packaging for a new scalp stimulating brush from KeraFactor, a hair wellness brand. We already have a visual mock-up and copy direction, and are looking for someone to polish the design, make a few thoughtful enhancements, and bring it to a finished, cohesive place.\nKey Responsibilities\nReview and refine our existing packaging mock-up.\nAdd subtle design enhancements that align with our brand's minimalistic and clean style.\nDevelop production-ready artwork suitable for mass production.\nRequirements\nProven experience in packaging design.\nProficiency with design tools relevant to refining and finalizing packaging artwork.\nAttention to detail and a strong sense of modern, clean aesthetics.",
+        "description": "I'm looking for a skilled editor to turn a Video Sales Letter (VSL) for a high-ticket coaching program into a polished, high-converting video with motion graphics. The finished video will run about 15 minutes and should closely follow the style of Matt Gray's VSLs (reference: \nwww.founderos.com/apply\n). The goal is a clean, premium, story-driven video that positions the coach as the clear authority, with graphics that highlight the key messages and frameworks.\nThe editor should work in the brand's colors and fonts so the video stays consistent with existing brand assets. It should feel more elevated and polished than the brand's vibrant short-form content, not copy it.\nResponsibilities\nEdit the VSL for tight pacing and a strong narrative flow.\nCreate motion graphics, text callouts, and visuals that strengthen the storytelling and reinforce the coaching frameworks.\nMake sure every visual element fits the brand.\nAdd captions and handle light color and audio cleanup.\nDeliver a premium-quality final video within the project timeline.\nQualifications\nProven video editing experience, with a portfolio of completed VSLs, ideally for coaches, consultants, or high-ticket offers.\nStrong motion graphics and visual storytelling skills.\nExperience working within existing brand materials to keep things consistent.\nThe ability to closely match a reference style.\nExperience with Matt Gray-style VSLs is highly desirable.Interested freelancers should respond with their three best VSL examples, including any performance results, along with their availability and previous relevant experience with similar styles.\nIf you're interested, please reply with your three best VSL examples and any performance results, along with your availability, your price and turnaround time, and any experience you have with similar styles.",
         "budget": {
           "estimatedHours": null,
-          "feeMax": "USD:450.00000000",
-          "feeMin": "USD:250.00000000",
+          "feeMax": "USD:1000.00000000",
+          "feeMin": "USD:500.00000000",
           "type": "FixedPriceJobBudget"
         },
         "prize": null,

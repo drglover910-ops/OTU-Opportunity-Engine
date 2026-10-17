@@ -107,7 +107,7 @@ class Backups:
     with zipfile.ZipFile(core,'w',zipfile.ZIP_DEFLATED) as out:
      out.writestr('records.json',json.dumps({k:v for k,v in data.items() if k not in EXTRA+('attachment_uploads','format')}))
      for r in docs:out.writestr('career/'+r['path'],z.read('career/'+r['path']))
-    result=self.e.restore(core.read_bytes())
+    result=self.e.restore(core.read_bytes(),complete=True)
     with self.e.connect() as c:
      leadmap={}
      for r in opps.values():

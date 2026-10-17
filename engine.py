@@ -823,10 +823,10 @@ class Engine:
                 path=self.assets/doc['path']
                 if path.exists():z.write(path,'career/'+path.name)
         self.set_setting('last_backup',now());return out.getvalue()
-    def restore(self,content):
-        if len(content)>80*1024*1024:raise ValueError('Backup too large')
+    def restore(self,content,complete=False):
+        if len(content)>(120 if complete else 80)*1024*1024:raise ValueError('Backup too large')
         with zipfile.ZipFile(io.BytesIO(content)) as z:
-            if sum(i.file_size for i in z.infolist())>100*1024*1024:raise ValueError('Expanded backup too large')
+            if sum(i.file_size for i in z.infolist())>(120 if complete else 100)*1024*1024:raise ValueError('Expanded backup too large')
             record=z.getinfo('records.json')
             if record.file_size>20*1024*1024:raise ValueError('Records too large')
             data=json.loads(z.read(record))

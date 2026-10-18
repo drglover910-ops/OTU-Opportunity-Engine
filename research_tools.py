@@ -4,7 +4,7 @@ from datetime import datetime,timezone
 from urllib.parse import urlsplit
 from knowledge_store import words,SECRET
 
-NOISE=set('find search research check look latest new current saved available opportunities opportunity jobs job work contra please show for suited suitable best match matching experience qualifications skills help today now paid freelance available'.split())
+NOISE=set('isis hey hi that fit fits my our your verified experience background in and with me us to of the a an from on can could would you find search research check look latest new current saved available opportunities opportunity jobs job work contra please show for suited suitable best match matching experience qualifications skills help today now paid freelance available'.split())
 
 def stamp():return datetime.now(timezone.utc).isoformat()
 
@@ -13,6 +13,7 @@ def requested(d):
  if mode=='research':return True
  if mode!='advice':return False
  text=str(d.get('text','')).strip().lower()
+ text=re.sub(r'^(?:hey\s+|hi\s+)?isis\b[\s,:!—–-]*','',text)
  text=re.sub(r'^(?:please\s+|(?:can|could|would) you\s+)+','',text)
  return bool(re.match(r'^(?:find|search|research|look up|check|refresh)\b',text) and re.search(r'\b(?:contra|jobs?|opportunit\w*|challenges?|contests?|applied|upwork|linkedin|indeed)\b',text))
 
@@ -95,7 +96,8 @@ class Research:
     candidate=self.e.get(o).get('url','');url=candidate if safe_contra_url(candidate) else None
    slug=urlsplit(url).path.split('/opportunity/',1)[1].rstrip('/') if url and '/opportunity/' in urlsplit(url).path else None
    challenge=bool(re.search(r'\b(challenges?|contests?|prizes?)\b',lower))
-   query=' '.join(t for t in words(re.sub(r'https?://\S+|[\w.+-]+@[\w.-]+\.[A-Za-z]+','',question)) if t not in NOISE and not t.isdigit())[:120]
+   query_text=re.sub(r'https?://\S+|[\w.+-]+@[\w.-]+\.[A-Za-z]+','',question).split('.')[0]
+   query=' '.join(t for t in words(query_text) if t not in NOISE and not t.isdigit())[:120]
    if slug and re.fullmatch(r'[A-Za-z0-9_-]{1,180}',slug):call=('get_job_by_slug',{'slug':slug});kind='contra_job'
    elif challenge:call=('list_active_challenges',{'limit':5});kind='contra_challenge'
    else:call=('list_job_feed',{'preset':'ALL','search':query,'first':5});kind='contra_job'
@@ -130,6 +132,17 @@ class Research:
    row=dict(row);row['digest']=row.get('digest') or hashlib.sha256(row['excerpt'].encode()).hexdigest();row['offset']=row.get('offset',0);row['citation']='S'+str(len(out)+1)
    if len(json.dumps(out+[row],ensure_ascii=False).encode())<=4800:out.append(row)
   return out
+
+ @staticmethod
+ def check_summary(report):
+  checks=[]
+  for c in report['checks']:
+   if c['tool']=='saved_opportunities':checks.append(str(c.get('count',0))+' saved matches')
+   elif c['status']=='live':checks.append('Contra checked: '+str(c.get('count',0))+' returned listings')
+   elif c['status']=='empty':checks.append('Contra checked: no listings returned for this bounded search')
+   elif c['status']=='cached':checks.append('Cached Contra results reused; no new live check')
+   else:checks.append(c.get('message') or c['tool']+': '+c['status'])
+  return 'Research check: '+'; '.join(checks)+'.'
 
  @staticmethod
  def summary(report):

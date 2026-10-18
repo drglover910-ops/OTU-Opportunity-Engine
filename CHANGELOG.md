@@ -1,3 +1,9 @@
+## v0.19.1
+
+- Recognize direct research requests addressed to Isis, including the owner-facing recommended prompt. Keep negative requests and quoted/drafting instructions out of automatic research.
+- Put an app-generated check summary above AI-written research answers. If research returns no usable records, show the direct result without a paid writing call or invented historical recommendation.
+- Clarify that research cannot schedule promised future checks and that career records do not independently verify skills or exact role fit.
+
 ## v0.19.0
 
 - Connect owner-requested conversational research to exact-scope saved opportunity search and one allowlisted Contra job feed, job detail or active-challenge read. No model planner, arbitrary browser, platform writes or new scopes.

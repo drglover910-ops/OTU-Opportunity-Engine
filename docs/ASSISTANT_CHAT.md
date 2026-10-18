@@ -34,3 +34,5 @@ See [the capability contract](CAPABILITY_MANIFEST.md). Chat now receives bounded
 Ask “Find Contra opportunities for GoHighLevel work” or select Research opportunities under message Options. Open Sources for this reply for execution receipts and original listing links. Research can search saved opportunities and run one supported Contra read. It cannot submit, contact, spend or edit accounts. Cached results are labeled. If writing is unavailable, the app returns a plain research summary without a second attempt. This supersedes the older statement that chat has no read tools.
 
 Follow-up questions can reuse the last completed research receipt from the same conversation. These sources are labeled as previous reads, never a fresh platform check.
+
+Requests may begin with “Isis, find …”. Research replies display app-generated check status. Empty research returns a direct summary without model writing; a future live check is never scheduled by the generated answer.

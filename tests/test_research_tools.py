@@ -13,9 +13,20 @@ class ResearchTests(unittest.TestCase):
   self.folder=tempfile.TemporaryDirectory();self.addCleanup(self.folder.cleanup);self.e=Engine(self.folder.name);self.e.set_setting('contra_tokens',{'access_token':'fixture-only'})
   r=self.e.create_chat({'workspace':'contra','title':'Research example'});self.scope={'workspace':'contra','chat_id':r['id']};self.d={**self.scope,'text':'Find Contra CRM opportunities','mode':'advice'}
  def test_only_owner_research_intent_is_routed(self):
-  for t in ['Find Contra CRM opportunities','Please search Contra jobs','Can you check this Contra opportunity?']:self.assertTrue(requested({'text':t}))
-  for t in ['Do not search Contra jobs','Explain how to search Contra jobs','Draft a message saying search Contra jobs','Review our existing Contra work without submitting.']:self.assertFalse(requested({'text':t}))
+  for t in ['Find Contra CRM opportunities','Please search Contra jobs','Can you check this Contra opportunity?','Isis, find Contra CRM opportunities','Hey Isis, please find Contra jobs']:self.assertTrue(requested({'text':t}))
+  for t in ['Do not search Contra jobs','Explain how to search Contra jobs','Draft a message saying search Contra jobs','Review our existing Contra work without submitting.','Isis, do not search Contra jobs','Isis, draft a message saying find Contra jobs']:self.assertFalse(requested({'text':t}))
   self.assertFalse(requested({'text':'Find Contra jobs','mode':'revise_document'}))
+ def test_actual_owner_prompt_runs_read_and_shows_app_check(self):
+  prompt='Isis, find Contra opportunities that fit my verified experience in CRM, GoHighLevel, outreach, and marketing operations. Explain the strongest matches simply. Separate confirmed requirements from anything we still need to check. Don’t submit anything.'
+  d={**self.d,'text':prompt}
+  self.assertTrue(requested(d))
+  with patch.dict(os.environ,{'HF_INFERENCE_TOKEN':'fixture'}),patch('contra_mcp.ContraConnection.read_tools',return_value={'list_job_feed:0':BODY}) as call,patch.object(self.e,'ai_request',return_value={'choices':[{'message':{'content':'Review this returned listing.'}}]}):
+   result=self.e.ask_workspace(d)
+  self.assertEqual(call.call_count,1);self.assertEqual(call.call_args.args[0][0][1]['search'],'crm gohighlevel outreach marketing operations');self.assertTrue(result['answer'].startswith('Research check:'));self.assertIn('Contra checked: 1 returned listings',result['answer'])
+ def test_empty_research_cannot_invent_historical_recommendation(self):
+  with patch.dict(os.environ,{'HF_INFERENCE_TOKEN':'fixture'}),patch('contra_mcp.ContraConnection.read_tools',return_value={'list_job_feed:0':{'structuredContent':{'entries':[]}}}) as call,patch.object(self.e,'ai_request') as model:
+   result=self.e.ask_workspace({**self.d,'text':'Isis, find Contra CRM opportunities'})
+  self.assertEqual(call.call_count,1);model.assert_not_called();self.assertFalse(result['ai_used']);self.assertIn('no usable records',result['answer']);self.assertNotIn('VIS World',result['answer'])
  def test_single_allowed_call_and_applied_terms_preserved(self):
   with patch('contra_mcp.ContraConnection.read_tools',return_value={'list_job_feed:0':BODY}) as call,patch.object(self.e,'add') as add,patch.object(self.e,'ai_request') as ai:
    report=Research(self.e).run(self.d)

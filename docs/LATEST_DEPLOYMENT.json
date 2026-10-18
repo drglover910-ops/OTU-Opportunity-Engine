@@ -1,7 +1,7 @@
 {
-  "commit": "bfbdef7307d6afff03c9ef06b5534839653f7565",
-  "version": "0.19.0",
-  "checked_at": "2026-10-18T01:57:38.890135+00:00",
+  "commit": "2553ce1f08e135be8a93d6260e6cd2dc8ffa11ed",
+  "version": "0.19.1",
+  "checked_at": "2026-10-18T03:26:43.867411+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-18T01:58:13.026526+00:00",
+    "checked_at": "2026-10-18T03:27:14.840594+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -39,7 +39,7 @@
     "writing": {
       "status": "configured",
       "message": "AI settings are saved. A paid writing request has not been made by this connection check.",
-      "last_success": "2026-10-17T20:06:44.000491+00:00"
+      "last_success": "2026-10-18T03:23:15.100777+00:00"
     },
     "saving": {
       "status": "connected"
@@ -76,7 +76,7 @@
     "counts": {
       "work_notes": {
         "before": 3,
-        "now": 11
+        "now": 15
       },
       "conversation_memory": {
         "before": 0,
@@ -102,10 +102,10 @@
   "developer_request_queue": "available",
   "ai_live_check": "not run; no paid inference during verification",
   "ai_budget": {
+    "count": 2,
+    "reserved_tokens": 42863,
+    "actual_tokens": 9348,
     "date": "2026-10-18",
-    "count": 0,
-    "reserved_tokens": 0,
-    "actual_tokens": 0,
     "daily_requests": 5,
     "daily_tokens": 60000,
     "paused": false,
@@ -129,7 +129,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-18T01:58:19.833963+00:00",
+    "checked_at": "2026-10-18T03:27:18.275445+00:00",
     "tools": 123,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -6346,8 +6346,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792288705.4540143,
-    "checked_at": "2026-10-18T01:58:25.454027+00:00",
+    "finished_epoch": 1792294043.050253,
+    "checked_at": "2026-10-18T03:27:23.050266+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",
@@ -7202,7 +7202,7 @@
         "tool": "list_job_feed",
         "status": "empty",
         "count": 0,
-        "checked_at": "2026-10-18T01:58:26.532045+00:00",
+        "checked_at": "2026-10-18T03:27:23.833567+00:00",
         "message": "Read-only result; returned fields only. Full eligibility, rights and current terms may still require checking."
       }
     ],

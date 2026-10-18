@@ -5,7 +5,7 @@ from pathlib import Path
 from email.message import EmailMessage
 from email import policy
 from html.parser import HTMLParser
-VERSION = '0.19.3'
+VERSION = '0.19.4'
 STAGES = ['New','Researching','Ready to contact','Contacted','Interview / meeting','Offer / contract','Won','Parked']
 CATEGORIES = ['CRM / GoHighLevel','AI / business automation','Sales / operations','Coaching','Contract']
 FILES_LIMIT=25*1024*1024
@@ -123,6 +123,12 @@ class Engine:
             if not exists:
                 workspace='contra' if key=='contra' else 'public' if key in ('wwr','remotive') else self.add_workspace({'name':name})['id']
                 with self.connect() as c:c.execute('INSERT OR IGNORE INTO platforms VALUES(?,?,?,?,?)',(key,name,url,workspace,now()))
+        # One-time owner-approved personal allowance; preserve later manual choices and pause.
+        if not self.setting('personal_allowance_v194',False):
+            limits=self.setting('ai_limits',{})
+            with self.lock,self.connect() as c:
+                c.execute('INSERT OR REPLACE INTO settings(key,value) VALUES(?,?)',('ai_limits',json.dumps({'daily_requests':50,'daily_tokens':250000,'paused':limits.get('paused',False)})))
+                c.execute('INSERT OR REPLACE INTO settings(key,value) VALUES(?,?)',('personal_allowance_v194','true'))
         from knowledge_store import KnowledgeStore
         self.knowledge=KnowledgeStore(self)
         previous=self.setting('history_study',{})
@@ -339,9 +345,10 @@ class Engine:
         today=datetime.now(timezone.utc).date().isoformat();usage=self.setting('ai_usage',{})
         if usage.get('date')!=today:usage={'date':today,'count':0,'reserved_tokens':0,'actual_tokens':0}
         limits=self.setting('ai_limits',{})
-        return {**usage,'daily_requests':limits.get('daily_requests',5),'daily_tokens':limits.get('daily_tokens',60000),'paused':limits.get('paused',False),'scope':'This bot only; shared account balance and other projects are not available here.','cost':'Dollar cost unavailable; provider billing is authoritative.','reset':'UTC midnight','next_reset_at':(datetime.fromisoformat(today).replace(tzinfo=timezone.utc)+timedelta(days=1)).isoformat()}
+        percent=min(100,int(100*max(usage.get('count',0)/max(limits.get('daily_requests',50),1),usage.get('reserved_tokens',0)/max(limits.get('daily_tokens',250000),1))))
+        return {**usage,'usage_percent':percent,'warning_level':90 if percent>=90 else 75 if percent>=75 else None,'unsettled_tokens':max(0,usage.get('reserved_tokens',0)-usage.get('actual_tokens',0)),'daily_requests':limits.get('daily_requests',50),'daily_tokens':limits.get('daily_tokens',250000),'paused':limits.get('paused',False),'scope':'This bot only; shared account balance and other projects are not available here.','cost':'Dollar cost unavailable; provider billing is authoritative.','reset':'UTC midnight','next_reset_at':(datetime.fromisoformat(today).replace(tzinfo=timezone.utc)+timedelta(days=1)).isoformat()}
     def save_ai_limits(self,d):
-        count=int(d.get('daily_requests',5));tokens=int(d.get('daily_tokens',60000))
+        count=int(d.get('daily_requests',50));tokens=int(d.get('daily_tokens',250000))
         if not 0<=count<=100 or not 0<=tokens<=1000000:raise ValueError('Choose 0–100 requests and 0–1,000,000 token allowance.')
         if not isinstance(d.get('paused',False),bool):raise ValueError('Pause must be on or off.')
         self.set_setting('ai_limits',{'daily_requests':count,'daily_tokens':tokens,'paused':d.get('paused',False)})
@@ -366,12 +373,15 @@ class Engine:
             self.set_setting('ai_usage',usage)
         result=fetch_json('https://router.huggingface.co/v1/chat/completions',payload,headers={'Authorization':'Bearer '+token})
         # Keep reservations even on failure: a provider may have billed the attempt.
-        measured=result.get('usage',{}).get('total_tokens',0)
-        if isinstance(measured,int) and measured>=0:
+        measured=result.get('usage',{}).get('total_tokens')
+        complete=bool(result.get('choices') and isinstance(result['choices'][0].get('message',{}).get('content'),str) and result['choices'][0]['message']['content'].strip())
+        if type(measured) is int and measured>0:
             with self.lock:
                 usage=self.setting('ai_usage',{})
                 if usage.get('date')==budget['date']:
-                    usage['actual_tokens']=usage.get('actual_tokens',0)+measured;self.set_setting('ai_usage',usage)
+                    usage['actual_tokens']=usage.get('actual_tokens',0)+measured
+                    if complete:usage['reserved_tokens']=max(0,usage.get('reserved_tokens',0)-reservation)+measured
+                    self.set_setting('ai_usage',usage)
         choices=result.get('choices',[])
         if not choices or not choices[0].get('message',{}).get('content'):return result
         with self.lock:
@@ -473,7 +483,7 @@ class Engine:
         if research:
             context_payload['research_receipt']={k:v for k,v in research.items() if k!='items'}
             context_payload['email_context']=[];context_payload['prepared_proposals']=[];context_payload['outreach_examples']=[];context_payload['previous_notes']=[n for n in previous if n['role']=='user'][-1:]
-            context_payload['shared_project_knowledge']['status_report']['opportunities']=[]
+            context_payload['shared_project_knowledge']={k:context_payload['shared_project_knowledge'][k] for k in ('owner','personality')}
         while True:
             payload['messages'][1]['content']=json.dumps(context_payload,ensure_ascii=False)
             if len(json.dumps(payload['messages'],ensure_ascii=False).encode())<=23500 or not sources:break
@@ -492,7 +502,7 @@ class Engine:
             except ZoneInfoNotFoundError:reset=datetime.fromisoformat(current['next_reset_at']).strftime('%H:%M UTC on %b %d')
             message={'disconnected':'AI writing is not connected.','paused':'AI writing is paused. Resume it in Connections when you choose.','requests':'The daily AI request allowance has been reached.','tokens':'This request would exceed the remaining conservative token allowance.'}[why]
             message='AI writing was not called. '+message
-            message+=' '+str(current['count'])+' of '+str(current['daily_requests'])+' requests used; '+str(current['reserved_tokens'])+' of '+str(current['daily_tokens'])+' conservative tokens reserved. Daily usage resets at '+reset+'. This is the app’s allowance, not your Hugging Face credit balance. Your question is saved.'
+            message+=' '+str(current['count'])+' of '+str(current['daily_requests'])+' requests used; '+str(current['reserved_tokens'])+' of '+str(current['daily_tokens'])+' tokens counted or held as estimates. Daily usage resets at '+reset+'. This is the app’s allowance, not your Hugging Face credit balance. Your question is saved.'
             writing_status={'status':'blocked','reason':why,'message':message,'next_reset_at':current['next_reset_at']}
             if research:
                 research['writing_status']=writing_status

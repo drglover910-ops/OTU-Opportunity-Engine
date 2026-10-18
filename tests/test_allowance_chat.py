@@ -7,7 +7,7 @@ from tests.test_research_tools import BODY
 
 class AllowanceChatTests(unittest.TestCase):
  def setUp(self):
-  folder=tempfile.TemporaryDirectory();self.addCleanup(folder.cleanup);self.e=Engine(folder.name);self.service=ChatService(self.e)
+  folder=tempfile.TemporaryDirectory();self.addCleanup(folder.cleanup);self.e=Engine(folder.name);self.service=ChatService(self.e);self.e.save_ai_limits({'daily_requests':5,'daily_tokens':60000})
   self.scope={'workspace':'contra','chat_id':self.e.create_chat({'workspace':'contra'})['id']}
   env=patch.dict(os.environ,{'HF_INFERENCE_TOKEN':'fixture'});env.start();self.addCleanup(env.stop)
  def wait(self,key):

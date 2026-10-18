@@ -98,7 +98,7 @@ class HTTP(unittest.TestCase):
         req=urllib.request.Request(self.base+path,data=json.dumps(data).encode() if data is not None else None,headers={'Content-Type':'application/json',**(headers or {})})
         with urllib.request.urlopen(req) as r:return json.load(r)
     def test_health_and_status(self):
-        self.assertEqual(self.request('/health')['version'],'0.19.3');self.assertIn('storage',self.request('/api/status'))
+        self.assertEqual(self.request('/health')['version'],'0.19.4');self.assertIn('storage',self.request('/api/status'))
     def test_research_preview_never_calls_inference(self):
         with patch('research_tools.Research.run',return_value={'checks':[],'items':[]}) as reads,patch.object(app.engine,'ai_request') as model:
             result=self.request('/api/research/preview',{'workspace':'contra','mode':'research','text':'Find Contra CRM opportunities'})

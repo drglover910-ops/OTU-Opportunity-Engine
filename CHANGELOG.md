@@ -1,3 +1,10 @@
+## v0.19.4
+
+- Apply the owner-approved personal allowance once: 50 AI requests and 250,000 tokens per day. Preserve pause state, usage history, and later manually chosen limits.
+- Replace a successful request's temporary reservation with positive integer provider-reported token usage. Keep estimates for missing/invalid usage, incomplete replies and failed calls; preserve concurrent reservations and no automatic retries.
+- Show 75%/90% allowance warnings and distinguish provider-reported usage from uncertain held estimates. Trim redundant shared research context without removing source evidence.
+- No dollar-cap guarantee, model change, paid verification calls, purchases or account-wide budget changes.
+
 ## v0.19.3
 
 - Complete allowance-blocked chat requests with a clear local explanation instead of a generic failed-reply state. Distinguish request, conservative token and pause limits; show the next reset time without changing limits or accounting.

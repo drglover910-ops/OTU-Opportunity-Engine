@@ -52,3 +52,7 @@ An empty keyword job search can make one additional, fixed FOR_YOU read (five re
 ### v0.19.3 allowance handling
 
 Allowance-blocked ordinary chat persists a labeled local notice and, where available, the last exact-conversation research receipt with previous_read status. It does not dispatch reads or inference, infer recommendations, or provide document/proposal revision IDs. Typed local allowance denials remain distinct from ambiguous provider failures; failed attempts retain reservations. Existing five-request/60,000-conservative-token defaults, model, and account-wide billing limitations are unchanged.
+
+### v0.19.4 personal allowance
+
+Owner approved 50 requests / 250,000 daily tokens on October 18. A one-time private settings migration preserves pause and existing usage; later manual choices survive restarts. Successful complete replies with positive integer provider total_tokens replace only their own temporary reservation. Missing/invalid measurements, incomplete replies and failed transport keep estimates. Legacy reservations are not retroactively forgiven. Warnings appear at 75% and 90% of either allowance. These are usage controls, not dollar limits or account-wide billing. Research writing context keeps owner/personality plus scoped evidence and execution receipts, omitting duplicated operating history.

@@ -38,3 +38,7 @@ Follow-up questions can reuse the last completed research receipt from the same 
 Requests may begin with “Isis, find …”. Research replies display app-generated check status. Empty research returns a direct summary without model writing; a future live check is never scheduled by the generated answer.
 
 In v0.19.3 an allowance-blocked request completes with a local explanation, not a model answer. Both the daily request cap and conservative reservation cap still apply unchanged; no credits are inferred from either counter. The next UTC midnight is returned as next_reset_at and shown in local time in Connections. An ordinary follow-up may display previous research from the exact same conversation without another platform or inference call. Blocked edits provide no document/proposal suggestion ID.
+
+### v0.19.4 personal allowance
+
+Owner approved 50 requests / 250,000 daily tokens on October 18. A one-time private settings migration preserves pause and existing usage; later manual choices survive restarts. Successful complete replies with positive integer provider total_tokens replace only their own temporary reservation. Missing/invalid measurements, incomplete replies and failed transport keep estimates. Legacy reservations are not retroactively forgiven. Warnings appear at 75% and 90% of either allowance. These are usage controls, not dollar limits or account-wide billing. Research writing context keeps owner/personality plus scoped evidence and execution receipts, omitting duplicated operating history.

@@ -17,13 +17,13 @@ for(const section of [...document.querySelectorAll('main > .tab')])if(section.id
 for(const [id,title,nodes] of [['chat-settings','Conversation tools',['application-shortcut','conversation-tools']],['files','Conversation files',['conversation-files']]]){
  const section=document.createElement('section');section.id=id;section.className='tab';section.hidden=true;for(const name of nodes){const node=$(name);section.append(node);if(node.tagName==='DETAILS')node.open=true}$('workspace-panel-content').append(section);
 }
-function tab(name){
+function tab(name,keepApplication=false){
  if(name==='document-reader'){openDocumentPane();return}
  if(name==='settings')name='connections';
  document.querySelector('.layout').classList.add('chat-mode');$('conversation').hidden=false;
  if(name==='conversation'){closeWorkspacePanel(false);return}
  if(name==='mail')loadMail().catch(()=>{});
- if(name==='contra-application'&&!contraApplicationBusy&&(!contraApplication||!sameChatScope(contraApplicationScope)))renderContraApplicationLauncher();
+ if(name==='contra-application'&&!keepApplication)showContraApplicationChooser();
  const section=$(name);if(!section)return;
  if(!$('document-reader').hidden)closeDocumentPane(false);
  panelReturnFocus=document.activeElement;activePanel=name;
@@ -34,6 +34,7 @@ function tab(name){
  syncWorkspaceLayers();$('workspace-panel').focus({preventScroll:true});
 }
 function closeWorkspacePanel(restore=true){
+ if(activePanel==='contra-application')rememberContraApplicationEdits();
  if(audioAnswer?.dataset.action==='read-application')stopAnswer();
  activePanel=null;document.querySelectorAll('nav [data-tab].active').forEach(el=>el.classList.remove('active'));$('workspace-panel').hidden=true;document.querySelector('.layout').classList.remove('panel-open');syncWorkspaceLayers();
  if(restore){const target=panelReturnFocus?.isConnected&&panelReturnFocus.getClientRects().length&&!panelReturnFocus.closest('#workspace-panel')?panelReturnFocus:$('workspace-menu').querySelector('summary');if(!target.matches('input,textarea,select'))target.focus({preventScroll:true})}
@@ -135,6 +136,7 @@ document.addEventListener('click',async event=>{
   if(action==='talk-assistant'){documentContext=null;proposalContext=null;await openConversation('assistant',null);return}
   if(action==='preview-document'){await viewDocument(id);return}
   if(action==='pdf-previous'||action==='pdf-next'){pdfPage=Math.max(0,Math.min((activeDocument?.pages||1)-1,pdfPage+(action==='pdf-next'?1:-1)));showPdfPage();return}
+  if(action==='contra-application-reset'){showContraApplicationChooser();return}
   if(action==='contra-application-choose'){await openContraApplication($('contra-application-url').value.trim());return}
   if(action==='contra-application-open'){await openContraApplication(b.dataset.url);return}
  if(action==='contra-application-prepare'){await prepareContraApplication();return}
@@ -651,14 +653,27 @@ setInterval(pollChatRequests,1200);document.addEventListener('visibilitychange',
 async function rateAnswer(button){const article=button.closest('article'),buttons=[...article.querySelectorAll('[data-action=rate-answer]')];if(article.dataset.ratingBusy)return;article.dataset.ratingBusy='true';buttons.forEach(b=>b.disabled=true);try{const rating=button.getAttribute('aria-pressed')==='true'?0:Number(button.dataset.rating),r=await api('/api/conversation/feedback',{...currentChatScope(),note_id:Number(button.dataset.noteId),rating});buttons.forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.rating)===r.rating)));const note=chatLastData?.data.notes.find(n=>n.id===Number(button.dataset.noteId));if(note)note.feedback=r.rating;notice('Feedback saved. You can also tell Isis what to change in your next message.')}finally{delete article.dataset.ratingBusy;buttons.forEach(b=>b.disabled=false)}}
 function restoreChatQuestion(id){const job=chatLastData?.data.requests?.find(r=>r.id===id);if(!job)return;if($('conversation-text').value.trim()){notice('Your message box already has text. Copy the saved question if you want to combine them.',true);return}$('conversation-text').value=job.payload.text;$('conversation-text').dispatchEvent(new Event('input'));notice('Question restored for editing. Pressing Send starts a new AI request; nothing has been retried automatically.');}
 
-let contraApplication=null,contraApplicationScope=null,contraApplicationBusy=false;
+let contraApplication=null,contraApplicationScope=null,contraApplicationBusy=false,contraApplicationWriting=false,contraApplicationLoad=0;
+const contraApplicationEdits=new Map();
+function applicationEditKey(scope,url){return chatScopeKey(scope)+'|'+url}
+function rememberContraApplicationEdits(){
+ if(contraApplication?.status!=='Options ready'||!$('contra-application-message'))return;
+ contraApplicationEdits.set(applicationEditKey(contraApplicationScope,contraApplication.url),{title:contraApplication.title,url:contraApplication.url,scope:contraApplicationScope,message:$('contra-application-message').value,project_ids:[...document.querySelectorAll('[data-contra-project]:checked')].map(n=>n.value),portfolio_opt_out:$('contra-application-optout').checked,calendar_link:$('contra-application-calendar').value});
+}
+function showContraApplicationChooser(){if(contraApplicationWriting){notice("Wait for the current application action to finish before changing jobs.",true);return}rememberContraApplicationEdits();contraApplicationLoad++;contraApplicationBusy=false;renderContraApplicationLauncher();$('workspace-panel-content').scrollTop=0}
+function restoreContraApplicationEdits(){
+ if(contraApplication?.status!=='Options ready')return;const saved=contraApplicationEdits.get(applicationEditKey(contraApplicationScope,contraApplication.url));if(!saved||!$('contra-application-message'))return;
+ $('contra-application-message').value=saved.message;document.querySelectorAll('[data-contra-project]').forEach(n=>n.checked=saved.project_ids.includes(n.value));$('contra-application-optout').checked=saved.portfolio_opt_out;$('contra-application-calendar').value=saved.calendar_link;
+ // Recheck accuracy after every fresh listing read. Never carry submission approval across jobs.
+ $('contra-application-fit').checked=false;
+}
 $('application-audio').insertAdjacentHTML('beforeend',speechSpeedControl());
 function renderContraApplicationLauncher(){
  if(audioAnswer?.dataset.action==='read-application')stopAnswer();
- const seen=new Set(),choices=[...(contraSummary.public_opportunities||[]),...leads].filter(item=>{
+ const seen=new Set(),choices=[...(contraApplication&&sameChatScope(contraApplicationScope)?[contraApplication]:[]),...[...contraApplicationEdits.values()].filter(item=>sameChatScope(item.scope)),...(contraSummary.public_opportunities||[]),...leads].filter(item=>{
   try{const u=new URL(item.url);if(u.protocol!=='https:'||u.hostname!=='contra.com'||!u.pathname.startsWith('/opportunity/')||seen.has(u.href))return false;seen.add(u.href);return true}catch{return false}
  });
- $('contra-application-content').innerHTML='<h2>Choose a Contra job</h2><p>Open its application here. Nothing is sent until you review and approve it.</p>'+choices.map(item=>'<p><button class="secondary" data-action="contra-application-open" data-url="'+esc(item.url)+'">'+esc(item.title||'Open saved job')+'</button></p>').join('')+'<label>Or paste the Contra job link<input id="contra-application-url" type="url" placeholder="https://contra.com/opportunity/…"></label><button data-action="contra-application-choose">Open application</button><p class="small">Use your Contra conversation, My assistant, or the conversation for this exact opportunity. Saved job details may have changed; opening checks the listing again.</p>';
+ $('contra-application-content').innerHTML='<h2>Choose a Contra job</h2><p>Open its application here. Nothing is sent until you review and approve it.</p><p class="small">Unfinished message edits stay available while this page remains open. Choose the same job to continue.</p>'+choices.map(item=>'<p><button class="secondary" data-action="contra-application-open" data-url="'+esc(item.url)+'">'+esc(item.title||'Open saved job')+'</button></p>').join('')+'<label>Or paste the Contra job link<input id="contra-application-url" type="url" placeholder="https://contra.com/opportunity/…"></label><button data-action="contra-application-choose">Open application</button><p class="small">Use your Contra conversation, My assistant, or the conversation for this exact opportunity. Saved job details may have changed; opening checks the listing again.</p>';
 }
 function nativePreviewHTML(value,depth=0){
  if(value===null||value===undefined)return '';
@@ -682,15 +697,15 @@ function renderContraApplication(){
  $('contra-application-content').innerHTML=html;
 }
 async function openContraApplication(url){
- if(contraApplicationBusy)return;contraApplicationBusy=true;const scope=currentChatScope();jump('contra-application');$('contra-application-content').textContent='Reading the listing and your portfolio… Nothing is being submitted.';
- try{const a=await api('/api/contra/application/options',{...scope,url});contraApplication=a;contraApplicationScope=scope;renderContraApplication()}catch(e){renderContraApplicationLauncher();const error=document.createElement('p');error.className='warning';error.textContent=e.message;$('contra-application-content').prepend(error);notice(e.message,true)}finally{contraApplicationBusy=false}
+ if(contraApplicationBusy)return;rememberContraApplicationEdits();contraApplicationBusy=true;const load=++contraApplicationLoad,scope=currentChatScope();tab('contra-application',true);$('contra-application-content').textContent='Reading the listing and your portfolio… Nothing is being submitted.';$('workspace-panel-content').scrollTop=0;
+ try{const a=await api('/api/contra/application/options',{...scope,url});if(load!==contraApplicationLoad||!sameChatScope(scope))return;contraApplication=a;contraApplicationScope=scope;renderContraApplication();restoreContraApplicationEdits()}catch(e){if(load!==contraApplicationLoad||!sameChatScope(scope))return;renderContraApplicationLauncher();const error=document.createElement('p');error.className='warning';error.textContent=e.message;$('contra-application-content').prepend(error);notice(e.message,true)}finally{if(load===contraApplicationLoad)contraApplicationBusy=false}
 }
 async function prepareContraApplication(){
- if(contraApplicationBusy||!contraApplication)return;if(!sameChatScope(contraApplicationScope)){notice('Open the original conversation before preparing this application.',true);return}contraApplicationBusy=true;const button=document.querySelector('[data-action=contra-application-prepare]');button.disabled=true;
- try{const a=await api('/api/contra/application/prepare',{...contraApplicationScope,id:contraApplication.id,message:$('contra-application-message').value,project_ids:[...document.querySelectorAll('[data-contra-project]:checked')].map(e=>e.value),portfolio_opt_out:$('contra-application-optout').checked,fit_reviewed:$('contra-application-fit').checked,calendar_link:$('contra-application-calendar').value});contraApplication=a;renderContraApplication();$('workspace-panel-content').scrollTop=0;await syncChatFeed(contraApplicationScope);notice('Preview prepared. Read it before deciding whether to send.')}catch(e){notice(e.message,true);try{const a=await api('/api/contra/application/status',{...contraApplicationScope,id:contraApplication.id});if(a.status!=='Options ready'){contraApplication=a;renderContraApplication()}}catch{}}finally{contraApplicationBusy=false;if(button.isConnected)button.disabled=false}
+ if(contraApplicationBusy||!contraApplication)return;if(!sameChatScope(contraApplicationScope)){notice('Open the original conversation before preparing this application.',true);return}contraApplicationBusy=true;contraApplicationWriting=true;const button=document.querySelector('[data-action=contra-application-prepare]');button.disabled=true;
+ try{const a=await api('/api/contra/application/prepare',{...contraApplicationScope,id:contraApplication.id,message:$('contra-application-message').value,project_ids:[...document.querySelectorAll('[data-contra-project]:checked')].map(e=>e.value),portfolio_opt_out:$('contra-application-optout').checked,fit_reviewed:$('contra-application-fit').checked,calendar_link:$('contra-application-calendar').value});contraApplication=a;renderContraApplication();$('workspace-panel-content').scrollTop=0;await syncChatFeed(contraApplicationScope);notice('Preview prepared. Read it before deciding whether to send.')}catch(e){notice(e.message,true);try{const a=await api('/api/contra/application/status',{...contraApplicationScope,id:contraApplication.id});if(a.status!=='Options ready'){contraApplication=a;renderContraApplication()}}catch{}}finally{contraApplicationBusy=false;contraApplicationWriting=false;if(button.isConnected)button.disabled=false}
 }
 async function submitContraApplication(){
- if(contraApplicationBusy||!contraApplication)return;if(!sameChatScope(contraApplicationScope)){notice('Open the original conversation before submitting this application.',true);return}if(!$('contra-application-approved').checked){notice('Read the preview and check its approval box first.',true);return}contraApplicationBusy=true;const button=document.querySelector('[data-action=contra-application-submit]');button.disabled=true;
- try{contraApplication=await api('/api/contra/application/submit',{...contraApplicationScope,id:contraApplication.id,approved:true,preview_digest:contraApplication.preview_digest});renderContraApplication();await syncChatFeed(contraApplicationScope);notice('Contra confirmed the application submission.')}catch(e){notice(e.message,true);try{contraApplication=await api('/api/contra/application/status',{...contraApplicationScope,id:contraApplication.id});renderContraApplication()}catch{}}finally{contraApplicationBusy=false;if(button.isConnected)button.disabled=false}
+ if(contraApplicationBusy||!contraApplication)return;if(!sameChatScope(contraApplicationScope)){notice('Open the original conversation before submitting this application.',true);return}if(!$('contra-application-approved').checked){notice('Read the preview and check its approval box first.',true);return}contraApplicationBusy=true;contraApplicationWriting=true;const button=document.querySelector('[data-action=contra-application-submit]');button.disabled=true;
+ try{contraApplication=await api('/api/contra/application/submit',{...contraApplicationScope,id:contraApplication.id,approved:true,preview_digest:contraApplication.preview_digest});renderContraApplication();await syncChatFeed(contraApplicationScope);notice('Contra confirmed the application submission.')}catch(e){notice(e.message,true);try{contraApplication=await api('/api/contra/application/status',{...contraApplicationScope,id:contraApplication.id});renderContraApplication()}catch{}}finally{contraApplicationBusy=false;contraApplicationWriting=false;if(button.isConnected)button.disabled=false}
 }
 async function editContraApplication(){if(contraApplicationBusy)return;if(!sameChatScope(contraApplicationScope)){notice('Open the original conversation before editing this application.',true);return}const old=contraApplication,url=old.url;await api('/api/contra/application/discard',{...contraApplicationScope,id:old.id});await openContraApplication(url);if($('contra-application-message')){$('contra-application-message').value=old.message||'';const selected=new Set((old.selected_projects||[]).map(p=>p.id));document.querySelectorAll('[data-contra-project]').forEach(e=>e.checked=selected.has(e.value));$('contra-application-optout').checked=!!old.portfolio_opt_out;$('contra-application-calendar').value=old.calendar_link||''}}

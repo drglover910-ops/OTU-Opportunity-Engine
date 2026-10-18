@@ -1,3 +1,8 @@
+## v0.19.10
+
+- Reopen Apply on Contra at the job chooser instead of trapping navigation in the last application. Add Choose another job and reset panel scroll.
+- Retain unsent message/sample/calendar edits per exact job and conversation for the open page session; recheck accuracy after reopening. Submission approval is never transferred. Ignore stale listing responses after explicitly returning to the chooser.
+
 ## v0.19.9
 
 - Add application read-aloud controls, including the edited message, requirements and returned preview. Keep controls visible as the panel scrolls.

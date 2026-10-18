@@ -11,10 +11,10 @@ import app
 from contra_mcp import ContraConnection
 stats={'reads':0,'prepares':0,'submits':0,'applied':False}
 url='https://contra.com/opportunity/canva-browser-fixture'
-def job():return {'structuredContent':{'ok':True,'job':{'title':'Canva to Google Slides Conversion Specialist','publicUrl':url,'description':'Canva and Google Slides experience required. Preserve formatting.','status':'POSTED','jobPosting':{'jobPostingId':'posting-fixture'},'organization':{'name':'Fixture client'},'viewerApplication':{'appliedAt':'2026-10-18T00:00:00Z'} if stats['applied'] else None}}}
+def job(slug='canva-browser-fixture'):return {'structuredContent':{'ok':True,'job':{'title':'Social Media Content Manager' if slug=='vis-browser-fixture' else 'Canva to Google Slides Conversion Specialist','publicUrl':'https://contra.com/opportunity/'+slug,'description':'Canva and Google Slides experience required. Preserve formatting.','status':'POSTED','jobPosting':{'jobPostingId':'posting-fixture'},'organization':{'name':'Fixture client'},'viewerApplication':{'appliedAt':'2026-10-18T00:00:00Z'} if stats['applied'] else None}}}
 def read(self,calls):
  stats['reads']+=len(calls)
- return {name+':'+str(i):{'structuredContent':{'projects':[{'id':'project-fixture','title':'Presentation sample','description':'An actual presentation example','isDraft':False}]}} if name=='list_portfolio_projects' else job() for i,(name,args) in enumerate(calls)}
+ return {name+':'+str(i):{'structuredContent':{'projects':[{'id':'project-fixture','title':'Presentation sample','description':'An actual presentation example','isDraft':False}]}} if name=='list_portfolio_projects' else job(args.get('slug','canva-browser-fixture')) for i,(name,args) in enumerate(calls)}
 def write(self,calls):
  name,args=calls[0]
  if name=='apply_to_job_prepare':
@@ -52,7 +52,12 @@ ThreadingHTTPServer(('127.0.0.1','''+str(port)+'''),Fixture).serve_forever()
    page.locator('#contra-application-message').fill('My edited application message for this exact opportunity.')
    page.locator('#close-workspace-panel').click()
    if not entry.is_visible():page.locator('#workspace-tools-toggle').click()
-   entry.click();expect(page.locator('#contra-application-message')).to_have_value('My edited application message for this exact opportunity.')
+   entry.click();expect(page.locator('#contra-application-url')).to_be_visible();expect(page.locator('#contra-application-message')).to_have_count(0)
+   page.locator('#contra-application-content [data-action=contra-application-open]').first.click();expect(page.locator('#contra-application-message')).to_have_value('My edited application message for this exact opportunity.')
+   page.locator('[data-action=contra-application-reset]').click();expect(page.locator('#contra-application-url')).to_be_visible()
+   page.locator('#contra-application-content [data-action=contra-application-open]').first.click();expect(page.locator('#contra-application-message')).to_have_value('My edited application message for this exact opportunity.');expect(page.locator('#contra-application-fit')).not_to_be_checked()
+   page.locator('[data-action=contra-application-reset]').click();page.locator('#contra-application-url').fill('https://contra.com/opportunity/vis-browser-fixture');page.locator('[data-action=contra-application-choose]').click();expect(page.locator('#contra-application-content h2')).to_have_text('Social Media Content Manager');expect(page.locator('#contra-application-message')).not_to_have_value('My edited application message for this exact opportunity.');expect(page.locator('#contra-application-fit')).not_to_be_checked()
+   page.locator('[data-action=contra-application-reset]').click();page.locator('#contra-application-content [data-action=contra-application-open]').filter(has_text='Canva to Google Slides Conversion Specialist').click();expect(page.locator('#contra-application-message')).to_have_value('My edited application message for this exact opportunity.')
    reader=page.locator('[data-action=read-application]');reader.click();expect(reader).to_have_text('⏸ Pause');assert page.evaluate('testUtterance.rate')==1;assert page.evaluate('testUtterance.voice.name')=='Samantha Enhanced'
    page.locator('#application-audio [data-speech-speed]').select_option('1.5');assert page.evaluate('testUtterance.rate')==1.5
    reader.click();expect(reader).to_have_text('▶ Resume');reader.click();expect(reader).to_have_text('⏸ Pause')
@@ -68,5 +73,5 @@ ThreadingHTTPServer(('127.0.0.1','''+str(port)+'''),Fixture).serve_forever()
    page.screenshot(path='/tmp/otu-native-application-preview.png');page.locator('#contra-application-approved').check();page.locator('[data-action=contra-application-submit]').click();expect(page.locator('#contra-application-content')).to_contain_text('Application sent',timeout=5000);assert json.load(urllib.request.urlopen(base+'/fixture-stats'))['submits']==1;expect(page.locator('#conversation-text')).to_have_value('Keep my unfinished message.')
    page.reload();assert page.evaluate('speechRate()')==1.5;expect(page.locator('#conversation-feed')).to_contain_text('Contra confirmed submission.');page.locator('[data-action=contra-application-open]').first.click();expect(page.locator('#contra-application-content')).to_contain_text('Application sent');assert json.load(urllib.request.urlopen(base+'/fixture-stats'))['submits']==1
    page.set_viewport_size({'width':390,'height':740});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth');assert not errors,errors;browser.close()
-  print('Native application UI passed: application speech/pause/resume/stop, saved speed, edited-message readout, Tools entry without an AI reply, exact-listing form, retained form edits, fit/portfolio review, unsent preview, separate explicit approval, verified mocked submission once, saved receipt/reload, composer preservation and phone bounds. Local fixtures only; no external submission or paid AI.')
+  print('Native application UI passed: application speech/pause/resume/stop, saved speed, edited-message readout, chooser reset on reopen, choose-another-job, scoped edit recovery, Tools entry without an AI reply, exact-listing form, retained form edits, fit/portfolio review, unsent preview, separate explicit approval, verified mocked submission once, saved receipt/reload, composer preservation and phone bounds. Local fixtures only; no external submission or paid AI.')
  finally:server.terminate();server.wait(timeout=10)

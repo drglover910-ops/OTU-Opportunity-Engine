@@ -42,3 +42,7 @@ In v0.19.3 an allowance-blocked request completes with a local explanation, not 
 ### v0.19.4 personal allowance
 
 Owner approved 50 requests / 250,000 daily tokens on October 18. A one-time private settings migration preserves pause and existing usage; later manual choices survive restarts. Successful complete replies with positive integer provider total_tokens replace only their own temporary reservation. Missing/invalid measurements, incomplete replies and failed transport keep estimates. Legacy reservations are not retroactively forgiven. Warnings appear at 75% and 90% of either allowance. These are usage controls, not dollar limits or account-wide billing. Research writing context keeps owner/personality plus scoped evidence and execution receipts, omitting duplicated operating history.
+
+### v0.19.5 draft versus delivery
+
+Chat receives outreach_state using selected-opportunity Gmail sent records, stored Contra application evidence, ambiguous send statuses and a direct current owner statement. It does not infer submission from a draft, approval, Contacted stage, a previous AI answer or another opportunity’s application. A narrow advice-mode check replaces recognized unsupported waiting claims with a local correction, without another inference call. This is a specific consistency check, not a general factual-accuracy guarantee.

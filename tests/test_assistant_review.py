@@ -58,3 +58,37 @@ class AssistantReview(unittest.TestCase):
   self.assertEqual(scoped['status_report']['opportunities'],[])
   compact=self.e.chat_knowledge({'workspace':'contra','opportunity_id':self.oid,'mode':'revise_document'})
   self.assertLess(len(json.dumps(compact)),2200);self.assertIn('career_rules',compact)
+
+ def test_actual_waiting_response_is_corrected_without_another_model_call(self):
+  answer='Since you’ve already drafted a thoughtful reply asking for slide count, deadline, and editable Canva access, wait for their response on those three scope details. No action required until they clarify.'
+  draft=self.e.draft(self.pkg['draft_id'])
+  with patch.dict(os.environ,{'HF_INFERENCE_TOKEN':'fixture'}),patch.object(self.e,'ai_request',return_value={'choices':[{'message':{'content':answer}}]}) as model:
+   result=self.e.ask_workspace({'workspace':'contra','opportunity_id':self.oid,'text':'What is next?'})
+  self.assertEqual(model.call_count,1);self.assertEqual(result['grounding_status'],'unsupported_delivery_assumption_removed');self.assertIn('finish and review the application',result['answer']);self.assertNotIn('wait for their response',result['answer']);self.assertEqual(self.e.draft(draft['id']),draft)
+  context=json.loads(model.call_args.args[0]['messages'][1]['content']);self.assertEqual(context['outreach_state']['delivery'],'not_confirmed')
+ def test_approved_draft_stage_and_ai_notes_are_not_delivery_evidence(self):
+  with self.e.connect() as c:
+   c.execute('UPDATE drafts SET status="Approved" WHERE id=?',(self.pkg['draft_id'],));c.execute('UPDATE opportunities SET stage="Contacted" WHERE id=?',(self.oid,))
+  self.e.add_work_note({'workspace':'contra','opportunity_id':self.oid,'text':'The message was sent.'},role='assistant')
+  d={'workspace':'contra','opportunity_id':self.oid,'text':'What next?'}
+  self.assertEqual(self.e.chat_outreach_state(d,self.e.conversation(d))['delivery'],'not_confirmed')
+ def test_real_delivery_is_scoped_and_unknown_delivery_needs_checking(self):
+  with self.e.connect() as c:c.execute('UPDATE drafts SET status="Sent",message_id="fixture-sent" WHERE id=?',(self.pkg['draft_id'],))
+  d={'workspace':'contra','opportunity_id':self.oid,'text':'What next?'}
+  state=self.e.chat_outreach_state(d,self.e.conversation(d));self.assertEqual(state['delivery'],'confirmed_outbound');self.assertFalse(self.e.ungrounded_wait('Wait for their response.',state,'advice'))
+  d={'workspace':'contra','text':'What next?'};self.assertEqual(self.e.chat_outreach_state(d,self.e.conversation(d))['delivery'],'not_confirmed')
+  with self.e.connect() as c:c.execute('UPDATE drafts SET status="Delivery unknown" WHERE id=?',(self.pkg['draft_id'],))
+  with patch.dict(os.environ,{'HF_INFERENCE_TOKEN':'fixture'}),patch.object(self.e,'ai_request',return_value={'choices':[{'message':{'content':'Wait for their response.'}}]}):
+   result=self.e.ask_workspace({'workspace':'contra','opportunity_id':self.oid,'text':'What next?'})
+  self.assertIn('before sending again',result['answer']);self.assertEqual(result['outreach_state']['delivery'],'uncertain')
+ def test_direct_owner_statement_and_client_facing_rewrite_are_distinct(self):
+  for statement in ('I submitted this application. What next?', 'I’ve already sent the message. What next?'):
+   d={'workspace':'contra','opportunity_id':self.oid,'text':statement};state=self.e.chat_outreach_state(d,self.e.conversation(d));self.assertEqual(state['delivery'],'owner_reported_outbound');self.assertFalse(self.e.ungrounded_wait('Wait for their response.',state,'advice'))
+  self.assertFalse(self.e.ungrounded_wait('Wait for their response.',{'delivery':'not_confirmed'},'revise_proposal'))
+ def test_contra_application_evidence_must_match_selected_url(self):
+  with self.e.connect() as c:c.execute('UPDATE opportunities SET url=? WHERE id=?',('https://contra.com/opportunity/current-fixture',self.oid))
+  d={'workspace':'contra','opportunity_id':self.oid,'text':'Next?'}
+  with patch('contra_mcp.ContraConnection.inventory_details',return_value={'applications':[{'url':'https://contra.com/opportunity/other','applied':True}]}):
+   self.assertFalse(self.e.chat_outreach_state(d,self.e.conversation(d))['contra_application_recorded'])
+  with patch('contra_mcp.ContraConnection.inventory_details',return_value={'applications':[{'url':'https://contra.com/opportunity/current-fixture','applied':True}]}):
+   self.assertTrue(self.e.chat_outreach_state(d,self.e.conversation(d))['contra_application_recorded'])

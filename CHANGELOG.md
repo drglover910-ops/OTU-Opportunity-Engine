@@ -1,3 +1,9 @@
+## v0.19.5
+
+- Supply explicit selected-opportunity delivery state to chat. Drafts, approvals, workflow stages and prior AI answers do not count as submitted outreach.
+- Replace recognized unsupported wait-for-client advice with a local correction, without another model call. Uncertain delivery advises checking before resending; direct owner-reported sending remains distinguished from recorded submission.
+- Preserve document/proposal rewrite modes, actual sent/application records, all original notes, and the personal allowance.
+
 ## v0.19.4
 
 - Apply the owner-approved personal allowance once: 50 AI requests and 250,000 tokens per day. Preserve pause state, usage history, and later manually chosen limits.

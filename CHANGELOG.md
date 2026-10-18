@@ -1,3 +1,9 @@
+## v0.19.3
+
+- Complete allowance-blocked chat requests with a clear local explanation instead of a generic failed-reply state. Distinguish request, conservative token and pause limits; show the next reset time without changing limits or accounting.
+- Ordinary follow-ups can display the latest completed research from that exact conversation, labeled as saved with no new platform check. No inference or live read is dispatched by that fallback.
+- Never expose an allowance notice as a suggested document/proposal rewrite. Preserve notes, receipts, original documents and failed-provider reservations.
+
 ## v0.19.2
 
 - Preserve Contra feed access limits in live/cached receipts and explain the account-visible subset.

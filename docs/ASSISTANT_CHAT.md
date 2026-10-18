@@ -36,3 +36,5 @@ Ask “Find Contra opportunities for GoHighLevel work” or select Research oppo
 Follow-up questions can reuse the last completed research receipt from the same conversation. These sources are labeled as previous reads, never a fresh platform check.
 
 Requests may begin with “Isis, find …”. Research replies display app-generated check status. Empty research returns a direct summary without model writing; a future live check is never scheduled by the generated answer.
+
+In v0.19.3 an allowance-blocked request completes with a local explanation, not a model answer. Both the daily request cap and conservative reservation cap still apply unchanged; no credits are inferred from either counter. The next UTC midnight is returned as next_reset_at and shown in local time in Connections. An ordinary follow-up may display previous research from the exact same conversation without another platform or inference call. Blocked edits provide no document/proposal suggestion ID.

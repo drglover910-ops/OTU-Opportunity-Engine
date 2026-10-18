@@ -146,6 +146,14 @@ class Research:
   report['items']=list(unique.values())[:5];report['phase']='ready';emit();return report
 
  @staticmethod
+ def previous(report):
+  prior=json.loads(json.dumps(report));prior.pop('writing_status',None)
+  for check in prior['checks']:
+   if check['tool']!='saved_opportunities':
+    check['result_status']=check.get('result_status',check['status']);check['status']='previous_read';check['message']='Saved research from this conversation, not a new check. '+check.get('message','')
+  return prior
+
+ @staticmethod
  def sources(report,local):
   when=report['checked_at'];receipt='\n'.join(c['tool']+': '+c['status']+'. '+c.get('message',c.get('basis','')) for c in report['checks'])
   rows=[{'label':'Research checks','kind':'research_receipt','authority':'App execution receipt, not independent verification of listing claims','recorded_at':when,'excerpt':receipt[:900]}]

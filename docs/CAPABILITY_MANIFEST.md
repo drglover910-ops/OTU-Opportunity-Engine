@@ -48,3 +48,7 @@ At most one writing call follows research, with the existing model and limits. R
 ### v0.19.2 empty-feed handling
 
 An empty keyword job search can make one additional, fixed FOR_YOU read (five records). Two platform reads maximum, one writing call maximum; no fallback after errors, unrecognized content, job detail or challenge requests. Both checks and account accessLimitedFeed flags survive caching and backup. Broader results carry match_basis, not a claim of keyword fit. Older search caches are invalidated by a key version.
+
+### v0.19.3 allowance handling
+
+Allowance-blocked ordinary chat persists a labeled local notice and, where available, the last exact-conversation research receipt with previous_read status. It does not dispatch reads or inference, infer recommendations, or provide document/proposal revision IDs. Typed local allowance denials remain distinct from ambiguous provider failures; failed attempts retain reservations. Existing five-request/60,000-conservative-token defaults, model, and account-wide billing limitations are unchanged.

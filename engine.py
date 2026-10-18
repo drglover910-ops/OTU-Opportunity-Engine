@@ -5,10 +5,14 @@ from pathlib import Path
 from email.message import EmailMessage
 from email import policy
 from html.parser import HTMLParser
-VERSION = '0.19.2'
+VERSION = '0.19.3'
 STAGES = ['New','Researching','Ready to contact','Contacted','Interview / meeting','Offer / contract','Won','Parked']
 CATEGORIES = ['CRM / GoHighLevel','AI / business automation','Sales / operations','Coaching','Contract']
 FILES_LIMIT=25*1024*1024
+class AIAllowanceError(ValueError):
+    def __init__(self,reason,message):
+        super().__init__(message);self.reason=reason
+
 class TextOnly(HTMLParser):
     def __init__(self): super().__init__(); self.parts=[]; self.skip=0
     def handle_starttag(self,t,a):
@@ -332,10 +336,10 @@ class Engine:
             else:c.execute('DELETE FROM response_feedback WHERE note_id=?',(note,))
         return {'saved':True,'rating':rating}
     def ai_budget(self):
-        today=date.today().isoformat();usage=self.setting('ai_usage',{})
+        today=datetime.now(timezone.utc).date().isoformat();usage=self.setting('ai_usage',{})
         if usage.get('date')!=today:usage={'date':today,'count':0,'reserved_tokens':0,'actual_tokens':0}
         limits=self.setting('ai_limits',{})
-        return {**usage,'daily_requests':limits.get('daily_requests',5),'daily_tokens':limits.get('daily_tokens',60000),'paused':limits.get('paused',False),'scope':'This bot only; shared account balance and other projects are not available here.','cost':'Dollar cost unavailable; provider billing is authoritative.','reset':'UTC midnight'}
+        return {**usage,'daily_requests':limits.get('daily_requests',5),'daily_tokens':limits.get('daily_tokens',60000),'paused':limits.get('paused',False),'scope':'This bot only; shared account balance and other projects are not available here.','cost':'Dollar cost unavailable; provider billing is authoritative.','reset':'UTC midnight','next_reset_at':(datetime.fromisoformat(today).replace(tzinfo=timezone.utc)+timedelta(days=1)).isoformat()}
     def save_ai_limits(self,d):
         count=int(d.get('daily_requests',5));tokens=int(d.get('daily_tokens',60000))
         if not 0<=count<=100 or not 0<=tokens<=1000000:raise ValueError('Choose 0–100 requests and 0–1,000,000 token allowance.')
@@ -355,8 +359,9 @@ class Engine:
         reservation=size+512+payload['max_tokens']
         with self.lock:
             budget=self.ai_budget()
-            if budget['paused']:raise ValueError('AI writing is paused. Notes, tracking and basic drafts still work.')
-            if budget.get('count',0)>=budget['daily_requests'] or budget.get('reserved_tokens',0)+reservation>budget['daily_tokens']:raise ValueError('This bot’s daily AI allowance is reached. Notes and basic drafts still work. Review AI usage or wait until tomorrow.')
+            if budget['paused']:raise AIAllowanceError('paused','AI writing is paused. Notes, tracking and basic drafts still work.')
+            if budget.get('count',0)>=budget['daily_requests']:raise AIAllowanceError('requests','This bot’s daily AI request allowance is reached. Notes and basic drafts still work.')
+            if budget.get('reserved_tokens',0)+reservation>budget['daily_tokens']:raise AIAllowanceError('tokens','This request would exceed this bot’s conservative token allowance. Notes and basic drafts still work.')
             usage={k:budget.get(k,0) for k in ('count','reserved_tokens','actual_tokens')};usage['date']=budget['date'];usage['count']+=1;usage['reserved_tokens']+=reservation
             self.set_setting('ai_usage',usage)
         result=fetch_json('https://router.huggingface.co/v1/chat/completions',payload,headers={'Authorization':'Bearer '+token})
@@ -454,14 +459,12 @@ class Engine:
             for draft in current_drafts:draft['body']=draft['body'][:3500]
         research=Research(self).run(d,progress) if researching else None
         sources=self.knowledge.search(d,exclude_note=user_note_id)
+        previous_research=next((r['result'].get('research') for r in context['requests'] if r['status']=='complete' and r['result'].get('research')),None)
         if research:
             sources=Research.sources(research,sources);leads=[]
         elif re.search(r'\b(first|second|last|that|this|those|results?|found|requirements?|deadline|pay|rate|opportunity|job|proposal|apply)\b',text,re.I):
-            previous_research=next((r['result'].get('research') for r in context['requests'] if r['status']=='complete' and r['result'].get('research')),None)
             if previous_research:
-                prior=json.loads(json.dumps(previous_research))
-                for check in prior['checks']:
-                    if check['status'] in ('live','cached'):check['status']='previous_read';check['message']='Saved research from this conversation, not a new check. '+check.get('message','')
+                prior=Research.previous(previous_research)
                 sources=Research.sources(prior,sources)
         previous=[{'role':n.get('role','note'),'text':n['text'][:600],'owner_rating':n.get('feedback',0)} for n in [n for n in context['notes'] if n['id']!=user_note_id][-3:]]
         if user_note_id is None:self.add_work_note(d,role='user')
@@ -476,12 +479,36 @@ class Engine:
             if len(json.dumps(payload['messages'],ensure_ascii=False).encode())<=23500 or not sources:break
             sources.pop()
         budget=self.ai_budget();size=len(json.dumps(payload['messages'],ensure_ascii=False).encode())
-        ai_used=not research or bool(research['items'] and token and not budget['paused'] and budget['count']<budget['daily_requests'] and budget['reserved_tokens']+size+512+payload['max_tokens']<=budget['daily_tokens'])
+        reason='disconnected' if not token else 'paused' if budget['paused'] else 'requests' if budget['count']>=budget['daily_requests'] else 'tokens' if budget['reserved_tokens']+size+512+payload['max_tokens']>budget['daily_tokens'] else None
+        ai_used=not reason and (not research or bool(research['items']))
+        writing_status=None
+        def allowance_result(why):
+            nonlocal research,sources,writing_status
+            if not research and previous_research:research=Research.previous(previous_research);sources=Research.sources(research,[])
+            elif not research:sources=[]
+            current=self.ai_budget()
+            from zoneinfo import ZoneInfo,ZoneInfoNotFoundError
+            try:reset=datetime.fromisoformat(current['next_reset_at']).astimezone(ZoneInfo('America/New_York')).strftime('%I:%M %p %Z on %b %d').lstrip('0')
+            except ZoneInfoNotFoundError:reset=datetime.fromisoformat(current['next_reset_at']).strftime('%H:%M UTC on %b %d')
+            message={'disconnected':'AI writing is not connected.','paused':'AI writing is paused. Resume it in Connections when you choose.','requests':'The daily AI request allowance has been reached.','tokens':'This request would exceed the remaining conservative token allowance.'}[why]
+            message='AI writing was not called. '+message
+            message+=' '+str(current['count'])+' of '+str(current['daily_requests'])+' requests used; '+str(current['reserved_tokens'])+' of '+str(current['daily_tokens'])+' conservative tokens reserved. Daily usage resets at '+reset+'. This is the app’s allowance, not your Hugging Face credit balance. Your question is saved.'
+            writing_status={'status':'blocked','reason':why,'message':message,'next_reset_at':current['next_reset_at']}
+            if research:
+                research['writing_status']=writing_status
+                answer=('Saved research from this same conversation; no new platform check.\n\n' if not researching else '')+Research.summary(research)
+            else:answer=message+'\n\nYou can still save notes, prepare basic drafts, or choose Research opportunities in message Options for a read-only search. No AI-written recommendation or revision was produced.'
+            return {'choices':[{'message':{'content':answer}}]}
         if progress and research:progress({**{k:v for k,v in research.items() if k!='items'},'phase':'writing' if ai_used else 'ready'})
-        if research and not ai_used:research['writing_status']={'status':'skipped','message':('AI writing was not called because the bounded research returned no usable records.' if not research['items'] else 'AI writing was not called because it is disconnected, paused, or outside the current allowance. These research records remain available.')}
         try:
-            result=self.ai_request(payload) if ai_used else {'choices':[{'message':{'content':Research.summary(research)}}]}
+            if reason:result=allowance_result(reason)
+            elif research and not research['items']:
+                research['writing_status']={'status':'skipped','message':'AI writing was not called because the bounded research returned no usable records.'}
+                result={'choices':[{'message':{'content':Research.summary(research)}}]}
+            else:result=self.ai_request(payload)
             if research and (not isinstance(result,dict) or not result.get('choices') or not isinstance(result['choices'][0].get('message',{}).get('content'),str) or not result['choices'][0]['message']['content'].strip()):raise ValueError('Writing response was incomplete.')
+        except AIAllowanceError as error:
+            ai_used=False;result=allowance_result(error.reason)
         except Exception:
             if not research:raise
             ai_used=False;research['writing_status']={'status':'failed','message':'AI writing could not finish. No retry was made; the attempt may still count toward usage. These are the research records, without an AI-written recommendation.'}
@@ -492,7 +519,7 @@ class Engine:
         if research and ai_used:answer=Research.check_summary(research)+'\n\n'+answer
         with self.lock,self.connect() as c:note_id=c.execute('INSERT INTO work_notes(workspace,opportunity_id,text,created,role,chat_id,sources) VALUES(?,?,?,?,?,?,?)',(workspace,oid,answer[:8000],now(),'assistant',d.get('chat_id') or None,json.dumps(sources,ensure_ascii=False))).lastrowid
         if ai_used:self.set_setting('last_ai_success',now())
-        return {'answered':True,'note_id':note_id,'answer':answer,'document_id':artifact['id'] if artifact else None,'draft_id':current_drafts[0]['id'] if d.get('mode')=='revise_proposal' else None,'sources':sources,'research':research,'ai_used':ai_used}
+        return {'answered':True,'note_id':note_id,'answer':answer,'document_id':artifact['id'] if artifact and ai_used else None,'draft_id':current_drafts[0]['id'] if d.get('mode')=='revise_proposal' and ai_used else None,'sources':sources,'research':research,'ai_used':bool(ai_used),'writing_status':writing_status}
     def platforms(self):
         with self.connect() as c:rows=[dict(r) for r in c.execute('SELECT * FROM platforms ORDER BY created')]
         for row in rows:row['automatic_discovery']=row['id'] in ('wwr','remotive');row['account_access']='Not verified'

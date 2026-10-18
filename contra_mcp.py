@@ -63,7 +63,7 @@ class ContraConnection:
    return tokens['access_token']
  def discover(self):
   headers={'Authorization':'Bearer '+self.token()}
-  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.19.2'}}},headers=headers)
+  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.19.3'}}},headers=headers)
   if result.get('error'):raise ValueError('Contra could not initialize the connection. No account tools were run.')
   protocol=result.get('result',{}).get('protocolVersion','2025-03-26');headers['MCP-Protocol-Version']=protocol
   session=next((v for k,v in response_headers.items() if k.lower()=='mcp-session-id'),None)
@@ -82,7 +82,7 @@ class ContraConnection:
   allowed={'get_user_profile_by_username','list_services','list_portfolio_projects','list_job_feed','list_active_challenges','get_job_by_slug','list_chat_conversations'}
   if any(name not in allowed for name,args in calls):raise ValueError('Only approved read tools can run here.')
   headers={'Authorization':'Bearer '+self.token()}
-  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.19.2'}}},headers=headers)
+  result,response_headers=request(RESOURCE,{'jsonrpc':'2.0','id':1,'method':'initialize','params':{'protocolVersion':'2025-03-26','capabilities':{},'clientInfo':{'name':'OTU Opportunity Engine','version':'0.19.3'}}},headers=headers)
   if result.get('error'):raise ValueError('Contra could not initialize read access.')
   headers['MCP-Protocol-Version']=result.get('result',{}).get('protocolVersion','2025-03-26')
   for k,v in response_headers.items():

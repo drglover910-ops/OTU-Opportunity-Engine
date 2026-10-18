@@ -1,7 +1,7 @@
 {
-  "commit": "f7e95530c3197e6b4ab8164be4d9e6fdac73025e",
-  "version": "0.19.6",
-  "checked_at": "2026-10-18T08:16:05.139215+00:00",
+  "commit": "0f3047aa2dd8e6b131f2575a5e1fcf4f73d4db99",
+  "version": "0.19.7",
+  "checked_at": "2026-10-18T17:01:55.192911+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -12,16 +12,16 @@
     "restart_verified": true,
     "message": "Mounted storage detected; verify a saved record survives a restart."
   },
-  "opportunities": 198,
+  "opportunities": 208,
   "last_discovery": {
-    "added": 0,
-    "seen": 62,
+    "added": 10,
+    "seen": 63,
     "errors": [],
     "sources_ok": [
       "We Work Remotely RSS",
       "Remotive"
     ],
-    "finished": "2026-10-18T03:31:11.692028+00:00"
+    "finished": "2026-10-18T15:31:20.599884+00:00"
   },
   "documents": 29,
   "gmail_connected": true,
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-18T08:16:38.707146+00:00",
+    "checked_at": "2026-10-18T17:02:27.678126+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -39,7 +39,7 @@
     "writing": {
       "status": "configured",
       "message": "AI settings are saved. A paid writing request has not been made by this connection check.",
-      "last_success": "2026-10-18T08:02:47.704766+00:00"
+      "last_success": "2026-10-18T16:25:30.201281+00:00"
     },
     "saving": {
       "status": "connected"
@@ -50,7 +50,7 @@
     }
   },
   "workspaces": 9,
-  "assistant_knowledge_version": "2026-10-18.1",
+  "assistant_knowledge_version": "2026-10-18.2",
   "working_status_report": "available",
   "document_preview": "passed",
   "designed_document_preview": "passed",
@@ -67,8 +67,47 @@
       {
         "scope_digest": "7460f4b0b305",
         "workspace": "contra",
-        "note_count": 19,
+        "note_count": 23,
         "requests": [
+          {
+            "created": "2026-10-18T16:25:18.267155+00:00",
+            "updated": "2026-10-18T16:25:30.203705+00:00",
+            "status": "complete",
+            "mode": "advice",
+            "ai_used": true,
+            "writing_status": {},
+            "matches_test_prompt": false,
+            "answer_format": "other",
+            "answer_note_present": true,
+            "research_checked_at": null,
+            "checks": []
+          },
+          {
+            "created": "2026-10-18T08:32:12.712228+00:00",
+            "updated": "2026-10-18T08:32:21.962788+00:00",
+            "status": "complete",
+            "mode": "advice",
+            "ai_used": true,
+            "writing_status": {},
+            "matches_test_prompt": false,
+            "answer_format": "research_check_summary",
+            "answer_note_present": true,
+            "research_checked_at": "2026-10-18T08:32:12.955205+00:00",
+            "checks": [
+              {
+                "tool": "saved_opportunities",
+                "status": "complete",
+                "count": 1
+              },
+              {
+                "tool": "get_job_by_slug",
+                "status": "live",
+                "count": 1,
+                "checked_at": "2026-10-18T08:32:13.947808+00:00",
+                "broader_feed": false
+              }
+            ]
+          },
           {
             "created": "2026-10-18T08:02:43.593809+00:00",
             "updated": "2026-10-18T08:02:47.706399+00:00",
@@ -79,32 +118,6 @@
             "matches_test_prompt": false,
             "answer_format": "other",
             "answer_note_present": true,
-            "research_checked_at": null,
-            "checks": []
-          },
-          {
-            "created": "2026-10-18T07:44:43.701574+00:00",
-            "updated": "2026-10-18T07:44:46.264575+00:00",
-            "status": "complete",
-            "mode": "advice",
-            "ai_used": true,
-            "writing_status": {},
-            "matches_test_prompt": false,
-            "answer_format": "other",
-            "answer_note_present": true,
-            "research_checked_at": null,
-            "checks": []
-          },
-          {
-            "created": "2026-10-18T07:00:34.685018+00:00",
-            "updated": "2026-10-18T07:00:35.048397+00:00",
-            "status": "failed",
-            "mode": "advice",
-            "ai_used": null,
-            "writing_status": {},
-            "matches_test_prompt": false,
-            "answer_format": "other",
-            "answer_note_present": false,
             "research_checked_at": null,
             "checks": []
           }
@@ -169,7 +182,7 @@
     "counts": {
       "work_notes": {
         "before": 3,
-        "now": 24
+        "now": 28
       },
       "conversation_memory": {
         "before": 0,
@@ -195,11 +208,11 @@
   "developer_request_queue": "available",
   "ai_live_check": "not run; no paid inference during verification",
   "ai_budget": {
-    "count": 4,
-    "reserved_tokens": 52678,
-    "actual_tokens": 19163,
+    "count": 6,
+    "reserved_tokens": 61235,
+    "actual_tokens": 27720,
     "date": "2026-10-18",
-    "usage_percent": 21,
+    "usage_percent": 24,
     "warning_level": null,
     "unsettled_tokens": 33515,
     "daily_requests": 50,
@@ -226,7 +239,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-18T08:16:47.095091+00:00",
+    "checked_at": "2026-10-18T17:02:34.214130+00:00",
     "tools": 123,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -6443,8 +6456,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792311412.1962762,
-    "checked_at": "2026-10-18T08:16:52.196298+00:00",
+    "finished_epoch": 1792342960.3350747,
+    "checked_at": "2026-10-18T17:02:40.335088+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",
@@ -6744,10 +6757,6 @@
             "type"
           ],
           [
-            "countryId",
-            "name"
-          ],
-          [
             "amount",
             "interval"
           ],
@@ -6766,13 +6775,6 @@
           [
             "languageName",
             "proficiency"
-          ],
-          [
-            "isVerified",
-            "name",
-            "organizationId",
-            "profileUrl",
-            "slug"
           ]
         ],
         "unavailable": false,
@@ -6924,10 +6926,6 @@
             "type"
           ],
           [
-            "countryId",
-            "name"
-          ],
-          [
             "amount",
             "interval"
           ],
@@ -6997,8 +6995,6 @@
           ],
           [
             "backgroundColor",
-            "isToggleable",
-            "level",
             "textAlignment",
             "textColor"
           ],
@@ -7008,11 +7004,6 @@
             "type"
           ],
           [],
-          [
-            "backgroundColor",
-            "textAlignment",
-            "textColor"
-          ],
           [
             "estimatedHours",
             "feeMax",
@@ -7076,14 +7067,9 @@
             "text",
             "type"
           ],
-          [
-            "bold"
-          ],
           [],
           [
-            "content",
-            "href",
-            "type"
+            "bold"
           ],
           [
             "backgroundColor",
@@ -7155,10 +7141,10 @@
             "text",
             "type"
           ],
-          [],
           [
             "bold"
           ],
+          [],
           [
             "estimatedHours",
             "feeMax",
@@ -7166,20 +7152,8 @@
             "type"
           ],
           [
-            "amount",
-            "interval"
-          ],
-          [
             "jobPostingId",
             "status"
-          ],
-          [
-            "hasMorePublicMembers",
-            "name",
-            "organizationId",
-            "profileUrl",
-            "publicMembers",
-            "slug"
           ],
           [
             "displayUsername",
@@ -7194,15 +7168,32 @@
     },
     "public_opportunities": [
       {
-        "title": "Cross-Platform Systems Integration & Workflow Automation",
-        "url": "https://contra.com/opportunity/XB6Y3WYR-cross-platform-systems-integration-and-workflow-automation",
+        "title": "n8n Developer to Test and Harden an Existing API-to-Google Sheets Workflow",
+        "url": "https://contra.com/opportunity/MPkkBUrW-n8n-developer-to-test-and-harden-an-existing-api-to-google-sheets-workflow",
         "kind": "Job / contract",
         "source": "Contra",
-        "description": "About the position\nWe\u2019re looking for an experienced, hands-on technical person to connect and automate workflows across a small consulting firm\u2019s existing platforms (SlaterConsult). The work focuses on making monday.com, Teamtailor, DocuSign, QuickBooks, and Microsoft 365 work together across US and EU operations. The team has already mapped current processes and identified inefficiencies, and needs technical expertise to implement the desired workflow automation.\nWhat you\u2019ll do\nYou\u2019ll be responsible for designing and implementing integrations that connect the existing systems and support secure, automated workflows. The initial project scope and deliverables were not fully specified in the request, so the focus is on integration setup, workflow automation, and advising on secure access management for a client without an internal IT department.\nIntegrate and automate workflows across monday.com, Teamtailor, DocuSign, QuickBooks, and Microsoft 365\nUse APIs, webhooks, and integration platforms such as Zapier, n8n, or similar tools\nAdvise on secure API connections and access management for a client without an internal IT department\nProvide your pricing structure and an estimated cost for an initial integration project",
+        "description": "ARH Automation seeks an n8n developer to harden one API-to-Google Sheets workflow. With a sanitized export and sample data, test pagination, API failures, missing fields, duplicates, and reruns. Deliver updated workflow JSON, error handling, and a test report in one week. Apply with one relevant n8n project and explain how you handle retries and duplicate records. Paid pilot; more work may follow.",
         "budget": {
           "estimatedHours": null,
-          "feeMax": "USD:4000.00000000",
-          "feeMin": "USD:2000.00000000",
+          "feeMax": "USD:1000.00000000",
+          "feeMin": "USD:1000.00000000",
+          "type": "FixedPriceJobBudget"
+        },
+        "prize": null,
+        "deadline": null,
+        "status": "CLOSED",
+        "requirements_verified": false
+      },
+      {
+        "title": "Senior Brand & Product Designer \u2014 FinTech (Logo + Mobile App)",
+        "url": "https://contra.com/opportunity/Ns76k7Wl-senior-brand-and-product-designer-fin-tech-logo-mobile-app",
+        "kind": "Job / contract",
+        "source": "Contra",
+        "description": "We're an ambitious fintech startup looking for an \nexceptional designer to create a distinctive brand identity and a world-class mobile app experience.\nWe admire the design excellence of companies like Wise, Nubank, Revolut, and KAST, but we're not looking for something derivative. We want to create something genuinely original, iconic, and memorable.\nWe're looking for someone who can think beyond conventional fintech design and bring a fresh creative perspective.\nScope of Work\n1. Logo & Visual Identity\nDevelop original, memorable logo concepts.\nDefine the core color palette and typography.\nCreate a versatile identity suitable for consumer and institutional financial products.\n2. Mobile App UX/UI\nDesign a premium, intuitive cross-border remittance mobile app.\nCover key journeys including onboarding, recipient management, transfers, payment, and transaction tracking.\nCreate a scalable design system in Figma.\nEnsure the experience is simple, elegant, and conversion-focused.\nWho We're Looking For\nOutstanding portfolio\n featuring both brand identity and mobile app design.\nProven experience with fintech, neobanking, payments, or leading consumer technology products.\nExceptional visual taste, creativity, and attention to detail.\nStrong UX thinking and mastery of Figma.\nAbility to create distinctive designs rather than rely on generic templates.\nExperience with Arabic/RTL interfaces is a plus.\nComfortable working in a fast-paced startup environment.\nHow to Apply\nPlease include:\nYour 2\u20133 strongest relevant projects, ideally combining branding and mobile app design.\nYour specific contribution to each project.\nYour availability, estimated timeline, and fixed-price proposal.\nImportant:\n We're prioritizing quality and originality over the lowest price. We want to work with someone whose design work genuinely stands out.\nOur goal isn't simply to build another beautiful fintech product. \nWe want to create something others will look to for inspiration. ",
+        "budget": {
+          "estimatedHours": null,
+          "feeMax": "USD:1500.00000000",
+          "feeMin": "USD:750.00000000",
           "type": "FixedPriceJobBudget"
         },
         "prize": null,
@@ -7211,33 +7202,16 @@
         "requirements_verified": false
       },
       {
-        "title": "Senior iOS Engineer - 4-Week Contract",
-        "url": "https://contra.com/opportunity/mBkoMYN7-senior-i-os-engineer-4-week-contract",
+        "title": "PR & Media Relations Specialist | Entrepreneur & Keynote Speaker",
+        "url": "https://contra.com/opportunity/UNvYWPmF-pr-and-media-relations-specialist-or-entrepreneur-and-keynote-speaker",
         "kind": "Job / contract",
         "source": "Contra",
-        "description": "Bring fmsg to iOS: a beautifully crafted native app for the future of AI messaging.\nfmsg AI is a messaging platform for people, businesses and AI agents, built on an open protocol. Our web app and backend are live at \nfmsg.ai\n. We need an experienced iOS engineer to build and ship our first native iOS app.\nThe role\nBuild a Swift/SwiftUI app with feature parity with the \nfmsg.ai\n web app, plus push notifications.\nBring the \nfmsg.ai\n design and themes to iOS with fluid, native interactions.\nShip it: testing, App Store submission and review. AI-assisted tools welcome.\nBackend and APIs are done; we handle any server-side changes, including APNs. The app is owned by FMSG AI Pty Ltd and published under our Apple Developer account, which we'll set up with your guidance.\nDeliverable:\n the app live on the App Store by 27 November, with submission well before the final week.\nYou have\nA track record of shipping iOS apps with standout UI/UX.\nStrong Swift and SwiftUI, including auth, push and messaging.\nThe judgement to deliver independently, and your own Mac and devices.\nInterest in AI agents and open protocols.\nThe engagement\nDates:\n 2\u201327 November 2026 (20 working days).\nRate:\n US$500\u2013650/day depending on experience.\nLocation:\n Fully remote, worldwide.\nCollaboration:\n A one-hour Zoom each weekday at a Perth-friendly time (UTC+8).\nBeyond the contract:\n Extension possible, subject to funding, with a potential path to a founding engineering role.\nHow to apply\nExplore \nfmsg.ai\n and the \ndocs\n, then send a few paragraphs with links to iOS apps you've shipped, what you'd prioritise in four weeks, and your availability and day rate. Connecting your own AI agent first is a bonus.\nApplications close Monday 26 October 2026 (Perth time).",
+        "description": "About the Opportunity\nI'm seeking a results-driven PR professional to help build my personal brand into a nationally recognized voice in entrepreneurship, innovation, business leadership, and motivational speaking.\nThe vision:\n Think Tony Robbins meets Guy Kawasaki, through the perspective of a Black serial entrepreneur.\nMy Background\nI'm a four-time entrepreneur, Founder & CEO of a consumer health company, Kellogg MBA graduate, and AI strategist. My background includes 10+ years of experience in finance, management consulting, corporate strategy, and innovation, including experience at a Fortune 100 company.\nWhat You'll Do\nSecure earned media features, interviews, and coverage in U.S. business and mainstream publications.\nPitch and book keynote speaking engagements, conferences, panels, and corporate events.\nSecure appearances on established podcasts, YouTube channels, and business shows.\nDevelop compelling media pitches, founder narratives, and thought leadership opportunities.\nBuild relationships with journalists, producers, event organizers, and industry influencers.\nExecute a focused 30\u201360 day PR campaign with measurable results.\nWhy Work With Me?\nThis is an opportunity to help build a high-profile personal brand from the ground up, with direct access to the founder and significant creative ownership.\nI'm particularly interested in individuals who can generate quick, measurable traction. Strong initial performance could lead to an ongoing partnership as my dedicated PR professional or agency.\nIdeal Candidate\nProven success securing U.S. media placements, podcast appearances, or speaking engagements.\nStrong relationships with journalists, podcast producers, and event organizers.\nExcellent English communication and persuasive pitching skills.\nResourceful, proactive, and focused on outcomes rather than activity.\nTo Apply\nShare 2\u20133 examples of placements you've personally secured and briefly explain how you'd generate meaningful traction in your first 30 days.\nInternational applicants are encouraged to apply if they have experience working with U.S. media.",
         "budget": {
-          "estimatedHours": null,
-          "feeMax": "USD:13000.00000000",
-          "feeMin": "USD:10000.00000000",
-          "type": "FixedPriceJobBudget"
-        },
-        "prize": null,
-        "deadline": null,
-        "status": "POSTED",
-        "requirements_verified": false
-      },
-      {
-        "title": "Canva to Google Slides Conversion Specialist",
-        "url": "https://contra.com/opportunity/Mb3oNbXl-canva-to-google-slides-conversion-specialist",
-        "kind": "Job / contract",
-        "source": "Contra",
-        "description": "We are seeking an experienced professional to assist with converting a presentation deck from Canva to Google Slides. The goal of this project is to enable streamlined collaboration within our team on monthly client reports. \nResponsibilities:\nConvert an existing Canva presentation into a Google Slides format, ensuring that the design, formatting, and all elements are preserved.\nOptimize the Google Slides version for collaborative editing, ensuring the presentation is user-friendly. \nRequirements:\nProven experience with presentation tools, particularly Canva and Google Slides.\nStrong attention to detail to maintain design consistency and functionality.\nAvailability to complete the project within the stipulated time frame.\nIf you are knowledgeable in presentation tools and can facilitate a seamless transition to Google Slides, we\u2019d love to hear from you.",
-        "budget": {
-          "estimatedHours": null,
-          "feeMax": "USD:250.00000000",
-          "feeMin": "USD:250.00000000",
-          "type": "FixedPriceJobBudget"
+          "estimatedHours": 10,
+          "feeMax": "USD:40.00000000",
+          "feeMin": "USD:20.00000000",
+          "type": "HourlyRateJobBudget"
         },
         "prize": null,
         "deadline": null,
@@ -7299,7 +7273,7 @@
         "tool": "list_job_feed",
         "status": "empty",
         "count": 0,
-        "checked_at": "2026-10-18T08:16:53.136953+00:00",
+        "checked_at": "2026-10-18T17:02:41.372399+00:00",
         "search": "gohighlevel",
         "preset": "ALL",
         "broader_feed": false,
@@ -7311,7 +7285,7 @@
         "tool": "list_job_feed",
         "status": "live",
         "count": 3,
-        "checked_at": "2026-10-18T08:16:53.729762+00:00",
+        "checked_at": "2026-10-18T17:02:42.225508+00:00",
         "search": "",
         "preset": "FOR_YOU",
         "broader_feed": true,
@@ -7328,7 +7302,7 @@
       "url": "https://contra.com/opportunity/Mb3oNbXl-canva-to-google-slides-conversion-specialist",
       "title": "Canva to Google Slides Conversion Specialist",
       "company": "The Growth Directive",
-      "basis": "saved platform snapshot",
+      "basis": "same-conversation research",
       "status": "ready"
     },
     "status": "listing_text_available",
@@ -7343,7 +7317,7 @@
         "tool": "get_job_by_slug",
         "status": "live",
         "count": 1,
-        "checked_at": "2026-10-18T08:16:54.875394+00:00",
+        "checked_at": "2026-10-18T17:02:43.302904+00:00",
         "search": "",
         "preset": null,
         "broader_feed": false,
@@ -7351,6 +7325,14 @@
       }
     ],
     "validation": "One exact-listing read; no AI writing, chat creation, application submission or purchase."
+  },
+  "contra_application_fields": {
+    "status": "Inspection only",
+    "title": "Canva to Google Slides Conversion Specialist",
+    "posting_id_available": true,
+    "portfolio_options": 2,
+    "blockers": [],
+    "validation": "Read listing and portfolio options only. No native draft, submission, model call or local application ticket created."
   },
   "platforms": 7,
   "browser": "hosting configuration needed",

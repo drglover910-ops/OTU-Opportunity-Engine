@@ -1,7 +1,7 @@
 {
-  "commit": "dfeeba9d87a5a3c680ee6ad4c536cbbe84113905",
-  "version": "0.18.0",
-  "checked_at": "2026-10-17T21:35:35.237188+00:00",
+  "commit": "bfbdef7307d6afff03c9ef06b5534839653f7565",
+  "version": "0.19.0",
+  "checked_at": "2026-10-18T01:57:38.890135+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-17T21:36:08.090567+00:00",
+    "checked_at": "2026-10-18T01:58:13.026526+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -50,7 +50,7 @@
     }
   },
   "workspaces": 9,
-  "assistant_knowledge_version": "2026-10-17.2",
+  "assistant_knowledge_version": "2026-10-17.3",
   "working_status_report": "available",
   "document_preview": "passed",
   "designed_document_preview": "passed",
@@ -60,7 +60,7 @@
   "isis_voice_controls": "available; device preview required",
   "acknowledged_chat_requests": "API available",
   "response_actions": "asset available; local browser checks passed separately",
-  "chat_threads": 8,
+  "chat_threads": 9,
   "projects": 9,
   "recovery_checkpoint": {
     "checkpoint": true,
@@ -76,7 +76,7 @@
     "counts": {
       "work_notes": {
         "before": 3,
-        "now": 9
+        "now": 11
       },
       "conversation_memory": {
         "before": 0,
@@ -84,7 +84,7 @@
       },
       "conversation_threads": {
         "before": 3,
-        "now": 6
+        "now": 7
       },
       "documents": {
         "before": 29,
@@ -102,10 +102,10 @@
   "developer_request_queue": "available",
   "ai_live_check": "not run; no paid inference during verification",
   "ai_budget": {
-    "count": 3,
-    "reserved_tokens": 43196,
-    "actual_tokens": 8784,
-    "date": "2026-10-17",
+    "date": "2026-10-18",
+    "count": 0,
+    "reserved_tokens": 0,
+    "actual_tokens": 0,
     "daily_requests": 5,
     "daily_tokens": 60000,
     "paused": false,
@@ -129,7 +129,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-17T21:36:13.516793+00:00",
+    "checked_at": "2026-10-18T01:58:19.833963+00:00",
     "tools": 123,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -6346,8 +6346,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792272979.345875,
-    "checked_at": "2026-10-17T21:36:19.345886+00:00",
+    "finished_epoch": 1792288705.4540143,
+    "checked_at": "2026-10-18T01:58:25.454027+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",
@@ -6647,14 +6647,18 @@
             "type"
           ],
           [
+            "countryId",
+            "name"
+          ],
+          [
+            "amount",
+            "interval"
+          ],
+          [
             "approvedAt",
             "externalUrl",
             "jobPostingId",
             "status"
-          ],
-          [
-            "languageName",
-            "proficiency"
           ],
           [
             "displayUsername",
@@ -6663,8 +6667,15 @@
             "userProfileId"
           ],
           [
-            "countryId",
-            "name"
+            "languageName",
+            "proficiency"
+          ],
+          [
+            "isVerified",
+            "name",
+            "organizationId",
+            "profileUrl",
+            "slug"
           ]
         ],
         "unavailable": false,
@@ -6777,23 +6788,6 @@
             "hasNextPage",
             "ok",
             "totalCount"
-          ]
-        ],
-        "unavailable": false,
-        "returned": 0,
-        "has_more": false,
-        "access_limited": true
-      },
-      "list_job_feed:9": {
-        "shapes": [
-          [
-            "accessLimitGuidance",
-            "accessLimitedFeed",
-            "endCursor",
-            "entries",
-            "hasNextPage",
-            "ok",
-            "totalCount"
           ],
           [
             "job",
@@ -6837,6 +6831,10 @@
             "name"
           ],
           [
+            "amount",
+            "interval"
+          ],
+          [
             "approvedAt",
             "externalUrl",
             "jobPostingId",
@@ -6851,6 +6849,23 @@
         ],
         "unavailable": false,
         "returned": 1,
+        "has_more": false,
+        "access_limited": true
+      },
+      "list_job_feed:9": {
+        "shapes": [
+          [
+            "accessLimitGuidance",
+            "accessLimitedFeed",
+            "endCursor",
+            "entries",
+            "hasNextPage",
+            "ok",
+            "totalCount"
+          ]
+        ],
+        "unavailable": false,
+        "returned": 0,
         "has_more": false,
         "access_limited": true
       },
@@ -6908,6 +6923,10 @@
             "type"
           ],
           [
+            "amount",
+            "interval"
+          ],
+          [
             "jobPostingId",
             "status"
           ],
@@ -6952,8 +6971,6 @@
           ],
           [
             "backgroundColor",
-            "isToggleable",
-            "level",
             "textAlignment",
             "textColor"
           ],
@@ -6962,9 +6979,19 @@
             "text",
             "type"
           ],
+          [
+            "bold"
+          ],
           [],
           [
+            "content",
+            "href",
+            "type"
+          ],
+          [
             "backgroundColor",
+            "isToggleable",
+            "level",
             "textAlignment",
             "textColor"
           ],
@@ -6973,6 +7000,10 @@
             "feeMax",
             "feeMin",
             "type"
+          ],
+          [
+            "amount",
+            "interval"
           ],
           [
             "jobPostingId",
@@ -7027,12 +7058,9 @@
             "text",
             "type"
           ],
-          [
-            "bold"
-          ],
           [],
           [
-            "italic"
+            "bold"
           ],
           [
             "estimatedHours",
@@ -7041,8 +7069,20 @@
             "type"
           ],
           [
+            "amount",
+            "interval"
+          ],
+          [
             "jobPostingId",
             "status"
+          ],
+          [
+            "hasMorePublicMembers",
+            "name",
+            "organizationId",
+            "profileUrl",
+            "publicMembers",
+            "slug"
           ],
           [
             "displayUsername",
@@ -7057,16 +7097,16 @@
     },
     "public_opportunities": [
       {
-        "title": "Senior Wedding Film Editor",
-        "url": "https://contra.com/opportunity/EQBFBLg6-senior-wedding-film-editor",
+        "title": "Cross-Platform Systems Integration & Workflow Automation",
+        "url": "https://contra.com/opportunity/XB6Y3WYR-cross-platform-systems-integration-and-workflow-automation",
         "kind": "Job / contract",
         "source": "Contra",
-        "description": "About the job\nVeridian Films is hiring a senior wedding film editor to cut a luxury wedding film at the level of Plus Two Films and other top studios. The edit should be an emotional, story-driven highlight film centered on vows, speeches, and letters, with cinematic pacing, careful music choice, color grading, and sound design. Footage is ready now, the first cut is due within 2 weeks, and the budget is $700\u20131,000 for this film, with ongoing work for the right editor.\nWhat you\u2019ll do\nYou\u2019ll edit the wedding footage into a polished highlight film that feels cinematic and narrative-driven, while keeping the emotional moments front and center. Please share 2\u20133 wedding or narrative films you edited yourself, along with your availability.\nCut a luxury wedding highlight film around vows, speeches, and letters\nApply cinematic pacing, music choice, color grading, and sound design\nDeliver the first cut within 2 weeks\nShare 2\u20133 self-edited wedding or narrative films and your availability",
+        "description": "About the position\nWe\u2019re looking for an experienced, hands-on technical person to connect and automate workflows across a small consulting firm\u2019s existing platforms (SlaterConsult). The work focuses on making monday.com, Teamtailor, DocuSign, QuickBooks, and Microsoft 365 work together across US and EU operations. The team has already mapped current processes and identified inefficiencies, and needs technical expertise to implement the desired workflow automation.\nWhat you\u2019ll do\nYou\u2019ll be responsible for designing and implementing integrations that connect the existing systems and support secure, automated workflows. The initial project scope and deliverables were not fully specified in the request, so the focus is on integration setup, workflow automation, and advising on secure access management for a client without an internal IT department.\nIntegrate and automate workflows across monday.com, Teamtailor, DocuSign, QuickBooks, and Microsoft 365\nUse APIs, webhooks, and integration platforms such as Zapier, n8n, or similar tools\nAdvise on secure API connections and access management for a client without an internal IT department\nProvide your pricing structure and an estimated cost for an initial integration project",
         "budget": {
           "estimatedHours": null,
           "feeMax": "USD:4000.00000000",
-          "feeMin": "USD:2100.00000000",
-          "type": "MonthlyRateJobBudget"
+          "feeMin": "USD:2000.00000000",
+          "type": "FixedPriceJobBudget"
         },
         "prize": null,
         "deadline": null,
@@ -7074,16 +7114,16 @@
         "requirements_verified": false
       },
       {
-        "title": "AI Video Producer for Ads and Brand ",
-        "url": "https://contra.com/opportunity/PE7MWoEN-ai-video-producer-for-ads-and-brand",
+        "title": "Senior iOS Engineer - 4-Week Contract",
+        "url": "https://contra.com/opportunity/mBkoMYN7-senior-i-os-engineer-4-week-contract",
         "kind": "Job / contract",
         "source": "Contra",
-        "description": "Introduction\nSearch Atlas is hiring a video producer to create concept-driven ads and brand videos for technical products. The role focuses on taking projects end to end\u2014from script to final cut\u2014writing scroll-stopping openings, making software easy to understand for new viewers, building multiple versions for testing, and using performance results to shape the next round of ideas.\nResponsibilities\nIn this role, you will meet daily with the paid team to review ad performance and plan new launches, then pitch concepts, produce and edit videos, and iterate based on results. The request emphasizes original concept development, strong performance-focused openings, and AI video tools as a default part of the workflow.\nCome up with concepts for ads and brand videos.\nUse AI to write scripts, create content, and analyze what's working across themes and individual videos.\nProduce videos end to end, from script to final cut.\nWrite openings strong enough to stop people scrolling.\nMake software understandable for people who have never seen it.\nBuild several versions of an idea for testing.\nTrack video performance and apply what you learn to the next idea.",
+        "description": "Bring fmsg to iOS: a beautifully crafted native app for the future of AI messaging.\nfmsg AI is a messaging platform for people, businesses and AI agents, built on an open protocol. Our web app and backend are live at \nfmsg.ai\n. We need an experienced iOS engineer to build and ship our first native iOS app.\nThe role\nBuild a Swift/SwiftUI app with feature parity with the \nfmsg.ai\n web app, plus push notifications.\nBring the \nfmsg.ai\n design and themes to iOS with fluid, native interactions.\nShip it: testing, App Store submission and review. AI-assisted tools welcome.\nBackend and APIs are done; we handle any server-side changes, including APNs. The app is owned by FMSG AI Pty Ltd and published under our Apple Developer account, which we'll set up with your guidance.\nDeliverable:\n the app live on the App Store by 27 November, with submission well before the final week.\nYou have\nA track record of shipping iOS apps with standout UI/UX.\nStrong Swift and SwiftUI, including auth, push and messaging.\nThe judgement to deliver independently, and your own Mac and devices.\nInterest in AI agents and open protocols.\nThe engagement\nDates:\n 2\u201327 November 2026 (20 working days).\nRate:\n US$500\u2013650/day depending on experience.\nLocation:\n Fully remote, worldwide.\nCollaboration:\n A one-hour Zoom each weekday at a Perth-friendly time (UTC+8).\nBeyond the contract:\n Extension possible, subject to funding, with a potential path to a founding engineering role.\nHow to apply\nExplore \nfmsg.ai\n and the \ndocs\n, then send a few paragraphs with links to iOS apps you've shipped, what you'd prioritise in four weeks, and your availability and day rate. Connecting your own AI agent first is a bonus.\nApplications close Monday 26 October 2026 (Perth time).",
         "budget": {
-          "estimatedHours": 40,
-          "feeMax": "USD:30.00000000",
-          "feeMin": "USD:25.00000000",
-          "type": "HourlyRateJobBudget"
+          "estimatedHours": null,
+          "feeMax": "USD:13000.00000000",
+          "feeMin": "USD:10000.00000000",
+          "type": "FixedPriceJobBudget"
         },
         "prize": null,
         "deadline": null,
@@ -7091,16 +7131,16 @@
         "requirements_verified": false
       },
       {
-        "title": "Junior Graphic Designer",
-        "url": "https://contra.com/opportunity/YWe3ZNNA-junior-graphic-designer",
+        "title": "Canva to Google Slides Conversion Specialist",
+        "url": "https://contra.com/opportunity/Mb3oNbXl-canva-to-google-slides-conversion-specialist",
         "kind": "Job / contract",
         "source": "Contra",
-        "description": "About House of Ari Jogiel\nWe are a Los Angeles-based creative studio, garment developer, and manufacturing company designing and making garments with intention.\nFounded in 2017, we've partnered with over 400 brands, including the WNBA, The North Face, Liquid Death, and Penguin. Through our verticals: Strategy, Design, Development, and Manufacturing, we help brands turn ideas into finished garments in days.\nWe're a tight-knit, ambitious team driven by creativity, craftsmanship, and a passion for ethical manufacturing, with big goals to grow and make a meaningful impact in the fashion industry.\nAbout the Role\nWe're looking for a driven, creative, and detail-oriented \nJunior Graphic Designer\n to join our growing creative team and work directly with our Founder.\nThis is an opportunity to work on exciting projects for established global brands and emerging labels, with exposure to the entire creative and garment development process, from concept to production.\nThe ideal candidate has a strong eye for design, is versatile across different creative styles, and can bring ideas to life while adapting to each brand's unique identity.\nRemote contract position | 10\u201315 hours per week to start, with room to grow.\nWe're looking for someone available to start within the next few days.\nWhat You'll Do\nBranding & Identity:\n Create and refine logos, visual identities, branding proposals, and presentations that reflect each brand's unique direction.\nFashion & Apparel Design:\n Develop garment graphics, artwork, patterns, technical sketches, and creative assets for a diverse range of fashion projects.\nDigital & Marketing:\n Design engaging social media and marketing assets for House of Ari Jogiel and our clients.\nCreative Collaboration:\n Work closely with our Founder to translate creative direction into polished designs, explore variations, and bring fresh ideas to the table.\nProject Execution:\n Manage multiple projects, meet deadlines, and maintain organized design files with clear version control.\nWhat We're Looking For\n2+ years of experience with Adobe Illustrator and Adobe Photoshop.\nA strong creative eye, attention to detail, and versatility across different design styles.\nAbility to understand creative direction, think critically, and execute independently while maintaining each brand's identity.\nProactive, organized, and comfortable managing multiple projects in a fast-paced environment with shifting priorities.\nStrong communication skills and ability to collaborate virtually, including screen-sharing for creative reviews.\nFluency in English is required.\nExperience in fashion, apparel graphics, or garment development is a plus.\nJoin the Team\nWork with exciting brands:\n Contribute to creative projects for globally recognized names and up-and-coming fashion labels.\nLearn directly from our Founder:\n Gain mentorship, creative guidance, and firsthand exposure to the fashion industry.\nMake a real impact:\n Take ownership of meaningful projects where your creativity and contributions are valued.\nExpand your experience:\n Work across branding, fashion, digital design, and the garment development process, gaining knowledge beyond traditional graphic design.\nGrow with us:\n Take on new creative challenges and opportunities for greater responsibility as our team expands.\nHow to Apply\nInterested in joining our creative team? Apply directly through Contra.\nWe will only review applications submitted through this job posting. For follow-ups, feel free to message us on Instagram at @ARIJOGIEL.",
+        "description": "We are seeking an experienced professional to assist with converting a presentation deck from Canva to Google Slides. The goal of this project is to enable streamlined collaboration within our team on monthly client reports. \nResponsibilities:\nConvert an existing Canva presentation into a Google Slides format, ensuring that the design, formatting, and all elements are preserved.\nOptimize the Google Slides version for collaborative editing, ensuring the presentation is user-friendly. \nRequirements:\nProven experience with presentation tools, particularly Canva and Google Slides.\nStrong attention to detail to maintain design consistency and functionality.\nAvailability to complete the project within the stipulated time frame.\nIf you are knowledgeable in presentation tools and can facilitate a seamless transition to Google Slides, we\u2019d love to hear from you.",
         "budget": {
-          "estimatedHours": 15,
-          "feeMax": "USD:40.00000000",
-          "feeMin": "USD:25.00000000",
-          "type": "HourlyRateJobBudget"
+          "estimatedHours": null,
+          "feeMax": "USD:250.00000000",
+          "feeMin": "USD:250.00000000",
+          "type": "FixedPriceJobBudget"
         },
         "prize": null,
         "deadline": null,
@@ -7149,6 +7189,25 @@
       }
     ],
     "geekyants_application_recorded": true
+  },
+  "chat_research": {
+    "checks": [
+      {
+        "tool": "saved_opportunities",
+        "status": "complete",
+        "count": 0,
+        "basis": "Saved records only; freshness and application outcome are not verified."
+      },
+      {
+        "tool": "list_job_feed",
+        "status": "empty",
+        "count": 0,
+        "checked_at": "2026-10-18T01:58:26.532045+00:00",
+        "message": "Read-only result; returned fields only. Full eligibility, rights and current terms may still require checking."
+      }
+    ],
+    "returned": 0,
+    "validation": "One bounded read without model inference or chat creation; no submissions or account writes."
   },
   "platforms": 7,
   "browser": "hosting configuration needed",

@@ -34,6 +34,7 @@ function tab(name){
  syncWorkspaceLayers();$('workspace-panel').focus({preventScroll:true});
 }
 function closeWorkspacePanel(restore=true){
+ if(audioAnswer?.dataset.action==='read-application')stopAnswer();
  activePanel=null;document.querySelectorAll('nav [data-tab].active').forEach(el=>el.classList.remove('active'));$('workspace-panel').hidden=true;document.querySelector('.layout').classList.remove('panel-open');syncWorkspaceLayers();
  if(restore){const target=panelReturnFocus?.isConnected&&panelReturnFocus.getClientRects().length&&!panelReturnFocus.closest('#workspace-panel')?panelReturnFocus:$('workspace-menu').querySelector('summary');if(!target.matches('input,textarea,select'))target.focus({preventScroll:true})}
 }
@@ -121,7 +122,7 @@ document.addEventListener('click',async event=>{
   if(action==='rename-chat'){renameTarget=b.dataset.chatId;$('rename-chat-title').value=chatThreads.find(t=>t.id===renameTarget)?.title||'';$('rename-chat-dialog').showModal();$('rename-chat-title').focus({preventScroll:true});return}
   if(action==='close-document'){closeDocumentPane();return}
   if(action==='open-voice'){tab('chat-settings');$('isis-voice-panel').scrollIntoView({block:'start'});return}
-  if(action==='read-answer'){readAnswer(b);return}
+  if(action==='read-answer'||action==='read-application'){readAnswer(b);return}
   if(action==='stop-answer'){stopAnswer();return}
   if(action==='copy-message'){const copied=await copyDeviceTool(b.closest('article').querySelector('.message-text').textContent,'message');const menu=b.closest('details');if(menu)menu.open=false;notice(copied?'Message copied.':'Select the text in the window and choose Copy.');return}
   if(action==='rate-answer'){await rateAnswer(b);return}
@@ -502,22 +503,44 @@ function renderStatusReport(){
  $('status-report-foundation').innerHTML=`<article class="panel"><h2>Keep the progress already made</h2><p>${esc(report.services)}</p><p>${esc(report.portfolio)}</p><p>${esc(report.continuity)}</p><p>${esc(report.next_focus)}</p></article>`;
 }
 
-let audioAnswer=null,audioUtterance=null;
+let audioAnswer=null,audioUtterance=null,audioSession=null;
+function speechRate(){const value=Number(localStorage.getItem('otu-speech-rate')||1);return [0.75,1,1.25,1.5,2].includes(value)?value:1}
+function speechSpeedControl(){return '<label class="speech-speed" hidden>Speed <select data-speech-speed aria-label="Reading speed">'+[0.75,1,1.25,1.5,2].map(n=>'<option value="'+n+'" '+(n===speechRate()?'selected':'')+'>'+n+'×</option>').join('')+'</select></label>'}
 function stopAnswer(){
- const old=audioAnswer;audioAnswer=null;audioUtterance=null;window.speechSynthesis?.cancel();
- if(old){old.textContent='🔊 Read aloud';old.setAttribute('aria-pressed','false');const stop=old.parentElement?.querySelector('[data-action=stop-answer]');if(stop)stop.hidden=true}
+ const old=audioAnswer;audioAnswer=null;audioUtterance=null;audioSession=null;window.speechSynthesis?.cancel();
+ if(old){old.textContent='🔊 Read aloud';old.setAttribute('aria-pressed','false');const stop=old.parentElement?.querySelector('[data-action=stop-answer]');if(stop)stop.hidden=true;const speed=old.parentElement?.querySelector('.speech-speed');if(speed)speed.hidden=true}
+}
+function applicationSpeechText(){
+ const copy=$('contra-application-content').cloneNode(true);
+ copy.querySelectorAll('input,select').forEach(n=>n.remove());
+ copy.querySelectorAll('textarea').forEach(n=>n.replaceWith(document.createTextNode('\n'+$('contra-application-message').value+'\n')));
+ copy.querySelectorAll('h2,h3,p,label,details,button').forEach(n=>{n.prepend(document.createTextNode('\n'));n.append(document.createTextNode('\n'))});
+ return 'Review your Contra application. Nothing is sent until you approve it.\n'+copy.textContent.replace(/\n[ \t]*\n/g,'\n');
+}
+function speakCurrentChunk(){
+ const session=audioSession;if(!session)return;
+ const utterance=new SpeechSynthesisUtterance(session.chunks[session.index].slice(session.offset));audioUtterance=utterance;const start=session.offset;
+ configureIsisVoice(utterance);
+ utterance.onboundary=e=>{if(audioUtterance===utterance&&Number.isInteger(e.charIndex))session.offset=start+e.charIndex};
+ utterance.onend=()=>{if(audioUtterance!==utterance)return;session.index++;session.offset=0;if(session.index>=session.chunks.length)stopAnswer();else speakCurrentChunk()};
+ utterance.onerror=e=>{if(audioUtterance===utterance){stopAnswer();if(!['canceled','interrupted'].includes(e.error))notice('This voice could not finish. Try another voice under Isis’s voice.',true)}};
+ try{window.speechSynthesis.speak(utterance)}catch{stopAnswer();notice('Read aloud could not start. Try another device voice.',true)}
 }
 function readAnswer(button){
  if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){notice('Read aloud is unavailable in this browser. Use your device’s spoken-content accessibility controls.',true);return}
  speechAccept=false;stopDictation();
  const synth=window.speechSynthesis;
  if(audioAnswer===button&&audioUtterance){if(synth.paused){synth.resume();button.textContent='⏸ Pause'}else{synth.pause();button.textContent='▶ Resume'}return}
- stopAnswer();audioAnswer=button;const utterance=new SpeechSynthesisUtterance(button.closest('article').querySelector('.message-text').textContent);audioUtterance=utterance;
- configureIsisVoice(utterance);if(!femaleUSVoice(utterance.voice||{})&&!localStorage.getItem('otu-isis-voice'))notice('Using your device’s current voice. Open Isis’s voice in the ⋯ menu to preview the choices.');
+ stopAnswer();const text=button.dataset.action==='read-application'?applicationSpeechText():button.closest('article').querySelector('.message-text').textContent;
+ if(!text.trim()){notice('Open an application or message to read first.');return}
+ audioAnswer=button;audioSession={chunks:text.match(/[^.!?\n]+(?:[.!?]+|\n|$)/g)||[text],index:0,offset:0};
+ // Bound long paragraphs too: shorter utterances are more reliable on mobile Safari.
+ audioSession.chunks=audioSession.chunks.flatMap(t=>t.match(/.{1,400}(?:\s|$)|.{1,400}/gs)||[t]).filter(t=>t.trim());
  button.textContent='⏸ Pause';button.setAttribute('aria-pressed','true');button.parentElement.querySelector('[data-action=stop-answer]').hidden=false;
- utterance.onend=()=>{if(audioUtterance===utterance)stopAnswer()};utterance.onerror=event=>{if(audioUtterance===utterance){stopAnswer();if(!['canceled','interrupted'].includes(event.error))notice('Your browser could not read this answer aloud. Try its spoken-content accessibility controls.',true)}};
- try{synth.speak(utterance)}catch(error){stopAnswer();notice('Read aloud could not start in this browser. Try your device’s spoken-content controls.',true)}
+ const speed=button.parentElement.querySelector('.speech-speed');if(speed){speed.hidden=false;speed.querySelector('select').value=String(speechRate())}
+ speakCurrentChunk();
 }
+document.addEventListener('change',event=>{if(!event.target.matches('[data-speech-speed]'))return;const rate=Number(event.target.value);if(![0.75,1,1.25,1.5,2].includes(rate))return;localStorage.setItem('otu-speech-rate',String(rate));document.querySelectorAll('[data-speech-speed]').forEach(n=>n.value=String(rate));if(audioSession){audioUtterance=null;window.speechSynthesis.cancel();audioAnswer.textContent='⏸ Pause';speakCurrentChunk()}});
 document.addEventListener('click',event=>{if(event.target.closest('[data-action=new-chat],[data-action=open-recent],[data-action=conversation],[data-action=workspace-conversation]'))stopAnswer()},true);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAnswer()});
 addEventListener('pagehide',stopAnswer);
@@ -568,9 +591,9 @@ $('complete-restore-form').onsubmit=async event=>{event.preventDefault();if(!con
 const isisVoicePanel=document.createElement('article');isisVoicePanel.id='isis-voice-panel';isisVoicePanel.className='panel';isisVoicePanel.innerHTML='<h2>Isis’s voice</h2><p>Warm, confident American English. Choose a voice you like, then hear a sample.</p><label for="isis-voice">Read-aloud voice</label><select id="isis-voice"></select><p id="isis-voice-status" class="small" role="status"></p><button type="button" id="isis-voice-preview">Hear Isis</button><button type="button" id="isis-voice-stop" class="secondary">Stop</button><p class="small">Your device supplies these voices. Preview a voice to check its sound. Your choice is saved on this browser. On-device voices keep speech local; other choices may use your browser’s speech service. No AI writing credits are used.</p>';$('chat-settings').prepend(isisVoicePanel);
 function voiceKey(v){return v.voiceURI||[v.name||'Device voice',v.lang].join(':')}
 function femaleUSVoice(v){return /^en[-_]US$/i.test(v.lang)&&/\b(Samantha|Ava|Susan|Allison|Victoria|Zira|Aria|Jenny|Michelle|Joanna|Salli|Kendra|Kimberly)\b/i.test(v.name||'')}
-function isisVoices(){return [...(window.speechSynthesis?.getVoices()||[])].sort((a,b)=>{const score=v=>(femaleUSVoice(v)?100:0)+(/^en[-_]US$/i.test(v.lang)?20:0)+(/^en[-_]/i.test(v.lang)?10:0)+(v.localService?5:0);return score(b)-score(a)})}
+function isisVoices(){return [...(window.speechSynthesis?.getVoices()||[])].sort((a,b)=>{const score=v=>(femaleUSVoice(v)?100:0)+(/enhanced|premium|natural|neural/i.test(v.name||'')?30:0)+(/^en[-_]US$/i.test(v.lang)?20:0)+(/^en[-_]/i.test(v.lang)?10:0)+(v.localService?5:0);return score(b)-score(a)})}
 function chosenIsisVoice(){const voices=isisVoices(),saved=localStorage.getItem('otu-isis-voice');return voices.find(v=>voiceKey(v)===saved)||voices[0]}
-function configureIsisVoice(utterance){const voice=chosenIsisVoice();if(voice)utterance.voice=voice;utterance.lang=voice?.lang||'en-US';utterance.rate=1;utterance.pitch=1;}
+function configureIsisVoice(utterance){const voice=chosenIsisVoice();if(voice)utterance.voice=voice;utterance.lang=voice?.lang||'en-US';utterance.rate=speechRate();utterance.pitch=1;}
 function renderIsisVoices(){const voices=isisVoices(),selected=chosenIsisVoice();$('isis-voice').innerHTML='<option value="">Recommended automatically</option>'+voices.map(v=>`<option value="${esc(voiceKey(v))}">${esc(v.name||'Device voice')} · ${esc(v.lang)}${v.localService?' · on device':''}</option>`).join('');$('isis-voice').value=voices.some(v=>voiceKey(v)===localStorage.getItem('otu-isis-voice'))?localStorage.getItem('otu-isis-voice'):'';const available=!!window.speechSynthesis&&!!window.SpeechSynthesisUtterance;$('isis-voice').disabled=!available;$('isis-voice-preview').disabled=!available;$('isis-voice-status').textContent=!available?'Read aloud is unavailable here. Try Safari’s spoken-content options.':!selected?'Device voices are still loading. Try Hear Isis, or choose a voice once the list appears.':femaleUSVoice(selected)?'Preferred female American English voice: '+selected.name+'. Preview it to check the sound.':'Current voice: '+(selected.name||'device default')+'. A known female American voice was not identified; preview the choices to find the one you prefer.';}
 $('isis-voice').onchange=()=>{stopAnswer();if($('isis-voice').value)localStorage.setItem('otu-isis-voice',$('isis-voice').value);else localStorage.removeItem('otu-isis-voice');renderIsisVoices()};
 $('isis-voice-preview').onclick=()=>{speechAccept=false;stopDictation();stopAnswer();renderIsisVoices();const sample=new SpeechSynthesisUtterance('Hi Desmond, I’m Isis, your opportunity teammate. Let’s pick our next move and get to work.');configureIsisVoice(sample);sample.onerror=e=>{if(!['canceled','interrupted'].includes(e.error))notice('This voice could not play. Choose another voice or check your device sound.',true)};try{window.speechSynthesis.speak(sample)}catch(e){notice('Voice preview could not start. Try another voice.',true)}};
@@ -584,7 +607,7 @@ function sameChatScope(s){return chatScopeKey(s)===chatScopeKey(currentChatScope
 function activeChatRequest(){return [...chatPending.values()].some(r=>sameChatScope(r)&&['submitting','queued','running','checking'].includes(r.status))}
 function updateSendState(){$('ask-workspace').disabled=!state.ai_configured||speechActive||activeChatRequest();$('ask-workspace').setAttribute('aria-busy',String(activeChatRequest()))}
 function formatChatText(text){return esc(text).replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>')}
-function responseActions(m){return `<div class="message-actions answer-audio" aria-label="Response actions"><button type="button" class="secondary" data-action="copy-message" aria-label="Copy response">Copy</button><button type="button" class="secondary" data-action="read-answer" aria-pressed="false">🔊 Read aloud</button><button type="button" class="secondary" data-action="stop-answer" hidden>Stop</button><button type="button" class="secondary" data-action="rate-answer" data-note-id="${m.id}" data-rating="1" aria-label="Good response" aria-pressed="${m.feedback===1}">👍</button><button type="button" class="secondary" data-action="rate-answer" data-note-id="${m.id}" data-rating="-1" aria-label="Needs improvement" aria-pressed="${m.feedback===-1}">👎</button><details class="message-menu"><summary aria-label="More message actions">•••</summary><div><button class="secondary" data-action="developer-from-answer">Request a development change</button></div></details></div>`}
+function responseActions(m){return `<div class="message-actions answer-audio" aria-label="Response actions"><button type="button" class="secondary" data-action="copy-message" aria-label="Copy response">Copy</button><button type="button" class="secondary" data-action="read-answer" aria-pressed="false">🔊 Read aloud</button><button type="button" class="secondary" data-action="stop-answer" hidden>Stop</button>${speechSpeedControl()}<button type="button" class="secondary" data-action="rate-answer" data-note-id="${m.id}" data-rating="1" aria-label="Good response" aria-pressed="${m.feedback===1}">👍</button><button type="button" class="secondary" data-action="rate-answer" data-note-id="${m.id}" data-rating="-1" aria-label="Needs improvement" aria-pressed="${m.feedback===-1}">👎</button><details class="message-menu"><summary aria-label="More message actions">•••</summary><div><button class="secondary" data-action="developer-from-answer">Request a development change</button></div></details></div>`}
 function sourceLink(value){try{const u=new URL(value);return ['https:','http:'].includes(u.protocol)&&!u.username&&!u.password?`<a href="${esc(u.href)}" target="_blank" rel="noopener noreferrer">Open original listing</a>`:''}catch{return ''}}
 function answerSourcesHTML(m){const sources=Array.isArray(m.sources)?m.sources:[];if(!sources.length)return '';return `<details class="answer-sources"><summary>Sources for this reply · ${sources.length}</summary><p>References supplied to Isis, not independent verification. Dates show when a record was saved.</p>${sources.map(s=>`<div><strong>[${esc(s.citation)}] ${esc(s.label)}</strong><small>${esc(s.authority)} · ${esc(s.recorded_at)} · Source ${esc((s.digest||'').slice(0,12))}</small>${s.url?sourceLink(s.url):''}<blockquote>${esc(s.excerpt)}</blockquote></div>`).join('')}</details>`}
 function applicationActionHTML(m){const focus=m.application_focus;if(!focus||focus.status!=='ready')return '';try{const u=new URL(focus.url);if(u.protocol!=='https:'||u.hostname!=='contra.com'||!u.pathname.startsWith('/opportunity/'))return ''}catch{return ''}return `<button type="button" class="secondary" data-action="contra-application-open" data-url="${esc(focus.url)}">Review Contra application</button>`}
@@ -629,7 +652,9 @@ async function rateAnswer(button){const article=button.closest('article'),button
 function restoreChatQuestion(id){const job=chatLastData?.data.requests?.find(r=>r.id===id);if(!job)return;if($('conversation-text').value.trim()){notice('Your message box already has text. Copy the saved question if you want to combine them.',true);return}$('conversation-text').value=job.payload.text;$('conversation-text').dispatchEvent(new Event('input'));notice('Question restored for editing. Pressing Send starts a new AI request; nothing has been retried automatically.');}
 
 let contraApplication=null,contraApplicationScope=null,contraApplicationBusy=false;
+$('application-audio').insertAdjacentHTML('beforeend',speechSpeedControl());
 function renderContraApplicationLauncher(){
+ if(audioAnswer?.dataset.action==='read-application')stopAnswer();
  const seen=new Set(),choices=[...(contraSummary.public_opportunities||[]),...leads].filter(item=>{
   try{const u=new URL(item.url);if(u.protocol!=='https:'||u.hostname!=='contra.com'||!u.pathname.startsWith('/opportunity/')||seen.has(u.href))return false;seen.add(u.href);return true}catch{return false}
  });
@@ -642,6 +667,7 @@ function nativePreviewHTML(value,depth=0){
  return Object.entries(value).filter(([k])=>!['draftId','expiresAt','$schema','ok'].includes(k)).map(([k,v])=>'<div class="panel"><strong>'+esc(k.replace(/([a-z])([A-Z])/g,'$1 $2').replace(/^./,c=>c.toUpperCase()))+'</strong>'+nativePreviewHTML(v,depth+1)+'</div>').join('');
 }
 function renderContraApplication(){
+ if(audioAnswer?.dataset.action==='read-application')stopAnswer();
  const a=contraApplication;if(!a)return;
  const projects=a.projects||[],ready=a.status==='Preview ready';
  let html='<h2>'+esc(a.title)+'</h2><p><a href="'+esc(a.url)+'" target="_blank" rel="noopener noreferrer">Open original listing</a></p><p class="badge">'+esc({'Options ready':'Choose your message and samples','Preview ready':'Review before sending','Submitted':'Application sent','Prepare uncertain':'Preview needs checking','Submission uncertain':'Check whether it was sent'}[a.status]||a.status)+'</p>';

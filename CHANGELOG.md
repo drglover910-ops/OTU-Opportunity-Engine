@@ -1,3 +1,9 @@
+## v0.19.9
+
+- Add application read-aloud controls, including the edited message, requirements and returned preview. Keep controls visible as the panel scrolls.
+- Add remembered 0.75×–2× reading speed for chat and application speech; changing speed continues from the current word where supported, otherwise repeats the current short segment. Preserve pause, resume and stop.
+- Prefer enhanced/natural device voices when available; retain the owner’s chosen voice, neutral pitch and normal default speed. No speech API billing or new credentials.
+
 ## v0.19.8
 
 - Add Tools → Apply on Contra with named saved job choices and an exact-link fallback. Opening the application no longer depends on finding a particular assistant reply.

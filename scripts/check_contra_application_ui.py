@@ -41,6 +41,7 @@ ThreadingHTTPServer(('127.0.0.1','''+str(port)+'''),Fixture).serve_forever()
    except Exception:time.sleep(.1)
   with sync_playwright() as p:
    browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox']);context=browser.new_context(viewport={'width':1180,'height':800});context.route('**/*',lambda r:r.continue_() if r.request.url.startswith(base) else r.abort());page=context.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+   page.add_init_script("""window.SpeechSynthesisUtterance=class{constructor(text){this.text=text}};Object.defineProperty(window,'speechSynthesis',{configurable:true,value:{paused:false,getVoices:()=>[{name:'Samantha Enhanced',voiceURI:'fixture-samantha',lang:'en-US',localService:true}],speak(u){window.testUtterance=u;this.paused=false},cancel(){this.paused=false},pause(){this.paused=true},resume(){this.paused=false}}});""")
    page.goto(base);page.wait_for_function('()=>selectedWorkspace!==null');page.locator('[data-action=new-chat]').click();expect(page.locator('[data-action=new-chat]')).to_be_enabled()
    page.locator('#conversation-text').fill('Keep my unfinished message.')
    entry=page.locator('#workspace-links [data-tab=contra-application]')
@@ -52,11 +53,20 @@ ThreadingHTTPServer(('127.0.0.1','''+str(port)+'''),Fixture).serve_forever()
    page.locator('#close-workspace-panel').click()
    if not entry.is_visible():page.locator('#workspace-tools-toggle').click()
    entry.click();expect(page.locator('#contra-application-message')).to_have_value('My edited application message for this exact opportunity.')
+   reader=page.locator('[data-action=read-application]');reader.click();expect(reader).to_have_text('⏸ Pause');assert page.evaluate('testUtterance.rate')==1;assert page.evaluate('testUtterance.voice.name')=='Samantha Enhanced'
+   page.locator('#application-audio [data-speech-speed]').select_option('1.5');assert page.evaluate('testUtterance.rate')==1.5
+   reader.click();expect(reader).to_have_text('▶ Resume');reader.click();expect(reader).to_have_text('⏸ Pause')
+   spoken=[]
+   for _ in range(100):
+    if page.evaluate('audioSession===null'):break
+    spoken.append(page.evaluate('testUtterance.text'));page.evaluate('testUtterance.onend()')
+   assert 'My edited application message for this exact opportunity.' in ''.join(spoken)
+   expect(reader).to_have_text('🔊 Read aloud');reader.click();page.locator('#application-audio [data-action=stop-answer]').click();expect(reader).to_have_text('🔊 Read aloud')
    page.locator('[data-action=contra-application-prepare]').click();expect(page.locator('#status')).to_contain_text('Review the skills');assert json.load(urllib.request.urlopen(base+'/fixture-stats'))['prepares']==0
    page.locator('[data-contra-project]').check();page.locator('#contra-application-fit').check();page.locator('[data-action=contra-application-prepare]').click();expect(page.locator('#contra-application-approved')).to_be_visible(timeout=5000);expect(page.locator('#contra-application-content')).to_contain_text('Presentation sample');assert json.load(urllib.request.urlopen(base+'/fixture-stats'))['prepares']==1;assert json.load(urllib.request.urlopen(base+'/fixture-stats'))['submits']==0
    page.locator('[data-action=contra-application-submit]').click();expect(page.locator('#status')).to_contain_text('approval box first');assert json.load(urllib.request.urlopen(base+'/fixture-stats'))['submits']==0
    page.screenshot(path='/tmp/otu-native-application-preview.png');page.locator('#contra-application-approved').check();page.locator('[data-action=contra-application-submit]').click();expect(page.locator('#contra-application-content')).to_contain_text('Application sent',timeout=5000);assert json.load(urllib.request.urlopen(base+'/fixture-stats'))['submits']==1;expect(page.locator('#conversation-text')).to_have_value('Keep my unfinished message.')
-   page.reload();expect(page.locator('#conversation-feed')).to_contain_text('Contra confirmed submission.');page.locator('[data-action=contra-application-open]').first.click();expect(page.locator('#contra-application-content')).to_contain_text('Application sent');assert json.load(urllib.request.urlopen(base+'/fixture-stats'))['submits']==1
+   page.reload();assert page.evaluate('speechRate()')==1.5;expect(page.locator('#conversation-feed')).to_contain_text('Contra confirmed submission.');page.locator('[data-action=contra-application-open]').first.click();expect(page.locator('#contra-application-content')).to_contain_text('Application sent');assert json.load(urllib.request.urlopen(base+'/fixture-stats'))['submits']==1
    page.set_viewport_size({'width':390,'height':740});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth');assert not errors,errors;browser.close()
-  print('Native application UI passed: Tools entry without an AI reply, exact-listing form, retained form edits, fit/portfolio review, unsent preview, separate explicit approval, verified mocked submission once, saved receipt/reload, composer preservation and phone bounds. Local fixtures only; no external submission or paid AI.')
+  print('Native application UI passed: application speech/pause/resume/stop, saved speed, edited-message readout, Tools entry without an AI reply, exact-listing form, retained form edits, fit/portfolio review, unsent preview, separate explicit approval, verified mocked submission once, saved receipt/reload, composer preservation and phone bounds. Local fixtures only; no external submission or paid AI.')
  finally:server.terminate();server.wait(timeout=10)

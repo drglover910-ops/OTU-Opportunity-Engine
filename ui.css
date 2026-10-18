@@ -164,3 +164,7 @@ body.sidebar-collapsed #sidebar-actions>.new-chat{justify-content:center;padding
 
 /* v0.18: inspect supplied references without expanding the normal chat. */
 .answer-sources{max-width:100%;margin-top:8px;color:var(--muted);font-size:14px}.answer-sources>summary{font-size:14px;min-height:44px;padding:10px 4px}.answer-sources p,.answer-sources small{display:block;font-size:13px;line-height:1.5}.answer-sources div{padding:12px 0;border-top:1px solid var(--line)}.answer-sources blockquote{margin:8px 0;padding-left:12px;border-left:2px solid #687a4a;white-space:pre-wrap;overflow-wrap:anywhere}.answer-sources strong{font-size:14px!important;color:var(--text)!important}
+
+/* Keep spoken instructions controllable while the application scrolls. */
+.application-audio{position:sticky;top:0;z-index:4;display:flex;flex-wrap:wrap;align-items:center;gap:6px;background:#101c15;padding:8px 0;border-bottom:1px solid #314637}
+.application-audio button{margin:0;min-height:44px}.speech-speed{display:inline-flex;align-items:center;gap:6px;margin:0!important;font-size:14px}.speech-speed select{width:auto;min-height:44px;margin:0;padding:6px}.speech-speed[hidden]{display:none!important}

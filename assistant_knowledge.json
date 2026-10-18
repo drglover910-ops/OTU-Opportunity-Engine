@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-18.1",
+  "version": "2026-10-18.2",
   "purpose": "Shared, curated project knowledge for the in-app assistant and repository developer. This is not live access to the private ChatGPT thread.",
   "owner": "Desmond Glover",
   "mission": "Find legitimate income opportunities, prepare accurate materials, track confirmed outcomes and help win suitable work with low costs.",
@@ -24,7 +24,7 @@
     "Buffalo Stallions needs no outreach right now."
   ],
   "permissions": [
-    "Chat has no sending, application, purchasing, publication or contract-acceptance tools.",
+    "Free-form chat cannot dispatch sending, applications, purchasing, publication or contract acceptance. The separate Contra application panel can prepare a native preview and submit only after the owner explicitly approves that exact preview.",
     "Advice, reply drafts, possible client reactions and negotiation options require factual grounding; predictions are not observed replies.",
     "Changes to documents require explicit owner review and create new versions.",
     "Development requests are owner-reviewed descriptions, never commands to execute automatically.",

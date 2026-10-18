@@ -14,6 +14,8 @@ from workspace_ops import WorkspaceOps
 workspace_ops=WorkspaceOps(engine)
 from chat_service import ChatService
 chat_service=ChatService(engine)
+from contra_applications import ContraApplications
+contra_applications=ContraApplications(engine)
 class Handler(BaseHTTPRequestHandler):
     developer_sessions={}
     def log_message(self,*args):pass  # No OAuth codes, inbox content, or credentials in logs.
@@ -151,6 +153,10 @@ class Handler(BaseHTTPRequestHandler):
                 from contra_mcp import ContraConnection
                 connection=ContraConnection(engine)
                 return self.output({'/api/contra/prepare':connection.prepare,'/api/contra/check':connection.discover,'/api/contra/disconnect':connection.disconnect}[self.path]())
+            if self.path.startswith('/api/contra/application/'):
+                method={'options':contra_applications.options,'prepare':contra_applications.prepare,'submit':contra_applications.submit,'discard':contra_applications.discard,'status':lambda d:contra_applications.view(contra_applications.record(d))}.get(self.path.rsplit('/',1)[-1])
+                if not method:raise ValueError('Unknown application action.')
+                return self.output(method(d))
             if self.path=='/api/ai/limits':return self.output(engine.save_ai_limits(d))
             if self.path=='/api/contra/sync':
                 from contra_mcp import ContraConnection

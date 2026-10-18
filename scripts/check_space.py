@@ -11,7 +11,7 @@ base='https://dezz-9-10-otu-opportunity-engine.hf.space'
 headers={'Authorization':'Bearer '+os.environ['HF_TOKEN'],'User-Agent':'OTU deployment smoke check'}
 def request(path,data=None):
     req=urllib.request.Request(base+path,data=json.dumps(data).encode() if data is not None else None,headers={**headers,'Content-Type':'application/json'})
-    with urllib.request.urlopen(req,timeout=180 if path in ('/api/contra/sync','/api/research/preview') else 65 if path=='/api/browser' else 30) as r:return json.load(r)
+    with urllib.request.urlopen(req,timeout=180 if path in ('/api/contra/sync','/api/research/preview','/api/contra/application/options') else 65 if path=='/api/browser' else 30) as r:return json.load(r)
 for attempt in range(48):
     try:
         info=api.space_info(SPACE);stage=str(info.runtime.stage);report['runtime_stage']=stage
@@ -86,6 +86,8 @@ for attempt in range(48):
                             report['chat_research']={'checks':research.get('checks',[]),'returned':len(research.get('items',[])),'validation':'Bounded keyword read with at most one broader-feed fallback; no model inference, chat creation, submissions or account writes.'}
                             prepared=request('/api/research/preview',{'workspace':'contra','text':'Review application requirements for https://contra.com/opportunity/Mb3oNbXl-canva-to-google-slides-conversion-specialist','mode':'advice'})
                             report['application_review_check']={'focus':prepared.get('focus',{}),'status':prepared.get('application_review',{}).get('status'),'checks':prepared.get('checks',[]),'validation':'One exact-listing read; no AI writing, chat creation, application submission or purchase.'}
+                            fields=request('/api/contra/application/options',{'workspace':'contra','url':'https://contra.com/opportunity/Mb3oNbXl-canva-to-google-slides-conversion-specialist','inspect_only':True})
+                            report['contra_application_fields']={'status':fields.get('status'),'title':fields.get('title'),'posting_id_available':bool(fields.get('jobPostingId')),'portfolio_options':len(fields.get('projects',[])),'blockers':fields.get('blockers',[]),'validation':'Read listing and portfolio options only. No native draft, submission, model call or local application ticket created.'}
                         except urllib.error.HTTPError as e:
                             try:report['contra_access_error']=json.load(e).get('error','')[:250]
                             except Exception:report['contra_access_error']='Account access could not be verified.'

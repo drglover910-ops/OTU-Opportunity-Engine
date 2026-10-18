@@ -98,7 +98,7 @@ class HTTP(unittest.TestCase):
         req=urllib.request.Request(self.base+path,data=json.dumps(data).encode() if data is not None else None,headers={'Content-Type':'application/json',**(headers or {})})
         with urllib.request.urlopen(req) as r:return json.load(r)
     def test_health_and_status(self):
-        self.assertEqual(self.request('/health')['version'],'0.19.6');self.assertIn('storage',self.request('/api/status'))
+        self.assertEqual(self.request('/health')['version'],'0.19.7');self.assertIn('storage',self.request('/api/status'))
     def test_research_preview_never_calls_inference(self):
         with patch('research_tools.Research.run',return_value={'checks':[],'items':[]}) as reads,patch.object(app.engine,'ai_request') as model:
             result=self.request('/api/research/preview',{'workspace':'contra','mode':'research','text':'Find Contra CRM opportunities'})
@@ -111,6 +111,11 @@ class HTTP(unittest.TestCase):
         with patch('research_tools.Research.run',return_value=report) as reads,patch.object(app.engine,'ai_request') as model:
             result=self.request('/api/research/preview',{'workspace':'contra','text':'Review application requirements for '+url})
         self.assertEqual(result['focus']['title'],'Canva conversion');self.assertEqual(result['application_review']['status'],'listing_text_available');self.assertEqual(reads.call_count,1);model.assert_not_called();self.assertEqual(len(app.engine.conversation({'workspace':'contra'})['notes']),before)
+
+    def test_application_submit_rejects_foreign_origin_before_tools(self):
+        with patch.object(app.contra_applications,'submit') as submit:
+            with self.assertRaises(urllib.error.HTTPError) as error:self.request('/api/contra/application/submit',{'approved':True},{'Origin':'https://foreign.example'})
+        self.assertEqual(error.exception.code,403);submit.assert_not_called()
 
     def test_workflow(self):
         result=self.request('/api/add',{'company':'HTTP client','title':'CRM project','url':'https://example.com/http'})

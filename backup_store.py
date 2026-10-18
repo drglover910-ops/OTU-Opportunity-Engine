@@ -2,9 +2,9 @@
 import hashlib,json,re,secrets,shutil,tempfile,zipfile
 from pathlib import Path
 from engine import VERSION,now
-TABLES=('opportunities','documents','activity','drafts','messages','career_updates','packages','email_threads','workspaces','conversation_threads','work_notes','conversation_memory','platforms','platform_profiles','developer_requests','projects','chat_organization','mail_folders','mail_organization','attachment_uploads','response_feedback','chat_requests','file_knowledge')
+TABLES=('opportunities','documents','activity','drafts','messages','career_updates','packages','email_threads','workspaces','conversation_threads','work_notes','conversation_memory','platforms','platform_profiles','developer_requests','projects','chat_organization','mail_folders','mail_organization','attachment_uploads','response_feedback','chat_requests','file_knowledge','contra_application_actions')
 UPLOAD_COLUMNS=('id','name','size','received','workspace','opportunity_id','chat_id','state','created','digest')
-EXTRA=('projects','chat_organization','mail_folders','mail_organization')
+EXTRA=('projects','chat_organization','mail_folders','mail_organization','contra_application_actions')
 def digest(path):
  h=hashlib.sha256()
  with Path(path).open('rb') as f:
@@ -79,12 +79,16 @@ class Backups:
     if not upload or row.get('digest')!=upload['digest'] or not isinstance(row.get('text'),str) or len(row['text'])>50000:raise ValueError('Invalid readable-file reference.')
    threads={r['id']:r for r in data.get('conversation_threads',[])};opps={r['id']:r for r in data.get('opportunities',[])}
    workspaces={r['id'] for r in data.get('workspaces',[])}
-   for row in list(threads.values())+data.get('work_notes',[])+data.get('conversation_memory',[])+uploads:
+   for row in list(threads.values())+data.get('work_notes',[])+data.get('conversation_memory',[])+data.get('contra_application_actions',[])+uploads:
     if row['workspace'] not in workspaces:raise ValueError('Missing conversation workspace.')
     if row.get('opportunity_id') and row['opportunity_id'] not in opps:raise ValueError('Missing conversation opportunity.')
     if row.get('chat_id'):
      thread=threads.get(row['chat_id'])
      if not thread or thread['workspace']!=row['workspace'] or thread['opportunity_id']!=row.get('opportunity_id'):raise ValueError('Conversation scope mismatch.')
+   for action in data.get('contra_application_actions',[]):
+    if not re.fullmatch(r'[a-f0-9]{32}',str(action.get('id',''))) or not isinstance(json.loads(action.get('data','null')),dict):raise ValueError('Invalid saved Contra application receipt.')
+    with self.e.connect() as c:old=c.execute('SELECT workspace,opportunity_id,chat_id FROM contra_application_actions WHERE id=?',(action['id'],)).fetchone()
+    if old and (old['workspace'],old['chat_id'])!=(action['workspace'],action.get('chat_id')):raise ValueError('Application receipt identity collision.')
    notes={r['id']:r for r in data.get('work_notes',[])}
    for job in data.get('chat_requests',[]):
     if not re.fullmatch(r'[a-zA-Z0-9-]{24,64}',str(job.get('id',''))) or job.get('status') not in ('queued','running','complete','failed','interrupted'):raise ValueError('Invalid chat request receipt.')
@@ -139,6 +143,9 @@ class Backups:
       columns=[r[1] for r in c.execute('PRAGMA table_info('+table+')')]
       for original in data.get(table,[]):
        row=dict(original)
+       if table=='contra_application_actions':
+        row['opportunity_id']=leadmap.get(row.get('opportunity_id'));row['remote_draft_id']='';row['status']='Restored'
+        restored=json.loads(row['data']);restored.pop('arguments',None);restored.pop('preview_digest',None);row['data']=json.dumps(restored)
        if table=='projects':row['id']=projectmap[row['id']]
        if table=='mail_folders':row['id']=foldermap[row['id']]
        if table=='chat_organization' and row.get('project_id'):row['project_id']=projectmap.get(row['project_id'],row['project_id'])

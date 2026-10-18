@@ -1,3 +1,10 @@
+## v0.19.7
+
+- Connect a conversation-side Contra application panel to exact listing and published portfolio reads, native application preparation, and separately approved submission. Models cannot dispatch these actions.
+- Require review of fit and truthful work samples; no automatic portfolio opt-out. Show Contra’s returned preview, keep its digest immutable, and require explicit approval before confirming it.
+- Persist scoped action receipts, guard duplicates and expired previews, recheck the listing before sending, and verify the recorded viewer application afterward. Interrupted/ambiguous writes never retry automatically.
+- Preserve previews through updates and complete backups; restored previews lose submission authority and require fresh review. Keep chat drafts and layout intact. No paid AI or real application submissions during verification.
+
 ## v0.19.6
 
 - Resolve the exact opportunity from an owner-provided URL, named visible listing, selected opportunity or prior exact-conversation focus before application work. Ambiguous targets and mismatched opportunity threads stop for clarification without inference or platform calls.

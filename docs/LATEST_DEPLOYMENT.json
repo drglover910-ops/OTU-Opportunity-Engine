@@ -1,7 +1,7 @@
 {
-  "commit": "91dba06f11346ff88762711adaf305cd844f9698",
+  "commit": "a1b8635b24556971cc964e4fd772605a6d3c69e9",
   "version": "0.19.2",
-  "checked_at": "2026-10-18T03:38:57.878230+00:00",
+  "checked_at": "2026-10-18T04:26:01.554424+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-18T03:39:32.243799+00:00",
+    "checked_at": "2026-10-18T04:26:02.443647+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -61,6 +61,105 @@
   "acknowledged_chat_requests": "API available",
   "response_actions": "asset available; local browser checks passed separately",
   "chat_threads": 9,
+  "chat_delivery": {
+    "scope": "Recent Contra/My assistant conversation delivery metadata only; no messages sent or AI calls.",
+    "conversations": [
+      {
+        "scope_digest": "7460f4b0b305",
+        "workspace": "contra",
+        "note_count": 12,
+        "requests": [
+          {
+            "created": "2026-10-18T03:34:58.977560+00:00",
+            "updated": "2026-10-18T03:34:59.426391+00:00",
+            "status": "complete",
+            "mode": "advice",
+            "matches_test_prompt": true,
+            "answer_format": "older_research_summary",
+            "answer_note_present": true,
+            "research_checked_at": "2026-10-18T03:34:59.164115+00:00",
+            "checks": [
+              {
+                "tool": "saved_opportunities",
+                "status": "complete",
+                "count": 0
+              },
+              {
+                "tool": "list_job_feed",
+                "status": "cached",
+                "count": 0,
+                "checked_at": "2026-10-18T03:27:23.833567+00:00"
+              }
+            ]
+          },
+          {
+            "created": "2026-10-18T03:23:11.366272+00:00",
+            "updated": "2026-10-18T03:23:15.102435+00:00",
+            "status": "complete",
+            "mode": "advice",
+            "matches_test_prompt": false,
+            "answer_format": "other",
+            "answer_note_present": true,
+            "research_checked_at": null,
+            "checks": []
+          },
+          {
+            "created": "2026-10-18T03:14:00.233662+00:00",
+            "updated": "2026-10-18T03:14:04.609481+00:00",
+            "status": "complete",
+            "mode": "advice",
+            "matches_test_prompt": false,
+            "answer_format": "other",
+            "answer_note_present": true,
+            "research_checked_at": null,
+            "checks": []
+          }
+        ]
+      },
+      {
+        "scope_digest": "e81195ef7717",
+        "workspace": "assistant",
+        "note_count": 0,
+        "requests": []
+      },
+      {
+        "scope_digest": "da7666eea723",
+        "workspace": "contra",
+        "note_count": 4,
+        "requests": []
+      },
+      {
+        "scope_digest": "8094592fbfa3",
+        "workspace": "assistant",
+        "note_count": 0,
+        "requests": []
+      },
+      {
+        "scope_digest": "348ce2d9ca75",
+        "workspace": "assistant",
+        "note_count": 0,
+        "requests": []
+      },
+      {
+        "scope_digest": "2736949a7d67",
+        "workspace": "assistant",
+        "note_count": 0,
+        "requests": []
+      },
+      {
+        "scope_digest": "abbfa6cbbc88",
+        "workspace": "assistant",
+        "note_count": 0,
+        "requests": []
+      },
+      {
+        "scope_digest": "324d572aeb04",
+        "workspace": "assistant",
+        "note_count": 0,
+        "requests": []
+      }
+    ]
+  },
   "projects": 9,
   "recovery_checkpoint": {
     "checkpoint": true,
@@ -129,7 +228,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-18T03:39:39.365596+00:00",
+    "checked_at": "2026-10-18T04:26:05.579528+00:00",
     "tools": 123,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -6346,8 +6445,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792294043.050253,
-    "checked_at": "2026-10-18T03:27:23.050266+00:00",
+    "finished_epoch": 1792297570.4124057,
+    "checked_at": "2026-10-18T04:26:10.412419+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",
@@ -7188,8 +7287,7 @@
         "applied": true
       }
     ],
-    "geekyants_application_recorded": true,
-    "cached": true
+    "geekyants_application_recorded": true
   },
   "chat_research": {
     "checks": [
@@ -7203,7 +7301,7 @@
         "tool": "list_job_feed",
         "status": "empty",
         "count": 0,
-        "checked_at": "2026-10-18T03:39:41.334278+00:00",
+        "checked_at": "2026-10-18T04:26:11.214131+00:00",
         "search": "gohighlevel",
         "preset": "ALL",
         "broader_feed": false,
@@ -7215,7 +7313,7 @@
         "tool": "list_job_feed",
         "status": "live",
         "count": 3,
-        "checked_at": "2026-10-18T03:39:42.122247+00:00",
+        "checked_at": "2026-10-18T04:26:11.832343+00:00",
         "search": "",
         "preset": "FOR_YOU",
         "broader_feed": true,

@@ -1,7 +1,7 @@
 {
-  "commit": "872f78fcb9eda4929e73cf83b058d49fe9c53c81",
-  "version": "0.19.8",
-  "checked_at": "2026-10-18T17:20:16.361587+00:00",
+  "commit": "5a8e4f89c055ffabfa558118170255145f9f3646",
+  "version": "0.19.9",
+  "checked_at": "2026-10-18T20:34:45.125755+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-18T17:20:47.394135+00:00",
+    "checked_at": "2026-10-18T20:35:09.452383+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -239,7 +239,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-18T17:20:52.144494+00:00",
+    "checked_at": "2026-10-18T20:35:18.860365+00:00",
     "tools": 123,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -6456,8 +6456,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792342960.3350747,
-    "checked_at": "2026-10-18T17:02:40.335088+00:00",
+    "finished_epoch": 1792355725.0332994,
+    "checked_at": "2026-10-18T20:35:25.033310+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",
@@ -7259,8 +7259,7 @@
         "applied": true
       }
     ],
-    "geekyants_application_recorded": true,
-    "cached": true
+    "geekyants_application_recorded": true
   },
   "chat_research": {
     "checks": [
@@ -7274,7 +7273,7 @@
         "tool": "list_job_feed",
         "status": "empty",
         "count": 0,
-        "checked_at": "2026-10-18T17:20:53.190539+00:00",
+        "checked_at": "2026-10-18T20:35:26.090472+00:00",
         "search": "gohighlevel",
         "preset": "ALL",
         "broader_feed": false,
@@ -7286,7 +7285,7 @@
         "tool": "list_job_feed",
         "status": "live",
         "count": 3,
-        "checked_at": "2026-10-18T17:20:54.006638+00:00",
+        "checked_at": "2026-10-18T20:35:26.896495+00:00",
         "search": "",
         "preset": "FOR_YOU",
         "broader_feed": true,
@@ -7318,7 +7317,7 @@
         "tool": "get_job_by_slug",
         "status": "live",
         "count": 1,
-        "checked_at": "2026-10-18T17:20:55.174729+00:00",
+        "checked_at": "2026-10-18T20:35:28.150103+00:00",
         "search": "",
         "preset": null,
         "broader_feed": false,

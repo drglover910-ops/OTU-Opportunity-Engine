@@ -3,6 +3,7 @@ import os,json,time,urllib.request,urllib.error,base64
 from pathlib import Path
 from datetime import datetime,timezone
 from huggingface_hub import HfApi
+from chat_delivery_diagnostic import diagnose
 SPACE='Dezz-9-10/OTU-Opportunity-Engine'
 VERSION=Path('VERSION').read_text().strip()
 api=HfApi(token=os.environ['HF_TOKEN']);report={'commit':os.getenv('GITHUB_SHA',''),'version':VERSION,'checked_at':datetime.now(timezone.utc).isoformat(),'upload':'completed','health':'unverified'}
@@ -56,7 +57,8 @@ for attempt in range(48):
                     conversation=request('/api/conversation?workspace=assistant')
                     report['acknowledged_chat_requests']='API available' if isinstance(conversation.get('requests'),list) else 'unverified'
                     report['response_actions']='asset available; local browser checks passed separately' if b'responseActions' in source and b'rate-answer' in source else 'unverified'
-                    report['chat_threads']=len(request('/api/chat-threads'))
+                    chat_threads=request('/api/chat-threads');report['chat_threads']=len(chat_threads)
+                    report['chat_delivery']=diagnose(request,chat_threads)
                     report['projects']=len(request('/api/projects'))
                     report['recovery_checkpoint']=request('/api/recovery-status')
                     report['mail_workspace']='local drafts readable' if isinstance(request('/api/mail?box=drafts').get('items'),list) else 'unverified'

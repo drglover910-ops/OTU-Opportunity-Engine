@@ -42,16 +42,21 @@ ThreadingHTTPServer(('127.0.0.1','''+str(port)+'''),Fixture).serve_forever()
   with sync_playwright() as p:
    browser=p.chromium.launch(executable_path='/usr/bin/chromium',args=['--no-sandbox']);context=browser.new_context(viewport={'width':1180,'height':800});context.route('**/*',lambda r:r.continue_() if r.request.url.startswith(base) else r.abort());page=context.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
    page.goto(base);page.wait_for_function('()=>selectedWorkspace!==null');page.locator('[data-action=new-chat]').click();expect(page.locator('[data-action=new-chat]')).to_be_enabled()
-   page.locator('#conversation-text').fill('Review application requirements for https://contra.com/opportunity/canva-browser-fixture');page.locator('#ask-workspace').click()
-   try:expect(page.locator('[data-action=contra-application-open]')).to_be_visible(timeout=7000)
-   except Exception:
-    print('Fixture errors:',errors);print('Fixture requests:',page.evaluate('JSON.stringify(chatLastData?.data?.requests?.map(r=>({status:r.status,error:r.error,focus:r.result?.focus})))'));raise
-   page.locator('#conversation-text').fill('Keep my unfinished message.');page.locator('[data-action=contra-application-open]').first.click();expect(page.locator('#contra-application-message')).to_be_visible(timeout=5000);expect(page.locator('#contra-application-content')).to_contain_text('unrelated CRM');expect(page.locator('#conversation-text')).to_have_value('Keep my unfinished message.')
+   page.locator('#conversation-text').fill('Keep my unfinished message.')
+   entry=page.locator('#workspace-links [data-tab=contra-application]')
+   if not entry.is_visible():page.locator('#workspace-tools-toggle').click()
+   entry.click();expect(page.locator('#contra-application-url')).to_be_visible()
+   page.locator('#contra-application-url').fill('https://contra.com/opportunity/canva-browser-fixture');page.locator('[data-action=contra-application-choose]').click()
+   expect(page.locator('#contra-application-message')).to_be_visible(timeout=5000);expect(page.locator('#contra-application-content')).to_contain_text('unrelated CRM');expect(page.locator('#conversation-text')).to_have_value('Keep my unfinished message.')
+   page.locator('#contra-application-message').fill('My edited application message for this exact opportunity.')
+   page.locator('#close-workspace-panel').click()
+   if not entry.is_visible():page.locator('#workspace-tools-toggle').click()
+   entry.click();expect(page.locator('#contra-application-message')).to_have_value('My edited application message for this exact opportunity.')
    page.locator('[data-action=contra-application-prepare]').click();expect(page.locator('#status')).to_contain_text('Review the skills');assert json.load(urllib.request.urlopen(base+'/fixture-stats'))['prepares']==0
    page.locator('[data-contra-project]').check();page.locator('#contra-application-fit').check();page.locator('[data-action=contra-application-prepare]').click();expect(page.locator('#contra-application-approved')).to_be_visible(timeout=5000);expect(page.locator('#contra-application-content')).to_contain_text('Presentation sample');assert json.load(urllib.request.urlopen(base+'/fixture-stats'))['prepares']==1;assert json.load(urllib.request.urlopen(base+'/fixture-stats'))['submits']==0
    page.locator('[data-action=contra-application-submit]').click();expect(page.locator('#status')).to_contain_text('approval box first');assert json.load(urllib.request.urlopen(base+'/fixture-stats'))['submits']==0
    page.screenshot(path='/tmp/otu-native-application-preview.png');page.locator('#contra-application-approved').check();page.locator('[data-action=contra-application-submit]').click();expect(page.locator('#contra-application-content')).to_contain_text('Application sent',timeout=5000);assert json.load(urllib.request.urlopen(base+'/fixture-stats'))['submits']==1;expect(page.locator('#conversation-text')).to_have_value('Keep my unfinished message.')
    page.reload();expect(page.locator('#conversation-feed')).to_contain_text('Contra confirmed submission.');page.locator('[data-action=contra-application-open]').first.click();expect(page.locator('#contra-application-content')).to_contain_text('Application sent');assert json.load(urllib.request.urlopen(base+'/fixture-stats'))['submits']==1
    page.set_viewport_size({'width':390,'height':740});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth');assert not errors,errors;browser.close()
-  print('Native application UI passed: exact-listing form, fit/portfolio review, unsent preview, separate explicit approval, verified mocked submission once, saved receipt/reload, composer preservation and phone bounds. Local fixtures only; no external submission or paid AI.')
+  print('Native application UI passed: Tools entry without an AI reply, exact-listing form, retained form edits, fit/portfolio review, unsent preview, separate explicit approval, verified mocked submission once, saved receipt/reload, composer preservation and phone bounds. Local fixtures only; no external submission or paid AI.')
  finally:server.terminate();server.wait(timeout=10)

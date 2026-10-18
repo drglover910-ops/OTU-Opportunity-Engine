@@ -23,6 +23,7 @@ function tab(name){
  document.querySelector('.layout').classList.add('chat-mode');$('conversation').hidden=false;
  if(name==='conversation'){closeWorkspacePanel(false);return}
  if(name==='mail')loadMail().catch(()=>{});
+ if(name==='contra-application'&&!contraApplicationBusy&&(!contraApplication||!sameChatScope(contraApplicationScope)))renderContraApplicationLauncher();
  const section=$(name);if(!section)return;
  if(!$('document-reader').hidden)closeDocumentPane(false);
  panelReturnFocus=document.activeElement;activePanel=name;
@@ -133,6 +134,7 @@ document.addEventListener('click',async event=>{
   if(action==='talk-assistant'){documentContext=null;proposalContext=null;await openConversation('assistant',null);return}
   if(action==='preview-document'){await viewDocument(id);return}
   if(action==='pdf-previous'||action==='pdf-next'){pdfPage=Math.max(0,Math.min((activeDocument?.pages||1)-1,pdfPage+(action==='pdf-next'?1:-1)));showPdfPage();return}
+  if(action==='contra-application-choose'){await openContraApplication($('contra-application-url').value.trim());return}
   if(action==='contra-application-open'){await openContraApplication(b.dataset.url);return}
  if(action==='contra-application-prepare'){await prepareContraApplication();return}
  if(action==='contra-application-submit'){await submitContraApplication();return}
@@ -627,6 +629,12 @@ async function rateAnswer(button){const article=button.closest('article'),button
 function restoreChatQuestion(id){const job=chatLastData?.data.requests?.find(r=>r.id===id);if(!job)return;if($('conversation-text').value.trim()){notice('Your message box already has text. Copy the saved question if you want to combine them.',true);return}$('conversation-text').value=job.payload.text;$('conversation-text').dispatchEvent(new Event('input'));notice('Question restored for editing. Pressing Send starts a new AI request; nothing has been retried automatically.');}
 
 let contraApplication=null,contraApplicationScope=null,contraApplicationBusy=false;
+function renderContraApplicationLauncher(){
+ const seen=new Set(),choices=[...(contraSummary.public_opportunities||[]),...leads].filter(item=>{
+  try{const u=new URL(item.url);if(u.protocol!=='https:'||u.hostname!=='contra.com'||!u.pathname.startsWith('/opportunity/')||seen.has(u.href))return false;seen.add(u.href);return true}catch{return false}
+ });
+ $('contra-application-content').innerHTML='<h2>Choose a Contra job</h2><p>Open its application here. Nothing is sent until you review and approve it.</p>'+choices.map(item=>'<p><button class="secondary" data-action="contra-application-open" data-url="'+esc(item.url)+'">'+esc(item.title||'Open saved job')+'</button></p>').join('')+'<label>Or paste the Contra job link<input id="contra-application-url" type="url" placeholder="https://contra.com/opportunity/…"></label><button data-action="contra-application-choose">Open application</button><p class="small">Use your Contra conversation, My assistant, or the conversation for this exact opportunity. Saved job details may have changed; opening checks the listing again.</p>';
+}
 function nativePreviewHTML(value,depth=0){
  if(value===null||value===undefined)return '';
  if(typeof value!=='object')return '<p class="message-text">'+esc(value)+'</p>';
@@ -649,7 +657,7 @@ function renderContraApplication(){
 }
 async function openContraApplication(url){
  if(contraApplicationBusy)return;contraApplicationBusy=true;const scope=currentChatScope();jump('contra-application');$('contra-application-content').textContent='Reading the listing and your portfolio… Nothing is being submitted.';
- try{const a=await api('/api/contra/application/options',{...scope,url});contraApplication=a;contraApplicationScope=scope;renderContraApplication()}catch(e){$('contra-application-content').textContent=e.message;notice(e.message,true)}finally{contraApplicationBusy=false}
+ try{const a=await api('/api/contra/application/options',{...scope,url});contraApplication=a;contraApplicationScope=scope;renderContraApplication()}catch(e){renderContraApplicationLauncher();const error=document.createElement('p');error.className='warning';error.textContent=e.message;$('contra-application-content').prepend(error);notice(e.message,true)}finally{contraApplicationBusy=false}
 }
 async function prepareContraApplication(){
  if(contraApplicationBusy||!contraApplication)return;if(!sameChatScope(contraApplicationScope)){notice('Open the original conversation before preparing this application.',true);return}contraApplicationBusy=true;const button=document.querySelector('[data-action=contra-application-prepare]');button.disabled=true;

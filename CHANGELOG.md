@@ -1,3 +1,8 @@
+## v0.19.8
+
+- Add Tools → Apply on Contra with named saved job choices and an exact-link fallback. Opening the application no longer depends on finding a particular assistant reply.
+- Preserve the open application form and unfinished chat message when closing and reopening Tools. Keep explicit preview and submission approvals unchanged.
+
 ## v0.19.7
 
 - Connect a conversation-side Contra application panel to exact listing and published portfolio reads, native application preparation, and separately approved submission. Models cannot dispatch these actions.

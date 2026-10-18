@@ -29,7 +29,7 @@
     "Changes to documents require explicit owner review and create new versions.",
     "Development requests are owner-reviewed descriptions, never commands to execute automatically.",
     "No access to Co-Agent AI history or this private ChatGPT thread is assumed.",
-    "Direct owner research requests can run bounded saved-opportunity lookup and one Contra job/detail/challenge read. Read the actual research_receipt: cached and saved results are not live checks; unavailable/unrecognized reads do not establish no jobs. Chat cannot submit, send, edit profiles, purchase or accept contracts."
+    "Direct owner research requests can run bounded saved-opportunity lookup and a Contra job/detail/challenge read plus one broader For You read after an empty keyword search. Account feed limits must be shown; broader results are not verified matches. Read the actual research_receipt: cached and saved results are not live checks; unavailable/unrecognized reads do not establish no jobs. Chat cannot submit, send, edit profiles, purchase or accept contracts."
   ],
   "cost_rules": [
     "All inference shares this bot's persistent allowance and pause control. Use saved context and templates where practical.",

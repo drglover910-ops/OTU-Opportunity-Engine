@@ -4,7 +4,7 @@ from datetime import datetime,timezone
 from urllib.parse import urlsplit
 from knowledge_store import words,SECRET
 
-NOISE=set('isis hey hi that fit fits my our your verified experience background in and with me us to of the a an from on can could would you find search research check look latest new current saved available opportunities opportunity jobs job work contra please show for suited suitable best match matching experience qualifications skills help today now paid freelance available'.split())
+NOISE=set('refresh fresh again isis hey hi that fit fits my our your verified experience background in and with me us to of the a an from on can could would you find search research check look latest new current saved available opportunities opportunity jobs job work contra please show for suited suitable best match matching experience qualifications skills help today now paid freelance available'.split())
 
 def stamp():return datetime.now(timezone.utc).isoformat()
 
@@ -34,15 +34,27 @@ def text(value):
  if isinstance(value,str):return value[:4000]
  return ' '.join(n['text'] for n in nodes(value) if isinstance(n.get('text'),str))[:4000]
 
+def parsed_content(body):
+ if body.get('structuredContent') is not None:return [body['structuredContent']]
+ parsed=[]
+ for part in body.get('content',[])[:5]:
+  if part.get('type')=='text':
+   try:parsed.append(json.loads(part.get('text','')[:200000]))
+   except (ValueError,TypeError):continue
+ return parsed
+
+def feed_metadata(body):
+ result={}
+ for tree in parsed_content(body):
+  for n in nodes(tree):
+   for key in ('accessLimitedFeed','hasNextPage'):
+    if isinstance(n.get(key),bool):result[key]=result.get(key,False) or n[key]
+ return result
+
 def extract(body,kind):
  if body.get('isError'):raise ValueError('Contra did not allow this read.')
- data=body.get('structuredContent');parsed=[]
- if data is not None:parsed=[data]
- else:
-  for part in body.get('content',[])[:5]:
-   if part.get('type')=='text':
-    try:parsed.append(json.loads(part.get('text','')[:200000]))
-    except (ValueError,TypeError):continue
+ parsed=parsed_content(body)
+ if any(isinstance(tree,dict) and tree.get('ok') is False for tree in parsed):raise ValueError('Contra did not complete this read.')
  rows={};recognized=False
  for tree in parsed:
   for n in nodes(tree):
@@ -64,7 +76,7 @@ class Research:
   w,o=self.e.conversation_scope(d);chat=self.e.chat_key(d,w,o);question=str(d.get('text',''));terms=set(words(question))-NOISE
   if SECRET.search(question):raise ValueError('Remove credentials from the research request. No platform check was started.')
   explicit_contra=bool(re.search(r'\bcontra\b',question,re.I));other=None if explicit_contra else next((p for p in ('upwork','linkedin','indeed','peopleperhour','remotive','we work remotely') if p in question.lower()),None)
-  report={'checked_at':stamp(),'phase':'saved','checks':[],'items':[],'limits':'At most five returned records; one Contra read; no submissions or account changes.'}
+  report={'checked_at':stamp(),'phase':'saved','checks':[],'items':[],'limits':'At most five returned records; up to two Contra reads; no submissions or account changes.'}
   def emit():
    if progress:progress({k:v for k,v in report.items() if k!='items'})
   emit();ranked=[]
@@ -101,21 +113,34 @@ class Research:
    if slug and re.fullmatch(r'[A-Za-z0-9_-]{1,180}',slug):call=('get_job_by_slug',{'slug':slug});kind='contra_job'
    elif challenge:call=('list_active_challenges',{'limit':5});kind='contra_challenge'
    else:call=('list_job_feed',{'preset':'ALL','search':query,'first':5});kind='contra_job'
-   key=hashlib.sha256(json.dumps([w,o,chat,call],sort_keys=True).encode()).hexdigest();cache=self.e.setting('chat_research_cache',{})
+   key=hashlib.sha256(json.dumps(['feed-v2',w,o,chat,call],sort_keys=True).encode()).hexdigest();cache=self.e.setting('chat_research_cache',{})
    cached=cache.get(key);report['phase']='contra';emit()
    if cached and cached.get('expires',0)>time.time() and not re.search(r'\brefresh\b|fresh check|check live|check again',question,re.I):
-    report['checks'].append({**cached['check'],'status':'cached','message':'Reused a read less than ten minutes old; this was not a new platform check.'});report['items']=cached['items']+saved
+    for check in cached['checks']:
+     report['checks'].append({**check,'result_status':check['status'],'status':'cached','message':'Reused a read less than ten minutes old; no new check. '+check['message']})
+    report['items']=cached['items']+saved
    else:
-    try:
-     from contra_mcp import ContraConnection
-     bodies=ContraConnection(self.e).read_tools([call]);body=next(iter(bodies.values()),{'isError':True})
-     items,recognized=extract(body,kind)
-     check={'tool':call[0],'status':'live' if items else 'empty' if recognized else 'unrecognized','count':len(items),'checked_at':stamp(),'message':'Read-only result; returned fields only. Full eligibility, rights and current terms may still require checking.'}
-     if not items and not recognized:check['message']='Contra returned no usable listing structure. This does not establish that no opportunities exist.'
-     report['checks'].append(check);report['items']=items+saved
-     cache={k:v for k,v in cache.items() if v.get('expires',0)>time.time()};cache[key]={'expires':time.time()+600,'check':check,'items':items};self.e.set_setting('chat_research_cache',dict(list(cache.items())[-10:]))
-    except Exception:
-     report['checks'].append({'tool':call[0],'status':'unavailable','message':'Contra could not complete this read. Check Connections before retrying. Saved results do not become live results.'})
+    from contra_mcp import ContraConnection
+    def read_once(current_call,broad=False):
+     try:
+      bodies=ContraConnection(self.e).read_tools([current_call]);body=next(iter(bodies.values()),{'isError':True})
+      items,recognized=extract(body,kind);metadata=feed_metadata(body)
+      check={'tool':current_call[0],'status':'live' if items else 'empty' if recognized else 'unrecognized','count':len(items),'checked_at':stamp(),'search':current_call[1].get('search',''),'preset':current_call[1].get('preset'),'broader_feed':broad,**metadata,'message':'Read-only result; returned fields only. Full eligibility, rights and current terms may still require checking.'}
+      if metadata.get('accessLimitedFeed'):check['message']='Contra limits the jobs visible to this account; these results do not cover the full board. '+check['message']
+      if broad:
+       check['message']='Broader For You feed, not confirmed keyword matches. '+check['message']
+       for item in items:item['match_basis']='Broader For You feed; not confirmed keyword matches.'
+      if not items and not recognized:check['message']='Contra returned no usable listing structure. This does not establish that no opportunities exist.'
+      return items,check
+     except Exception:
+      return [],{'tool':current_call[0],'status':'unavailable','checked_at':stamp(),'broader_feed':broad,'message':'Contra could not complete this read. Check Connections before retrying. Saved results do not become live results.'}
+    items,check=read_once(call);checks=[check]
+    report['checks'].append(check);emit()
+    if not items and check['status']=='empty' and call[0]=='list_job_feed' and call[1].get('search'):
+     items,fallback=read_once(('list_job_feed',{'preset':'FOR_YOU','first':5}),True);checks.append(fallback);report['checks'].append(fallback)
+    report['items']=items+saved
+    if all(c['status'] not in ('unavailable','unrecognized') for c in checks):
+     cache={k:v for k,v in cache.items() if v.get('expires',0)>time.time()};cache[key]={'expires':time.time()+600,'checks':checks,'items':items};self.e.set_setting('chat_research_cache',dict(list(cache.items())[-10:]))
   unique={}
   for item in report['items']:unique.setdefault(item['url'] or item['title'],item)
   report['items']=list(unique.values())[:5];report['phase']='ready';emit();return report
@@ -125,7 +150,7 @@ class Research:
   when=report['checked_at'];receipt='\n'.join(c['tool']+': '+c['status']+'. '+c.get('message',c.get('basis','')) for c in report['checks'])
   rows=[{'label':'Research checks','kind':'research_receipt','authority':'App execution receipt, not independent verification of listing claims','recorded_at':when,'excerpt':receipt[:900]}]
   for item in report['items'][:2]:
-   excerpt=json.dumps({k:item[k] for k in ('pay','deadline','status','applied','location','posted_at') if k in item},ensure_ascii=False)+'\n'+item['description'][:550]
+   excerpt=json.dumps({k:item[k] for k in ('pay','deadline','status','applied','location','posted_at','match_basis') if k in item},ensure_ascii=False)+'\n'+item['description'][:550]
    rows.append({'label':item['title'],'kind':item['kind'],'authority':('Saved record; not a fresh platform check' if item['kind']=='saved_opportunity' else 'Contra returned fields; advertised terms are not agreements; full guidelines may be absent'),'recorded_at':item.get('saved_at') or next((c.get('checked_at') for c in reversed(report['checks']) if c.get('checked_at')),when),'url':item['url'],'excerpt':excerpt[:900]})
   rows+=local[:1];out=[]
   for row in rows:
@@ -140,15 +165,18 @@ class Research:
    if c['tool']=='saved_opportunities':checks.append(str(c.get('count',0))+' saved matches')
    elif c['status']=='live':checks.append('Contra checked: '+str(c.get('count',0))+' returned listings')
    elif c['status']=='empty':checks.append('Contra checked: no listings returned for this bounded search')
-   elif c['status']=='cached':checks.append('Cached Contra results reused; no new live check')
+   elif c['status']=='cached':checks.append('Cached Contra results reused ('+str(c.get('count',0))+' listings); no new live check')
    else:checks.append(c.get('message') or c['tool']+': '+c['status'])
+  if any(c.get('accessLimitedFeed') for c in report['checks']):checks.append('Contra limits the jobs visible to this account')
+  if any(c.get('broader_feed') for c in report['checks']):checks.append('For You listings are broader suggestions, not confirmed keyword matches')
   return 'Research check: '+'; '.join(checks)+'.'
 
  @staticmethod
  def summary(report):
-  lines=['Research results — direct summary of returned records.']
+  lines=[Research.check_summary(report)]
   if report.get('writing_status'):lines.append(report['writing_status']['message'])
-  for c in report['checks']:lines.append(c['tool']+': '+c['status']+'. '+c.get('message',c.get('basis','')))
+  for c in report['checks']:
+   if c['status'] in ('unavailable','unrecognized','unsupported','saved_only'):lines.append(c.get('message',c.get('basis','')))
   for item in report['items'][:2]:lines.append(item['title']+'\n'+item['url']+'\nRecorded status: '+item['status']+'. '+item['description'][:250])
   if not report['items']:lines.append('No usable records were returned in these bounded checks; broader availability remains unknown.')
   return '\n\n'.join(lines)+'\n\nNothing was submitted or changed on the platform.'

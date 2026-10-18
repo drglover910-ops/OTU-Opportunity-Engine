@@ -26,7 +26,29 @@ class ResearchTests(unittest.TestCase):
  def test_empty_research_cannot_invent_historical_recommendation(self):
   with patch.dict(os.environ,{'HF_INFERENCE_TOKEN':'fixture'}),patch('contra_mcp.ContraConnection.read_tools',return_value={'list_job_feed:0':{'structuredContent':{'entries':[]}}}) as call,patch.object(self.e,'ai_request') as model:
    result=self.e.ask_workspace({**self.d,'text':'Isis, find Contra CRM opportunities'})
-  self.assertEqual(call.call_count,1);model.assert_not_called();self.assertFalse(result['ai_used']);self.assertIn('no usable records',result['answer']);self.assertNotIn('VIS World',result['answer'])
+  self.assertEqual(call.call_count,2);model.assert_not_called();self.assertFalse(result['ai_used']);self.assertIn('no usable records',result['answer']);self.assertNotIn('VIS World',result['answer'])
+ def test_limited_empty_search_checks_broader_feed_once_and_caches_both(self):
+  empty={'structuredContent':{'ok':True,'entries':[],'accessLimitedFeed':True,'hasNextPage':False}}
+  broad=json.loads(json.dumps(BODY));broad['structuredContent']['accessLimitedFeed']=True
+  with patch('contra_mcp.ContraConnection.read_tools',side_effect=[{'list_job_feed:0':empty},{'list_job_feed:0':broad}]) as call:
+   first=Research(self.e).run(self.d);second=Research(self.e).run(self.d)
+  self.assertEqual(call.call_count,2);self.assertEqual(call.call_args_list[1].args[0],[('list_job_feed',{'preset':'FOR_YOU','first':5})])
+  self.assertTrue(first['checks'][1]['accessLimitedFeed']);self.assertTrue(first['checks'][2]['broader_feed']);self.assertIn('not confirmed',first['items'][0]['match_basis'])
+  self.assertTrue(all(c['status']=='cached' for c in second['checks'][1:]));self.assertIn('limits the jobs visible',Research.check_summary(second));self.assertIn('not confirmed keyword matches',Research.check_summary(first));self.assertIn('match_basis',json.dumps(Research.sources(first,[])))
+ def test_broader_feed_failure_does_not_retry_or_cache_empty_as_success(self):
+  empty={'structuredContent':{'ok':True,'entries':[],'accessLimitedFeed':True}}
+  with patch('contra_mcp.ContraConnection.read_tools',side_effect=[{'list_job_feed:0':empty},ValueError('offline')]) as call:
+   result=Research(self.e).run(self.d)
+  self.assertEqual(call.call_count,2);self.assertEqual(result['checks'][-1]['status'],'unavailable');self.assertFalse(self.e.setting('chat_research_cache',{}))
+ def test_failed_body_is_not_empty_feed_and_never_broadens(self):
+  with patch('contra_mcp.ContraConnection.read_tools',return_value={'list_job_feed:0':{'structuredContent':{'ok':False,'entries':[]}}}) as call:
+   result=Research(self.e).run(self.d)
+  self.assertEqual(call.call_count,1);self.assertEqual(result['checks'][-1]['status'],'unavailable');self.assertFalse(self.e.setting('chat_research_cache',{}))
+ def test_empty_detail_or_challenge_never_broadens_to_job_feed(self):
+  for d in [{**self.d,'text':'Check https://contra.com/opportunity/example-crm'},{**self.d,'text':'Find Contra contests'}]:
+   with patch('contra_mcp.ContraConnection.read_tools',return_value={'read:0':{'structuredContent':{'entries':[]}}}) as call:
+    Research(self.e).run(d)
+   self.assertEqual(call.call_count,1)
  def test_single_allowed_call_and_applied_terms_preserved(self):
   with patch('contra_mcp.ContraConnection.read_tools',return_value={'list_job_feed:0':BODY}) as call,patch.object(self.e,'add') as add,patch.object(self.e,'ai_request') as ai:
    report=Research(self.e).run(self.d)

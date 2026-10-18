@@ -1,3 +1,9 @@
+## v0.19.2
+
+- Preserve Contra feed access limits in live/cached receipts and explain the account-visible subset.
+- After an empty keyword search, read up to five broader For You listings once; label them as suggestions whose keyword fit still needs checking. Never broaden failed, unrecognized, challenge or job-detail reads.
+- Invalidate prior research caches and keep both check receipts, with no additional inference calls or subscription changes. Simplify direct summaries for the owner.
+
 ## v0.19.1
 
 - Recognize direct research requests addressed to Isis, including the owner-facing recommended prompt. Keep negative requests and quoted/drafting instructions out of automatic research.

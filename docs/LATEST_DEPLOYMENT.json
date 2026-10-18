@@ -1,7 +1,7 @@
 {
-  "commit": "5b3e5122f57540258b0eb63ceb50bdb564ad529a",
-  "version": "0.19.5",
-  "checked_at": "2026-10-18T07:50:56.491080+00:00",
+  "commit": "f7e95530c3197e6b4ab8164be4d9e6fdac73025e",
+  "version": "0.19.6",
+  "checked_at": "2026-10-18T08:16:05.139215+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-18T07:51:27.376110+00:00",
+    "checked_at": "2026-10-18T08:16:38.707146+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -39,7 +39,7 @@
     "writing": {
       "status": "configured",
       "message": "AI settings are saved. A paid writing request has not been made by this connection check.",
-      "last_success": "2026-10-18T07:44:46.261307+00:00"
+      "last_success": "2026-10-18T08:02:47.704766+00:00"
     },
     "saving": {
       "status": "connected"
@@ -50,7 +50,7 @@
     }
   },
   "workspaces": 9,
-  "assistant_knowledge_version": "2026-10-17.3",
+  "assistant_knowledge_version": "2026-10-18.1",
   "working_status_report": "available",
   "document_preview": "passed",
   "designed_document_preview": "passed",
@@ -67,8 +67,21 @@
       {
         "scope_digest": "7460f4b0b305",
         "workspace": "contra",
-        "note_count": 17,
+        "note_count": 19,
         "requests": [
+          {
+            "created": "2026-10-18T08:02:43.593809+00:00",
+            "updated": "2026-10-18T08:02:47.706399+00:00",
+            "status": "complete",
+            "mode": "advice",
+            "ai_used": true,
+            "writing_status": {},
+            "matches_test_prompt": false,
+            "answer_format": "other",
+            "answer_note_present": true,
+            "research_checked_at": null,
+            "checks": []
+          },
           {
             "created": "2026-10-18T07:44:43.701574+00:00",
             "updated": "2026-10-18T07:44:46.264575+00:00",
@@ -94,41 +107,6 @@
             "answer_note_present": false,
             "research_checked_at": null,
             "checks": []
-          },
-          {
-            "created": "2026-10-18T04:34:26.793452+00:00",
-            "updated": "2026-10-18T04:34:28.561577+00:00",
-            "status": "complete",
-            "mode": "advice",
-            "ai_used": false,
-            "writing_status": {},
-            "matches_test_prompt": false,
-            "answer_format": "research_check_summary",
-            "answer_note_present": true,
-            "research_checked_at": "2026-10-18T04:34:26.924284+00:00",
-            "checks": [
-              {
-                "tool": "saved_opportunities",
-                "status": "complete",
-                "count": 0
-              },
-              {
-                "tool": "list_job_feed",
-                "status": "empty",
-                "count": 0,
-                "checked_at": "2026-10-18T04:34:27.937029+00:00",
-                "broader_feed": false,
-                "accessLimitedFeed": true
-              },
-              {
-                "tool": "list_job_feed",
-                "status": "live",
-                "count": 3,
-                "checked_at": "2026-10-18T04:34:28.539547+00:00",
-                "broader_feed": true,
-                "accessLimitedFeed": true
-              }
-            ]
           }
         ]
       },
@@ -191,7 +169,7 @@
     "counts": {
       "work_notes": {
         "before": 3,
-        "now": 22
+        "now": 24
       },
       "conversation_memory": {
         "before": 0,
@@ -217,11 +195,11 @@
   "developer_request_queue": "available",
   "ai_live_check": "not run; no paid inference during verification",
   "ai_budget": {
-    "count": 3,
-    "reserved_tokens": 47593,
-    "actual_tokens": 14078,
+    "count": 4,
+    "reserved_tokens": 52678,
+    "actual_tokens": 19163,
     "date": "2026-10-18",
-    "usage_percent": 19,
+    "usage_percent": 21,
     "warning_level": null,
     "unsettled_tokens": 33515,
     "daily_requests": 50,
@@ -248,7 +226,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-18T07:51:30.949472+00:00",
+    "checked_at": "2026-10-18T08:16:47.095091+00:00",
     "tools": 123,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -6465,8 +6443,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792309325.638587,
-    "checked_at": "2026-10-18T07:42:05.638600+00:00",
+    "finished_epoch": 1792311412.1962762,
+    "checked_at": "2026-10-18T08:16:52.196298+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",
@@ -7307,8 +7285,7 @@
         "applied": true
       }
     ],
-    "geekyants_application_recorded": true,
-    "cached": true
+    "geekyants_application_recorded": true
   },
   "chat_research": {
     "checks": [
@@ -7320,33 +7297,60 @@
       },
       {
         "tool": "list_job_feed",
-        "status": "cached",
+        "status": "empty",
         "count": 0,
-        "checked_at": "2026-10-18T07:42:06.454889+00:00",
+        "checked_at": "2026-10-18T08:16:53.136953+00:00",
         "search": "gohighlevel",
         "preset": "ALL",
         "broader_feed": false,
         "accessLimitedFeed": true,
         "hasNextPage": false,
-        "message": "Reused a read less than ten minutes old; no new check. Contra limits the jobs visible to this account; these results do not cover the full board. Read-only result; returned fields only. Full eligibility, rights and current terms may still require checking.",
-        "result_status": "empty"
+        "message": "Contra limits the jobs visible to this account; these results do not cover the full board. Read-only result; returned fields only. Full eligibility, rights and current terms may still require checking."
       },
       {
         "tool": "list_job_feed",
-        "status": "cached",
+        "status": "live",
         "count": 3,
-        "checked_at": "2026-10-18T07:42:07.071236+00:00",
+        "checked_at": "2026-10-18T08:16:53.729762+00:00",
         "search": "",
         "preset": "FOR_YOU",
         "broader_feed": true,
         "accessLimitedFeed": true,
         "hasNextPage": false,
-        "message": "Reused a read less than ten minutes old; no new check. Broader For You feed, not confirmed keyword matches. Contra limits the jobs visible to this account; these results do not cover the full board. Read-only result; returned fields only. Full eligibility, rights and current terms may still require checking.",
-        "result_status": "live"
+        "message": "Broader For You feed, not confirmed keyword matches. Contra limits the jobs visible to this account; these results do not cover the full board. Read-only result; returned fields only. Full eligibility, rights and current terms may still require checking."
       }
     ],
     "returned": 3,
     "validation": "Bounded keyword read with at most one broader-feed fallback; no model inference, chat creation, submissions or account writes."
+  },
+  "application_review_check": {
+    "focus": {
+      "url": "https://contra.com/opportunity/Mb3oNbXl-canva-to-google-slides-conversion-specialist",
+      "title": "Canva to Google Slides Conversion Specialist",
+      "company": "The Growth Directive",
+      "basis": "saved platform snapshot",
+      "status": "ready"
+    },
+    "status": "listing_text_available",
+    "checks": [
+      {
+        "tool": "saved_opportunities",
+        "status": "complete",
+        "count": 1,
+        "basis": "Saved records only; freshness and application outcome are not verified."
+      },
+      {
+        "tool": "get_job_by_slug",
+        "status": "live",
+        "count": 1,
+        "checked_at": "2026-10-18T08:16:54.875394+00:00",
+        "search": "",
+        "preset": null,
+        "broader_feed": false,
+        "message": "Read-only result; returned fields only. Full eligibility, rights and current terms may still require checking."
+      }
+    ],
+    "validation": "One exact-listing read; no AI writing, chat creation, application submission or purchase."
   },
   "platforms": 7,
   "browser": "hosting configuration needed",

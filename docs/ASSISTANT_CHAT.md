@@ -46,3 +46,5 @@ Owner approved 50 requests / 250,000 daily tokens on October 18. A one-time priv
 ### v0.19.5 draft versus delivery
 
 Chat receives outreach_state using selected-opportunity Gmail sent records, stored Contra application evidence, ambiguous send statuses and a direct current owner statement. It does not infer submission from a draft, approval, Contacted stage, a previous AI answer or another opportunity’s application. A narrow advice-mode check replaces recognized unsupported waiting claims with a local correction, without another inference call. This is a specific consistency check, not a general factual-accuracy guarantee.
+
+Before preparing an application, ask “Review the Canva application requirements” or give an exact Contra opportunity URL. Isis resolves the listing, reads its returned description, and separates client requirements, platform instructions, tools/accounts, fees, timing/eligibility, rights and unknowns. A selected opportunity thread cannot silently switch jobs; use the matching thread or general Contra chat. The review does not claim linked websites/files were read or that software/account purchases are required unless supported.

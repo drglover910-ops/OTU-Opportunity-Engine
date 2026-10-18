@@ -125,6 +125,13 @@ class Handler(BaseHTTPRequestHandler):
             d=json.loads(self.rfile.read(length))
             if self.path=='/api/research/preview':
                 from research_tools import Research,requested
+                from opportunity_review import intended,resolve,review
+                if intended(d):
+                    focus=resolve(engine,d,engine.conversation(d))
+                    if focus['status']!='ready':return self.output({'focus':focus,'checks':[],'items':[]})
+                    report=Research(engine).run({**d,'text':str(d.get('text',''))+'\nListing to review: '+focus['url']})
+                    details=review(focus,report);report['items']=[i for i in report['items'] if i['url'].split('?',1)[0].rstrip('/')==focus['url']]
+                    return self.output({**report,'focus':{k:v for k,v in focus.items() if k!='excluded_labels'},'application_review':details})
                 if not requested(d):raise ValueError('Ask for opportunity research first.')
                 return self.output(Research(engine).run(d))
             if self.path=='/api/files/read-in-chat':return self.output(engine.knowledge.enable_file(d))

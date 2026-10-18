@@ -26,7 +26,8 @@ class ChatService:
     if c.execute("SELECT id FROM chat_requests WHERE workspace=? AND opportunity_id IS ? AND chat_id IS ? AND status IN ('queued','running')",(workspace,oid,chat)).fetchone():raise ValueError('Isis is already answering in this conversation. Wait for that reply first.')
     if c.execute("SELECT count(*) FROM chat_requests WHERE status IN ('queued','running')").fetchone()[0]>=3:raise ValueError('Three conversations are already being answered. Wait for one to finish.')
    from research_tools import requested
-   if not os.getenv('HF_INFERENCE_TOKEN') and not requested(payload):raise ValueError('AI writing is not connected. You can still save a note.')
+   from opportunity_review import intended
+   if not os.getenv('HF_INFERENCE_TOKEN') and not (requested(payload) or intended(payload)):raise ValueError('AI writing is not connected. You can still save a note.')
    note=self.e.add_work_note(payload,role='user')['id']
    with self.e.connect() as c:c.execute('INSERT INTO chat_requests(id,workspace,opportunity_id,chat_id,fingerprint,payload,status,user_note_id,created,updated) VALUES(?,?,?,?,?,?,?,?,?,?)',(key,workspace,oid,chat,fingerprint,encoded,'queued',note,now(),now()))
    threading.Thread(target=self.run,args=(key,),daemon=True).start()

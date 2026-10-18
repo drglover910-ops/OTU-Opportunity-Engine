@@ -1,3 +1,10 @@
+## v0.19.6
+
+- Resolve the exact opportunity from an owner-provided URL, named visible listing, selected opportunity or prior exact-conversation focus before application work. Ambiguous targets and mismatched opportunity threads stop for clarification without inference or platform calls.
+- Read the target listing before application drafting, attach a requirements checklist and dated official Contra application guidance, and mark linked pages/files as unread. Missing descriptions block substitution of another job.
+- Remove unrelated historical opportunity context from focused drafting, including a named-job example embedded in personality guidance. Detect known other-job names in a focused draft and stop it without retrying.
+- Persist focus/review receipts, show the exact opportunity title, and verify a real listing review without AI writing or submission. Existing allowances and originals remain unchanged.
+
 ## v0.19.5
 
 - Supply explicit selected-opportunity delivery state to chat. Drafts, approvals, workflow stages and prior AI answers do not count as submitted outreach.

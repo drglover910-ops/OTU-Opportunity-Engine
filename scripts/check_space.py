@@ -84,6 +84,8 @@ for attempt in range(48):
                             report['contra_inventory']=request('/api/contra/sync',{})
                             research=request('/api/research/preview',{'workspace':'contra','text':'Find Contra GoHighLevel opportunities','mode':'research'})
                             report['chat_research']={'checks':research.get('checks',[]),'returned':len(research.get('items',[])),'validation':'Bounded keyword read with at most one broader-feed fallback; no model inference, chat creation, submissions or account writes.'}
+                            prepared=request('/api/research/preview',{'workspace':'contra','text':'Review application requirements for https://contra.com/opportunity/Mb3oNbXl-canva-to-google-slides-conversion-specialist','mode':'advice'})
+                            report['application_review_check']={'focus':prepared.get('focus',{}),'status':prepared.get('application_review',{}).get('status'),'checks':prepared.get('checks',[]),'validation':'One exact-listing read; no AI writing, chat creation, application submission or purchase.'}
                         except urllib.error.HTTPError as e:
                             try:report['contra_access_error']=json.load(e).get('error','')[:250]
                             except Exception:report['contra_access_error']='Account access could not be verified.'

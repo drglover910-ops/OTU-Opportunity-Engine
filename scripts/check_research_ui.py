@@ -12,14 +12,18 @@ from contra_mcp import ContraConnection
 stats={'reads':0,'writes':0}
 app.engine.set_setting('contra_tokens',{'access_token':'fixture-only'})
 def read(self,calls):
- assert len(calls)==1 and calls[0][0]=='list_job_feed'
+ assert len(calls)==1 and calls[0][0] in ('list_job_feed','get_job_by_slug')
  stats['reads']+=1;time.sleep(1.5)
+ if calls[0][0]=='get_job_by_slug':return {'get_job_by_slug:0':{'structuredContent':{'job':{'title':'Canva to Google Slides Conversion Specialist','publicUrl':'https://contra.com/opportunity/canva-example','description':'Convert a Canva deck to Google Slides. Preserve editable formatting and collaboration.','status':'POSTED'}}}}
  if calls[0][1].get('preset')=='ALL':return {'list_job_feed:0':{'structuredContent':{'entries':[],'accessLimitedFeed':True,'hasNextPage':False}}}
  return {'list_job_feed:0':{'structuredContent':{'entries':[{'job':{'title':'Example CRM contract','publicUrl':'https://contra.com/opportunity/example-crm','description':'Set up two pipelines. <img src=x onerror=window.injected=true>','status':'POSTED'}}]}}}
 ContraConnection.read_tools=read
 def model(payload):
  stats['writes']+=1;time.sleep(1.4)
  context=json.loads(payload['messages'][1]['content']);assert 'research_receipt' in context
+ if context.get('opportunity_focus'):
+  assert context['opportunity_focus']['title']=='Canva to Google Slides Conversion Specialist'
+  return {'choices':[{'message':{'content':'For this Canva project, confirm slide count, deadline, editable file access and the required portfolio sample before submitting. No paid plan is established by this listing.'}}]}
  return {'choices':[{'message':{'content':'Example CRM contract is a returned option [S2]. Review its actual requirements before applying.'}}]}
 app.engine.ai_request=model
 class Fixture(app.Handler):
@@ -45,6 +49,8 @@ ThreadingHTTPServer(('127.0.0.1','''+str(port)+'''),Fixture).serve_forever()
    page.locator('#conversation-text').fill(question);page.locator('#ask-workspace').click();expect(page.locator('.assistant-message')).to_have_count(3,timeout=7000);expect(page.locator('.assistant-message .message-text').last).to_contain_text('AI writing was not called');assert json.load(urllib.request.urlopen(base+'/fixture-stats'))=={'reads':2,'writes':2}
    page.locator('#conversation-text').fill('Which option should I review?');page.locator('#ask-workspace').click();expect(page.locator('.assistant-message')).to_have_count(4,timeout=7000);expect(page.locator('.assistant-message .message-text').last).to_contain_text('Saved research from this same conversation; no new platform check');expect(page.locator('.assistant-message .message-text').last).to_contain_text('AI writing was not called');assert json.load(urllib.request.urlopen(base+'/fixture-stats'))=={'reads':2,'writes':2}
    page.reload();expect(page.locator('.assistant-message')).to_have_count(4);page.locator('.answer-sources>summary').last.click();expect(page.locator('.answer-sources').last).to_contain_text('previous_read')
+   page.evaluate("fetch('/api/ai/limits',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({paused:false})}).then(r=>r.json())")
+   page.locator('#conversation-text').fill('Review application requirements for https://contra.com/opportunity/canva-example');page.locator('#ask-workspace').click();expect(page.locator('.assistant-message')).to_have_count(5,timeout=7000);expect(page.locator('.assistant-message .message-text').last).to_contain_text('Opportunity: Canva to Google Slides Conversion Specialist');page.locator('.answer-sources>summary').last.click();expect(page.locator('.answer-sources').last).to_contain_text('Applying to jobs');assert json.load(urllib.request.urlopen(base+'/fixture-stats'))=={'reads':3,'writes':3};page.screenshot(path='/tmp/otu-canva-review.png')
    page.set_viewport_size({'width':390,'height':720});assert page.evaluate('document.documentElement.scrollWidth<=innerWidth');assert not errors,errors;browser.close()
-  print('Research UI passed: immediate send/progress, preserved draft, receipts/links escaping, bounded broader-feed fallback with access limits, cached reads, research and ordinary-follow-up allowance fallback without another model or platform call, reload and phone bounds. Mocked services only.')
+  print('Research UI passed: immediate send/progress, preserved draft, receipts/links escaping, bounded broader-feed fallback with access limits, cached reads, research and ordinary-follow-up allowance fallback without another model or platform call, exact-listing pre-application review with official guidance, reload and phone bounds. Mocked services only.')
  finally:server.terminate();server.wait(timeout=10)

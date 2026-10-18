@@ -63,6 +63,8 @@ def extract(body,kind):
    url=job.get('publicUrl') or job.get('challengeUrl') or job.get('url');title=job.get('title') or job.get('name')
    if not isinstance(title,str) or not safe_contra_url(url):continue
    item={'title':title[:180],'url':url,'kind':kind,'description':text(job.get('description') or job.get('blocknoteDescription') or ''),'pay':text(job.get('budget')) or json.dumps(job.get('budget') or job.get('prize') or {},ensure_ascii=False)[:300],'deadline':str(job.get('submissionsDeadline') or job.get('deadline') or '')[:100],'status':str(job.get('status') or 'not supplied')[:80],'location':str(job.get('location') or job.get('locationRequirement') or '')[:200],'posted_at':str(job.get('publishedAt') or job.get('createdAt') or '')[:100]}
+   organization=job.get('organization') or job.get('hiringOrganization') or {}
+   if isinstance(organization,dict) and isinstance(organization.get('name'),str):item['company']=organization['name'][:150]
    applied=n.get('visitorDidApply',job.get('visitorDidApply'))
    if isinstance(applied,bool):item['applied']=applied
    prior=rows.get(url)
@@ -154,13 +156,13 @@ class Research:
   return prior
 
  @staticmethod
- def sources(report,local):
+ def sources(report,local,extra=None):
   when=report['checked_at'];receipt='\n'.join(c['tool']+': '+c['status']+'. '+c.get('message',c.get('basis','')) for c in report['checks'])
   rows=[{'label':'Research checks','kind':'research_receipt','authority':'App execution receipt, not independent verification of listing claims','recorded_at':when,'excerpt':receipt[:900]}]
   for item in report['items'][:2]:
-   excerpt=json.dumps({k:item[k] for k in ('pay','deadline','status','applied','location','posted_at','match_basis') if k in item},ensure_ascii=False)+'\n'+item['description'][:550]
+   excerpt=json.dumps({k:item[k] for k in ('company','pay','deadline','status','applied','location','posted_at','match_basis') if k in item},ensure_ascii=False)+'\n'+item['description'][:550]
    rows.append({'label':item['title'],'kind':item['kind'],'authority':('Saved record; not a fresh platform check' if item['kind']=='saved_opportunity' else 'Contra returned fields; advertised terms are not agreements; full guidelines may be absent'),'recorded_at':item.get('saved_at') or next((c.get('checked_at') for c in reversed(report['checks']) if c.get('checked_at')),when),'url':item['url'],'excerpt':excerpt[:900]})
-  rows+=local[:1];out=[]
+  rows+=(extra or [])[:1]+local[:1];out=[]
   for row in rows:
    row=dict(row);row['digest']=row.get('digest') or hashlib.sha256(row['excerpt'].encode()).hexdigest();row['offset']=row.get('offset',0);row['citation']='S'+str(len(out)+1)
    if len(json.dumps(out+[row],ensure_ascii=False).encode())<=4800:out.append(row)

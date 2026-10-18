@@ -1,7 +1,7 @@
 {
-  "commit": "a1b8635b24556971cc964e4fd772605a6d3c69e9",
-  "version": "0.19.2",
-  "checked_at": "2026-10-18T04:26:01.554424+00:00",
+  "commit": "521619acde860087aea09267ed565a0870f18403",
+  "version": "0.19.3",
+  "checked_at": "2026-10-18T07:06:21.094264+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-18T04:26:02.443647+00:00",
+    "checked_at": "2026-10-18T07:06:53.010662+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -67,13 +67,63 @@
       {
         "scope_digest": "7460f4b0b305",
         "workspace": "contra",
-        "note_count": 12,
+        "note_count": 15,
         "requests": [
+          {
+            "created": "2026-10-18T07:00:34.685018+00:00",
+            "updated": "2026-10-18T07:00:35.048397+00:00",
+            "status": "failed",
+            "mode": "advice",
+            "ai_used": null,
+            "writing_status": {},
+            "matches_test_prompt": false,
+            "answer_format": "other",
+            "answer_note_present": false,
+            "research_checked_at": null,
+            "checks": []
+          },
+          {
+            "created": "2026-10-18T04:34:26.793452+00:00",
+            "updated": "2026-10-18T04:34:28.561577+00:00",
+            "status": "complete",
+            "mode": "advice",
+            "ai_used": false,
+            "writing_status": {},
+            "matches_test_prompt": false,
+            "answer_format": "research_check_summary",
+            "answer_note_present": true,
+            "research_checked_at": "2026-10-18T04:34:26.924284+00:00",
+            "checks": [
+              {
+                "tool": "saved_opportunities",
+                "status": "complete",
+                "count": 0
+              },
+              {
+                "tool": "list_job_feed",
+                "status": "empty",
+                "count": 0,
+                "checked_at": "2026-10-18T04:34:27.937029+00:00",
+                "broader_feed": false,
+                "accessLimitedFeed": true
+              },
+              {
+                "tool": "list_job_feed",
+                "status": "live",
+                "count": 3,
+                "checked_at": "2026-10-18T04:34:28.539547+00:00",
+                "broader_feed": true,
+                "accessLimitedFeed": true
+              }
+            ]
+          },
           {
             "created": "2026-10-18T03:34:58.977560+00:00",
             "updated": "2026-10-18T03:34:59.426391+00:00",
             "status": "complete",
             "mode": "advice",
+            "ai_used": false,
+            "writing_status": {},
             "matches_test_prompt": true,
             "answer_format": "older_research_summary",
             "answer_note_present": true,
@@ -91,28 +141,6 @@
                 "checked_at": "2026-10-18T03:27:23.833567+00:00"
               }
             ]
-          },
-          {
-            "created": "2026-10-18T03:23:11.366272+00:00",
-            "updated": "2026-10-18T03:23:15.102435+00:00",
-            "status": "complete",
-            "mode": "advice",
-            "matches_test_prompt": false,
-            "answer_format": "other",
-            "answer_note_present": true,
-            "research_checked_at": null,
-            "checks": []
-          },
-          {
-            "created": "2026-10-18T03:14:00.233662+00:00",
-            "updated": "2026-10-18T03:14:04.609481+00:00",
-            "status": "complete",
-            "mode": "advice",
-            "matches_test_prompt": false,
-            "answer_format": "other",
-            "answer_note_present": true,
-            "research_checked_at": null,
-            "checks": []
           }
         ]
       },
@@ -175,7 +203,7 @@
     "counts": {
       "work_notes": {
         "before": 3,
-        "now": 17
+        "now": 20
       },
       "conversation_memory": {
         "before": 0,
@@ -210,7 +238,8 @@
     "paused": false,
     "scope": "This bot only; shared account balance and other projects are not available here.",
     "cost": "Dollar cost unavailable; provider billing is authoritative.",
-    "reset": "UTC midnight"
+    "reset": "UTC midnight",
+    "next_reset_at": "2026-10-19T00:00:00+00:00"
   },
   "source_retrieval": {
     "method": "local lexical retrieval",
@@ -228,7 +257,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-18T04:26:05.579528+00:00",
+    "checked_at": "2026-10-18T07:06:58.596012+00:00",
     "tools": 123,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -6445,8 +6474,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792297570.4124057,
-    "checked_at": "2026-10-18T04:26:10.412419+00:00",
+    "finished_epoch": 1792307223.5122845,
+    "checked_at": "2026-10-18T07:07:03.512296+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",
@@ -7301,7 +7330,7 @@
         "tool": "list_job_feed",
         "status": "empty",
         "count": 0,
-        "checked_at": "2026-10-18T04:26:11.214131+00:00",
+        "checked_at": "2026-10-18T07:07:04.364804+00:00",
         "search": "gohighlevel",
         "preset": "ALL",
         "broader_feed": false,
@@ -7313,7 +7342,7 @@
         "tool": "list_job_feed",
         "status": "live",
         "count": 3,
-        "checked_at": "2026-10-18T04:26:11.832343+00:00",
+        "checked_at": "2026-10-18T07:07:04.973058+00:00",
         "search": "",
         "preset": "FOR_YOU",
         "broader_feed": true,

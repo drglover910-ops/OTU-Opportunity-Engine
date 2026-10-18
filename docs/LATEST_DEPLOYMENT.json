@@ -1,7 +1,7 @@
 {
-  "commit": "2f7f1070ef8eb8eda8b4c6ded1638da291fd55c4",
-  "version": "0.19.4",
-  "checked_at": "2026-10-18T07:41:25.897307+00:00",
+  "commit": "5b3e5122f57540258b0eb63ceb50bdb564ad529a",
+  "version": "0.19.5",
+  "checked_at": "2026-10-18T07:50:56.491080+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-18T07:41:56.919862+00:00",
+    "checked_at": "2026-10-18T07:51:27.376110+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -39,7 +39,7 @@
     "writing": {
       "status": "configured",
       "message": "AI settings are saved. A paid writing request has not been made by this connection check.",
-      "last_success": "2026-10-18T03:23:15.100777+00:00"
+      "last_success": "2026-10-18T07:44:46.261307+00:00"
     },
     "saving": {
       "status": "connected"
@@ -67,8 +67,21 @@
       {
         "scope_digest": "7460f4b0b305",
         "workspace": "contra",
-        "note_count": 15,
+        "note_count": 17,
         "requests": [
+          {
+            "created": "2026-10-18T07:44:43.701574+00:00",
+            "updated": "2026-10-18T07:44:46.264575+00:00",
+            "status": "complete",
+            "mode": "advice",
+            "ai_used": true,
+            "writing_status": {},
+            "matches_test_prompt": false,
+            "answer_format": "other",
+            "answer_note_present": true,
+            "research_checked_at": null,
+            "checks": []
+          },
           {
             "created": "2026-10-18T07:00:34.685018+00:00",
             "updated": "2026-10-18T07:00:35.048397+00:00",
@@ -114,31 +127,6 @@
                 "checked_at": "2026-10-18T04:34:28.539547+00:00",
                 "broader_feed": true,
                 "accessLimitedFeed": true
-              }
-            ]
-          },
-          {
-            "created": "2026-10-18T03:34:58.977560+00:00",
-            "updated": "2026-10-18T03:34:59.426391+00:00",
-            "status": "complete",
-            "mode": "advice",
-            "ai_used": false,
-            "writing_status": {},
-            "matches_test_prompt": true,
-            "answer_format": "older_research_summary",
-            "answer_note_present": true,
-            "research_checked_at": "2026-10-18T03:34:59.164115+00:00",
-            "checks": [
-              {
-                "tool": "saved_opportunities",
-                "status": "complete",
-                "count": 0
-              },
-              {
-                "tool": "list_job_feed",
-                "status": "cached",
-                "count": 0,
-                "checked_at": "2026-10-18T03:27:23.833567+00:00"
               }
             ]
           }
@@ -203,7 +191,7 @@
     "counts": {
       "work_notes": {
         "before": 3,
-        "now": 20
+        "now": 22
       },
       "conversation_memory": {
         "before": 0,
@@ -229,11 +217,11 @@
   "developer_request_queue": "available",
   "ai_live_check": "not run; no paid inference during verification",
   "ai_budget": {
-    "count": 2,
-    "reserved_tokens": 42863,
-    "actual_tokens": 9348,
+    "count": 3,
+    "reserved_tokens": 47593,
+    "actual_tokens": 14078,
     "date": "2026-10-18",
-    "usage_percent": 17,
+    "usage_percent": 19,
     "warning_level": null,
     "unsettled_tokens": 33515,
     "daily_requests": 50,
@@ -260,7 +248,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-18T07:42:00.869022+00:00",
+    "checked_at": "2026-10-18T07:51:30.949472+00:00",
     "tools": 123,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -7319,7 +7307,8 @@
         "applied": true
       }
     ],
-    "geekyants_application_recorded": true
+    "geekyants_application_recorded": true,
+    "cached": true
   },
   "chat_research": {
     "checks": [
@@ -7331,7 +7320,7 @@
       },
       {
         "tool": "list_job_feed",
-        "status": "empty",
+        "status": "cached",
         "count": 0,
         "checked_at": "2026-10-18T07:42:06.454889+00:00",
         "search": "gohighlevel",
@@ -7339,11 +7328,12 @@
         "broader_feed": false,
         "accessLimitedFeed": true,
         "hasNextPage": false,
-        "message": "Contra limits the jobs visible to this account; these results do not cover the full board. Read-only result; returned fields only. Full eligibility, rights and current terms may still require checking."
+        "message": "Reused a read less than ten minutes old; no new check. Contra limits the jobs visible to this account; these results do not cover the full board. Read-only result; returned fields only. Full eligibility, rights and current terms may still require checking.",
+        "result_status": "empty"
       },
       {
         "tool": "list_job_feed",
-        "status": "live",
+        "status": "cached",
         "count": 3,
         "checked_at": "2026-10-18T07:42:07.071236+00:00",
         "search": "",
@@ -7351,7 +7341,8 @@
         "broader_feed": true,
         "accessLimitedFeed": true,
         "hasNextPage": false,
-        "message": "Broader For You feed, not confirmed keyword matches. Contra limits the jobs visible to this account; these results do not cover the full board. Read-only result; returned fields only. Full eligibility, rights and current terms may still require checking."
+        "message": "Reused a read less than ten minutes old; no new check. Broader For You feed, not confirmed keyword matches. Contra limits the jobs visible to this account; these results do not cover the full board. Read-only result; returned fields only. Full eligibility, rights and current terms may still require checking.",
+        "result_status": "live"
       }
     ],
     "returned": 3,

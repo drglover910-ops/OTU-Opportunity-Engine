@@ -1,7 +1,7 @@
 {
-  "commit": "0f3047aa2dd8e6b131f2575a5e1fcf4f73d4db99",
-  "version": "0.19.7",
-  "checked_at": "2026-10-18T17:01:55.192911+00:00",
+  "commit": "872f78fcb9eda4929e73cf83b058d49fe9c53c81",
+  "version": "0.19.8",
+  "checked_at": "2026-10-18T17:20:16.361587+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-18T17:02:27.678126+00:00",
+    "checked_at": "2026-10-18T17:20:47.394135+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -239,7 +239,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-18T17:02:34.214130+00:00",
+    "checked_at": "2026-10-18T17:20:52.144494+00:00",
     "tools": 123,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -7259,7 +7259,8 @@
         "applied": true
       }
     ],
-    "geekyants_application_recorded": true
+    "geekyants_application_recorded": true,
+    "cached": true
   },
   "chat_research": {
     "checks": [
@@ -7273,7 +7274,7 @@
         "tool": "list_job_feed",
         "status": "empty",
         "count": 0,
-        "checked_at": "2026-10-18T17:02:41.372399+00:00",
+        "checked_at": "2026-10-18T17:20:53.190539+00:00",
         "search": "gohighlevel",
         "preset": "ALL",
         "broader_feed": false,
@@ -7285,7 +7286,7 @@
         "tool": "list_job_feed",
         "status": "live",
         "count": 3,
-        "checked_at": "2026-10-18T17:02:42.225508+00:00",
+        "checked_at": "2026-10-18T17:20:54.006638+00:00",
         "search": "",
         "preset": "FOR_YOU",
         "broader_feed": true,
@@ -7317,7 +7318,7 @@
         "tool": "get_job_by_slug",
         "status": "live",
         "count": 1,
-        "checked_at": "2026-10-18T17:02:43.302904+00:00",
+        "checked_at": "2026-10-18T17:20:55.174729+00:00",
         "search": "",
         "preset": null,
         "broader_feed": false,

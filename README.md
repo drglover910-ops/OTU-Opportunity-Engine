@@ -7,7 +7,7 @@ sdk: docker
 app_port: 7860
 ---
 
-# OTU Opportunity Engine — v0.18.0
+# OTU Opportunity Engine — v0.19.0
 
 Short windows keep conversations in their own scrolling list. **Tools** opens workspace shortcuts and the Recent/Archived/Trash selector; the project picker stays above the list. New chat clears search/archive filters so the new conversation is visible. Existing chats are preserved.
 
@@ -55,3 +55,6 @@ Copy, Read aloud and thumbs up/down sit under each saved response. Copy also wor
 
 
 v0.18.0: Isis can retrieve relevant excerpts from the current career master, owner-confirmed career updates and older owner notes in the exact conversation. Expand **Sources for this reply** to inspect the references supplied to the model. In Files, choose **Let Isis read this** for a UTF-8 TXT/MD file (256 KiB / 50,000 characters maximum). Confirm before relevant text may be sent to the configured AI provider with future questions. Other uploads remain saved for viewing; PDF/Word/images/audio/video are not analyzed in chat. Stop using in chat stops future retrieval, not prior saved replies. No embedding service, training, new model or extra inference round is added. `python scripts/evaluate_otu.py` runs the 28-case offline retrieval baseline, not a model-quality benchmark.
+
+
+v0.19.0: Ask “Find Contra opportunities for GoHighLevel work,” paste a Contra job link with a research request, or choose **Research opportunities** under message Options. Research searches saved opportunities and can make one supported Contra job/detail/challenge read. Source receipts distinguish fresh, cached (up to ten minutes), saved-only, unavailable and unrecognized results. Challenges are listing snippets, not a complete rules audit. No applications, messages, account edits, purchases or arbitrary browsing. If AI writing is disconnected, paused, exhausted or fails, a direct summary of returned research remains available without a retry. Search uses local intent/keyword routing, not an extra model planner; one writing call at most. Explicit refresh requests bypass the short-lived cache.

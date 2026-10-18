@@ -1,3 +1,10 @@
+## v0.19.0
+
+- Connect owner-requested conversational research to exact-scope saved opportunity search and one allowlisted Contra job feed, job detail or active-challenge read. No model planner, arbitrary browser, platform writes or new scopes.
+- Persist research receipts with request results and source references. Show actual research phases, safe original-listing links, and clear cached/saved/live/unavailable states. Repeat reads cache for ten minutes; an explicit refresh bypasses the cache.
+- Keep useful direct research summaries when AI writing is unavailable or the current allowance blocks it; no automatic retries or raised limits. Failed writing attempts may still count toward usage.
+- Add scoped read/tool/failure/backup tests and a localhost browser fixture. Deployment checks exercise one bounded research preview without model inference, chat creation or submissions.
+
 ## v0.18.0
 
 - Retrieve bounded source-labeled excerpts from the current career master, confirmed career updates, exact-conversation owner notes and explicitly enabled TXT/MD files. Exclude AI replies as factual evidence and keep other threads/platforms isolated.

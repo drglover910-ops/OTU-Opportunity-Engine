@@ -98,7 +98,12 @@ class HTTP(unittest.TestCase):
         req=urllib.request.Request(self.base+path,data=json.dumps(data).encode() if data is not None else None,headers={'Content-Type':'application/json',**(headers or {})})
         with urllib.request.urlopen(req) as r:return json.load(r)
     def test_health_and_status(self):
-        self.assertEqual(self.request('/health')['version'],'0.18.0');self.assertIn('storage',self.request('/api/status'))
+        self.assertEqual(self.request('/health')['version'],'0.19.0');self.assertIn('storage',self.request('/api/status'))
+    def test_research_preview_never_calls_inference(self):
+        with patch('research_tools.Research.run',return_value={'checks':[],'items':[]}) as reads,patch.object(app.engine,'ai_request') as model:
+            result=self.request('/api/research/preview',{'workspace':'contra','mode':'research','text':'Find Contra CRM opportunities'})
+        self.assertEqual(result['items'],[]);self.assertEqual(reads.call_count,1);model.assert_not_called()
+
     def test_workflow(self):
         result=self.request('/api/add',{'company':'HTTP client','title':'CRM project','url':'https://example.com/http'})
         self.request('/api/update',{'id':result['id'],'contact':'a@example.com'})

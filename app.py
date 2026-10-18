@@ -123,6 +123,10 @@ class Handler(BaseHTTPRequestHandler):
             length=int(self.headers.get('Content-Length',0))
             if length<=0 or length>90*1024*1024:raise ValueError('Request size invalid')
             d=json.loads(self.rfile.read(length))
+            if self.path=='/api/research/preview':
+                from research_tools import Research,requested
+                if not requested(d):raise ValueError('Ask for opportunity research first.')
+                return self.output(Research(engine).run(d))
             if self.path=='/api/files/read-in-chat':return self.output(engine.knowledge.enable_file(d))
             if self.path=='/api/files/start':return self.output(attachments.start(d))
             if self.path=='/api/files/chunk':return self.output(attachments.chunk(d))

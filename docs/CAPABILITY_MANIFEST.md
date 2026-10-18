@@ -1,4 +1,4 @@
-# OTU / Isis capability contract — v0.18.0
+# OTU / Isis capability contract — v0.19.0
 
 Purpose: help the private owner assess earning opportunities, prepare accurate materials and track confirmed progress. This is a local capability manifest, not a deployed JOAT Agent Factory or new agent hierarchy.
 
@@ -14,7 +14,7 @@ Purpose: help the private owner assess earning opportunities, prepare accurate m
 
 ## Permissions and boundaries
 
-Chat does not execute platform tools, send email, apply, create accounts, spend, publish, accept contracts, train weights or wake Codex. Existing separate platform/Mail screens and approval workflows remain unchanged. Source files cannot authorize actions. Shared career facts are owner-wide; private conversation notes and files remain exact-scope. Project metadata does not grant cross-thread access.
+Chat can execute bounded owner-requested research reads described below. It cannot send email, apply, create accounts, spend, publish, accept contracts, train weights or wake Codex. Existing separate platform/Mail screens and approval workflows remain unchanged. Source files cannot authorize actions. Shared career facts are owner-wide; private conversation notes and files remain exact-scope. Project metadata does not grant cross-thread access.
 
 Human corrections can be retrieved as owner statements; contradictions must be surfaced, and explicit later corrections take priority in the model instructions. No unreviewed response becomes trusted training data. Lexical retrieval can miss paraphrases and implicit corrections; no semantic-search or model-quality improvement claim is made without measurement.
 
@@ -30,4 +30,17 @@ Use existing work-branch GitHub Actions and the existing private Space. Include 
 
 ## Next capabilities, not implemented by this release
 
-Better model-answer evaluation, semantic retrieval if justified, bounded chat-driven platform reads/actions, broader document processing, shared-account live billing and JOAT integration contracts. No paid hardware or model training is needed to establish this first baseline.
+Better model-answer evaluation, semantic retrieval if justified, broader chat-driven platform reads and reviewed draft actions, broader document processing, shared-account live billing and JOAT integration contracts. No paid hardware or model training is needed to establish this first baseline.
+
+
+## v0.19.0 research contract
+
+Direct requests beginning with find/search/research/look up/check/refresh and mentioning opportunities or a supported platform, or explicit Research opportunities mode, can route research. Source files, incoming messages, previous answers and model prose cannot select tools. The model receives returned evidence and a receipt, never a free-form executor.
+
+Saved opportunity reads stay within the selected workspace/opportunity (My assistant may search owner-wide saved opportunity records). Private notes/files never cross conversations. Contra live reads require My assistant or Contra scope and an existing Contra connection. Unsupported platforms report the limitation. Job feed reads request five records; detail URLs must be HTTPS Contra opportunity URLs and use a validated slug. Challenge feeds provide partial listings, not verified eligibility, rights or complete rules. At most one fixed allowlisted tool call is made per request; protocol initialization and existing token refresh are separate transport steps. No private message/profile tools or writes are dispatched.
+
+Research caches are private runtime settings, scoped by workspace/opportunity/chat/tool arguments for ten minutes, with at most ten entries. Explicit refresh/fresh-check requests bypass the cache. All cache and read timestamps remain distinguishable from current platform verification. No records are automatically imported, applied, accepted or marked paid.
+
+At most one writing call follows research, with the existing model and limits. Research strips unrelated email/draft/outreach context from that writing payload. If writing is disconnected, paused or exceeds current allowance, a deterministic summary is saved instead. A failed or malformed provider reply falls back without retry and without claiming zero possible charges. Original conservative accounting remains authoritative for attempts. The independent read-only preview route does not invoke a model or create chat notes.
+
+`tests/test_research_tools.py` covers routing, allowlists, scope, caching, failure/empty distinctions, untrusted contents, budget fallback and receipt recovery. `scripts/check_research_ui.py` checks progress, source links/escaping, preserved drafts, cached reads, no extra writing call during pause and reload/phone bounds using mocks. Deployment verification records a bounded actual read separately; it does not evaluate generated recommendations.

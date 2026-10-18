@@ -10,7 +10,7 @@ base='https://dezz-9-10-otu-opportunity-engine.hf.space'
 headers={'Authorization':'Bearer '+os.environ['HF_TOKEN'],'User-Agent':'OTU deployment smoke check'}
 def request(path,data=None):
     req=urllib.request.Request(base+path,data=json.dumps(data).encode() if data is not None else None,headers={**headers,'Content-Type':'application/json'})
-    with urllib.request.urlopen(req,timeout=180 if path=='/api/contra/sync' else 65 if path=='/api/browser' else 30) as r:return json.load(r)
+    with urllib.request.urlopen(req,timeout=180 if path in ('/api/contra/sync','/api/research/preview') else 65 if path=='/api/browser' else 30) as r:return json.load(r)
 for attempt in range(48):
     try:
         info=api.space_info(SPACE);stage=str(info.runtime.stage);report['runtime_stage']=stage
@@ -80,6 +80,8 @@ for attempt in range(48):
                             report['contra_access']=request('/api/contra/check',{})
                             report['contra_tools']=request('/api/contra/tools')
                             report['contra_inventory']=request('/api/contra/sync',{})
+                            research=request('/api/research/preview',{'workspace':'contra','text':'Find Contra GoHighLevel opportunities','mode':'research'})
+                            report['chat_research']={'checks':research.get('checks',[]),'returned':len(research.get('items',[])),'validation':'One bounded read without model inference or chat creation; no submissions or account writes.'}
                         except urllib.error.HTTPError as e:
                             try:report['contra_access_error']=json.load(e).get('error','')[:250]
                             except Exception:report['contra_access_error']='Account access could not be verified.'

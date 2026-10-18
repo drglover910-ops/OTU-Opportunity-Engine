@@ -2,7 +2,7 @@
 
 Open **Talk to OTU** for the main assistant. It receives the curated project decisions in `assistant_knowledge.json`, recent opportunity summaries, saved outreach-style examples, and current connection indicators. Platform and opportunity chats keep their own history, emails and remembered instructions. The main chat can see opportunity summaries, not other chats' private messages. Use **What to remember in this conversation** for up to eight persistent instructions without an AI call. Recent dialogue is bounded rather than repeatedly transmitting the whole archive.
 
-The assistant is powered by the configured HF inference provider, not a live connection to the private ChatGPT thread. It has no action tools. It can advise, draft replies, anticipate possible questions and prepare negotiation options; it cannot silently send, spend, apply, publish, summon an agent, accept a deal or train model weights. Shared project memory is updated through deployment, with a visible version. All writing calls use the shared allowance, pause control and cache. A full document rewrite may reserve up to2,000 output tokens instead of the normal700. No paid smoke tests or background inference runs are enabled.
+The assistant is powered by the configured HF inference provider, not a live connection to the private ChatGPT thread. It has bounded read-only research tools for saved opportunities and supported Contra listings; it has no sending or account-changing tools. It can advise, draft replies, anticipate possible questions and prepare negotiation options; it cannot silently send, spend, apply, publish, summon an agent, accept a deal or train model weights. Shared project memory is updated through deployment, with a visible version. All writing calls use the shared allowance, pause control and cache. A full document rewrite may reserve up to2,000 output tokens instead of the normal700. No paid smoke tests or background inference runs are enabled.
 
 ## Read and revise without downloading
 
@@ -27,3 +27,10 @@ Assistant replies include Read aloud, Pause/Resume and Stop, using browser speec
 ## v0.18.0 source lookup
 
 See [the capability contract](CAPABILITY_MANIFEST.md). Chat now receives bounded relevant career/owner-note excerpts and explicitly enabled TXT/MD reference text. Sources for this reply exposes the supplied references. Retrieval is local and makes no extra inference call; adding excerpts can increase the tokens in the one existing request. Other upload formats remain unread in chat. No platform action tools or model training are added.
+
+
+## v0.19.0 research in conversation
+
+Ask “Find Contra opportunities for GoHighLevel work” or select Research opportunities under message Options. Open Sources for this reply for execution receipts and original listing links. Research can search saved opportunities and run one supported Contra read. It cannot submit, contact, spend or edit accounts. Cached results are labeled. If writing is unavailable, the app returns a plain research summary without a second attempt. This supersedes the older statement that chat has no read tools.
+
+Follow-up questions can reuse the last completed research receipt from the same conversation. These sources are labeled as previous reads, never a fresh platform check.

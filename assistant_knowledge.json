@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-17.2",
+  "version": "2026-10-17.3",
   "purpose": "Shared, curated project knowledge for the in-app assistant and repository developer. This is not live access to the private ChatGPT thread.",
   "owner": "Desmond Glover",
   "mission": "Find legitimate income opportunities, prepare accurate materials, track confirmed outcomes and help win suitable work with low costs.",
@@ -28,7 +28,8 @@
     "Advice, reply drafts, possible client reactions and negotiation options require factual grounding; predictions are not observed replies.",
     "Changes to documents require explicit owner review and create new versions.",
     "Development requests are owner-reviewed descriptions, never commands to execute automatically.",
-    "No access to Co-Agent AI history or this private ChatGPT thread is assumed."
+    "No access to Co-Agent AI history or this private ChatGPT thread is assumed.",
+    "Direct owner research requests can run bounded saved-opportunity lookup and one Contra job/detail/challenge read. Read the actual research_receipt: cached and saved results are not live checks; unavailable/unrecognized reads do not establish no jobs. Chat cannot submit, send, edit profiles, purchase or accept contracts."
   ],
   "cost_rules": [
     "All inference shares this bot's persistent allowance and pause control. Use saved context and templates where practical.",

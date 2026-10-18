@@ -1,7 +1,7 @@
 {
-  "commit": "2553ce1f08e135be8a93d6260e6cd2dc8ffa11ed",
-  "version": "0.19.1",
-  "checked_at": "2026-10-18T03:26:43.867411+00:00",
+  "commit": "91dba06f11346ff88762711adaf305cd844f9698",
+  "version": "0.19.2",
+  "checked_at": "2026-10-18T03:38:57.878230+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -14,14 +14,14 @@
   },
   "opportunities": 198,
   "last_discovery": {
-    "added": 17,
+    "added": 0,
     "seen": 62,
     "errors": [],
     "sources_ok": [
       "We Work Remotely RSS",
       "Remotive"
     ],
-    "finished": "2026-10-17T15:30:19.362777+00:00"
+    "finished": "2026-10-18T03:31:11.692028+00:00"
   },
   "documents": 29,
   "gmail_connected": true,
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-18T03:27:14.840594+00:00",
+    "checked_at": "2026-10-18T03:39:32.243799+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -76,7 +76,7 @@
     "counts": {
       "work_notes": {
         "before": 3,
-        "now": 15
+        "now": 17
       },
       "conversation_memory": {
         "before": 0,
@@ -129,7 +129,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-18T03:27:18.275445+00:00",
+    "checked_at": "2026-10-18T03:39:39.365596+00:00",
     "tools": 123,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -7188,7 +7188,8 @@
         "applied": true
       }
     ],
-    "geekyants_application_recorded": true
+    "geekyants_application_recorded": true,
+    "cached": true
   },
   "chat_research": {
     "checks": [
@@ -7202,12 +7203,29 @@
         "tool": "list_job_feed",
         "status": "empty",
         "count": 0,
-        "checked_at": "2026-10-18T03:27:23.833567+00:00",
-        "message": "Read-only result; returned fields only. Full eligibility, rights and current terms may still require checking."
+        "checked_at": "2026-10-18T03:39:41.334278+00:00",
+        "search": "gohighlevel",
+        "preset": "ALL",
+        "broader_feed": false,
+        "accessLimitedFeed": true,
+        "hasNextPage": false,
+        "message": "Contra limits the jobs visible to this account; these results do not cover the full board. Read-only result; returned fields only. Full eligibility, rights and current terms may still require checking."
+      },
+      {
+        "tool": "list_job_feed",
+        "status": "live",
+        "count": 3,
+        "checked_at": "2026-10-18T03:39:42.122247+00:00",
+        "search": "",
+        "preset": "FOR_YOU",
+        "broader_feed": true,
+        "accessLimitedFeed": true,
+        "hasNextPage": false,
+        "message": "Broader For You feed, not confirmed keyword matches. Contra limits the jobs visible to this account; these results do not cover the full board. Read-only result; returned fields only. Full eligibility, rights and current terms may still require checking."
       }
     ],
-    "returned": 0,
-    "validation": "One bounded read without model inference or chat creation; no submissions or account writes."
+    "returned": 3,
+    "validation": "Bounded keyword read with at most one broader-feed fallback; no model inference, chat creation, submissions or account writes."
   },
   "platforms": 7,
   "browser": "hosting configuration needed",

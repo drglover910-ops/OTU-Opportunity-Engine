@@ -26,6 +26,7 @@ on:
       - matrix.js
       - ui.js
       - ui.css
+      - voice_samples/**
       - playbooks.json
       - requirements.txt
       - scripts/check_space.py

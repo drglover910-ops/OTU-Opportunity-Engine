@@ -1,5 +1,5 @@
 """Private single-owner Hugging Face Space. HF access controls provide authentication."""
-import base64,json,os,threading,urllib.parse,secrets,time
+import base64,json,os,threading,urllib.parse,secrets,time,re
 from pathlib import Path
 from http.server import BaseHTTPRequestHandler,ThreadingHTTPServer
 from engine import Engine,VERSION,STAGES
@@ -23,12 +23,40 @@ class Handler(BaseHTTPRequestHandler):
         if not isinstance(body,bytes):body=json.dumps(body).encode()
         self.send_response(status);self.send_header('Content-Type',ctype);self.send_header('Content-Length',str(len(body)))
         self.send_header('Cache-Control','no-store');self.send_header('X-Content-Type-Options','nosniff');self.send_header('Referrer-Policy','no-referrer')
-        if ctype.startswith('text/html'):self.send_header('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'self'")
+        if ctype.startswith('text/html'):self.send_header('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; media-src 'self'; base-uri 'none'; form-action 'self'")
         if download:self.send_header('Content-Disposition','attachment; filename="'+download+'"')
         self.end_headers();self.wfile.write(body)
+    def voice_sample(self,path,head=False):
+        names={'/voice-samples/heart.mp3':'heart.mp3','/voice-samples/bella.mp3':'bella.mp3'}
+        if path not in names:return False
+        body=(ROOT/'voice_samples'/names[path]).read_bytes();size=len(body);start=0;end=size-1;status=200
+        value=self.headers.get('Range') if not head else None
+        if value:
+            match=re.fullmatch(r'bytes=(\d*)-(\d*)',value)
+            try:
+                if not match or not any(match.groups()):raise ValueError()
+                left,right=match.groups()
+                if left:start=int(left);end=min(int(right),size-1) if right else size-1
+                else:
+                    count=int(right)
+                    if count<=0:raise ValueError()
+                    start=max(0,size-count)
+                if start>=size or end<start:raise ValueError()
+                status=206
+            except ValueError:
+                self.send_response(416);self.send_header('Content-Range',f'bytes */{size}');self.send_header('Content-Length','0');self.send_header('Cache-Control','no-store');self.end_headers();return True
+        self.send_response(status);self.send_header('Content-Type','audio/mpeg');self.send_header('Accept-Ranges','bytes');self.send_header('Content-Length',str(end-start+1));self.send_header('Cache-Control','no-store');self.send_header('X-Content-Type-Options','nosniff');self.send_header('Referrer-Policy','no-referrer')
+        if status==206:self.send_header('Content-Range',f'bytes {start}-{end}/{size}')
+        self.end_headers()
+        if not head:self.wfile.write(body[start:end+1])
+        return True
+    def do_HEAD(self):
+        if not self.voice_sample(urllib.parse.urlsplit(self.path).path,head=True):
+            self.send_response(404);self.send_header('Content-Length','0');self.end_headers()
     def do_GET(self):
         parsed=urllib.parse.urlsplit(self.path);path=parsed.path;query=urllib.parse.parse_qs(parsed.query)
         try:
+            if self.voice_sample(path):return
             if path=='/api/files/photo':return self.output(attachments.photo(query['id'][0]),'image/jpeg')
             if path=='/api/files/storage':return self.output(attachments.status())
             if path=='/api/files/list':return self.output(attachments.listing({k:v[0] for k,v in query.items()}))

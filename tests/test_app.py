@@ -98,7 +98,21 @@ class HTTP(unittest.TestCase):
         req=urllib.request.Request(self.base+path,data=json.dumps(data).encode() if data is not None else None,headers={'Content-Type':'application/json',**(headers or {})})
         with urllib.request.urlopen(req) as r:return json.load(r)
     def test_health_and_status(self):
-        self.assertEqual(self.request('/health')['version'],'0.19.10');self.assertIn('storage',self.request('/api/status'))
+        self.assertEqual(self.request('/health')['version'],'0.19.11');self.assertIn('storage',self.request('/api/status'))
+    def test_voice_sample_media_ranges(self):
+        url=self.base+'/voice-samples/heart.mp3'
+        with urllib.request.urlopen(url) as r:
+            data=r.read();self.assertEqual(r.headers['Content-Type'],'audio/mpeg');self.assertGreater(len(data),100000)
+        for span,start,end in [('bytes=0-1',0,1),('bytes=-8',len(data)-8,len(data)-1),('bytes=100-',100,len(data)-1)]:
+            with urllib.request.urlopen(urllib.request.Request(url,headers={'Range':span})) as r:
+                self.assertEqual(r.status,206);self.assertEqual(r.read(),data[start:end+1]);self.assertEqual(r.headers['Content-Range'],f'bytes {start}-{end}/{len(data)}')
+        with urllib.request.urlopen(urllib.request.Request(url,method='HEAD')) as r:self.assertEqual(int(r.headers['Content-Length']),len(data));self.assertEqual(r.read(),b'')
+        for span in ['bytes=99999999-','bytes=-0','bytes=1-0','bytes=0-1,3-4']:
+            with self.assertRaises(urllib.error.HTTPError) as error:urllib.request.urlopen(urllib.request.Request(url,headers={'Range':span}))
+            self.assertEqual(error.exception.code,416)
+        with self.assertRaises(urllib.error.HTTPError) as error:urllib.request.urlopen(self.base+'/voice-samples/../app.py')
+        self.assertEqual(error.exception.code,404)
+
     def test_research_preview_never_calls_inference(self):
         with patch('research_tools.Research.run',return_value={'checks':[],'items':[]}) as reads,patch.object(app.engine,'ai_request') as model:
             result=self.request('/api/research/preview',{'workspace':'contra','mode':'research','text':'Find Contra CRM opportunities'})

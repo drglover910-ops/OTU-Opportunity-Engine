@@ -54,6 +54,14 @@ for attempt in range(48):
                         report['matrix_asset']='available' if b'matrix-rain' in asset.read(1000) else 'unverified'
                     with urllib.request.urlopen(urllib.request.Request(base+'/ui.js',headers=headers),timeout=30) as shell:
                         source=shell.read(200000);report['workspace_shell']='available' if b'closeWorkspacePanel' in source and b'browsingWorkspace' in source else 'unverified';report['read_aloud_controls']='asset available; device audio not tested' if b'readAnswer' in source else 'unverified';report['isis_voice_controls']='available; device preview required' if b'configureIsisVoice' in source and b'renderIsisVoices' in source else 'unverified'
+                    report['voice_samples']={}
+                    for voice in ('heart','bella'):
+                        try:
+                            sample_request=urllib.request.Request(base+'/voice-samples/'+voice+'.mp3',headers={**headers,'Range':'bytes=0-15'})
+                            with urllib.request.urlopen(sample_request,timeout=30) as sample:
+                                prefix=sample.read(16)
+                                report['voice_samples'][voice]={'status':'verified' if sample.status==206 and sample.headers.get('Content-Type')=='audio/mpeg' and prefix.startswith(b'ID3') else 'unverified','http_status':sample.status,'content_range':sample.headers.get('Content-Range','')}
+                        except Exception:report['voice_samples'][voice]={'status':'unverified'}
                     conversation=request('/api/conversation?workspace=assistant')
                     report['acknowledged_chat_requests']='API available' if isinstance(conversation.get('requests'),list) else 'unverified'
                     report['response_actions']='asset available; local browser checks passed separately' if b'responseActions' in source and b'rate-answer' in source else 'unverified'

@@ -1,3 +1,8 @@
+## v0.19.11
+
+- Put prerecorded CPU-generated Heart/Bella voice samples in Isis’s voice settings with native audio controls and same-app download links. No model/runtime installation or paid inference.
+- Support bounded HTTP byte ranges and HEAD for Safari media playback; keep sample files allowlisted under private Space access. Stop other audio during dictation/read-aloud/sample playback.
+
 ## v0.19.10
 
 - Reopen Apply on Contra at the job chooser instead of trapping navigation in the last application. Add Choose another job and reset panel scroll.

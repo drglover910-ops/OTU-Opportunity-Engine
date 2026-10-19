@@ -1,7 +1,7 @@
 {
-  "commit": "585a1b79b9fb3b95e5afd5a0c7d839f68e417691",
-  "version": "0.19.11",
-  "checked_at": "2026-10-19T03:09:12.663521+00:00",
+  "commit": "dcdcc74c92d7db2e2f5e3944a718dcb82c7a5024",
+  "version": "0.19.12",
+  "checked_at": "2026-10-19T03:24:18.060295+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-19T03:09:43.686831+00:00",
+    "checked_at": "2026-10-19T03:25:32.685040+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -69,6 +69,23 @@
       "http_status": 206,
       "content_range": "bytes 0-15/302636"
     }
+  },
+  "cpu_voice": {
+    "available": true,
+    "voice": "Heart",
+    "engine": "Kokoro CPU",
+    "cpu_threads": 1,
+    "max_characters": 280,
+    "paid_provider": false,
+    "note": "Local CPU speech; short chunks, one worker, private temporary cache. No hosted inference API."
+  },
+  "cpu_voice_check": {
+    "status": "verified",
+    "duration": 5.129,
+    "generation_seconds": 3.285,
+    "first_prepare_round_trip_seconds": 6.81,
+    "replay_cached": true,
+    "validation": "Short synthetic CPU speech only, no hosted inference, chat notes or platform writes. Not a live-device listening score."
   },
   "acknowledged_chat_requests": "API available",
   "response_actions": "asset available; local browser checks passed separately",
@@ -251,7 +268,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-19T03:09:47.830621+00:00",
+    "checked_at": "2026-10-19T03:25:48.968937+00:00",
     "tools": 123,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -7271,7 +7288,8 @@
         "applied": true
       }
     ],
-    "geekyants_application_recorded": true
+    "geekyants_application_recorded": true,
+    "cached": true
   },
   "chat_research": {
     "checks": [
@@ -7285,7 +7303,7 @@
         "tool": "list_job_feed",
         "status": "empty",
         "count": 0,
-        "checked_at": "2026-10-19T03:09:54.047575+00:00",
+        "checked_at": "2026-10-19T03:25:50.831287+00:00",
         "search": "gohighlevel",
         "preset": "ALL",
         "broader_feed": false,
@@ -7297,7 +7315,7 @@
         "tool": "list_job_feed",
         "status": "live",
         "count": 3,
-        "checked_at": "2026-10-19T03:09:54.686252+00:00",
+        "checked_at": "2026-10-19T03:25:51.462065+00:00",
         "search": "",
         "preset": "FOR_YOU",
         "broader_feed": true,
@@ -7329,7 +7347,7 @@
         "tool": "get_job_by_slug",
         "status": "live",
         "count": 1,
-        "checked_at": "2026-10-19T03:09:55.688958+00:00",
+        "checked_at": "2026-10-19T03:25:52.682998+00:00",
         "search": "",
         "preset": null,
         "broader_feed": false,

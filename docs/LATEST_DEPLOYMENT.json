@@ -1,7 +1,7 @@
 {
-  "commit": "33349bcc23c47918622bcd048a263e3f24a138e0",
-  "version": "0.19.10",
-  "checked_at": "2026-10-18T23:05:27.372772+00:00",
+  "commit": "585a1b79b9fb3b95e5afd5a0c7d839f68e417691",
+  "version": "0.19.11",
+  "checked_at": "2026-10-19T03:09:12.663521+00:00",
   "upload": "completed",
   "health": "verified",
   "runtime_stage": "RUNNING",
@@ -31,7 +31,7 @@
   "upload_check_scope": "1 GiB reservation; 4 MiB chunk, retry and next chunk through private HF proxy. Full 1 GiB verified locally, not transferred in production smoke check.",
   "upload_fixture_cleanup": "passed",
   "connections": {
-    "checked_at": "2026-10-18T23:06:09.445187+00:00",
+    "checked_at": "2026-10-19T03:09:43.686831+00:00",
     "gmail": {
       "status": "connected",
       "message": "Inbox access passed a live check."
@@ -58,6 +58,18 @@
   "workspace_shell": "available",
   "read_aloud_controls": "asset available; device audio not tested",
   "isis_voice_controls": "available; device preview required",
+  "voice_samples": {
+    "heart": {
+      "status": "verified",
+      "http_status": 206,
+      "content_range": "bytes 0-15/296876"
+    },
+    "bella": {
+      "status": "verified",
+      "http_status": 206,
+      "content_range": "bytes 0-15/302636"
+    }
+  },
   "acknowledged_chat_requests": "API available",
   "response_actions": "asset available; local browser checks passed separately",
   "chat_threads": 9,
@@ -208,20 +220,20 @@
   "developer_request_queue": "available",
   "ai_live_check": "not run; no paid inference during verification",
   "ai_budget": {
-    "count": 6,
-    "reserved_tokens": 61235,
-    "actual_tokens": 27720,
-    "date": "2026-10-18",
-    "usage_percent": 24,
+    "date": "2026-10-19",
+    "count": 0,
+    "reserved_tokens": 0,
+    "actual_tokens": 0,
+    "usage_percent": 0,
     "warning_level": null,
-    "unsettled_tokens": 33515,
+    "unsettled_tokens": 0,
     "daily_requests": 50,
     "daily_tokens": 250000,
     "paused": false,
     "scope": "This bot only; shared account balance and other projects are not available here.",
     "cost": "Dollar cost unavailable; provider billing is authoritative.",
     "reset": "UTC midnight",
-    "next_reset_at": "2026-10-19T00:00:00+00:00"
+    "next_reset_at": "2026-10-20T00:00:00+00:00"
   },
   "source_retrieval": {
     "method": "local lexical retrieval",
@@ -239,7 +251,7 @@
   "contra_signin_ready": true,
   "contra_access": {
     "connected": true,
-    "checked_at": "2026-10-18T23:06:14.274025+00:00",
+    "checked_at": "2026-10-19T03:09:47.830621+00:00",
     "tools": 123,
     "history_access": "Co-Agent AI history is not assumed available.",
     "actions": "Capability discovery only; no account tools called."
@@ -6456,8 +6468,8 @@
   ],
   "contra_inventory": {
     "scan_version": 2,
-    "finished_epoch": 1792364779.4640102,
-    "checked_at": "2026-10-18T23:06:19.464021+00:00",
+    "finished_epoch": 1792379393.1831546,
+    "checked_at": "2026-10-19T03:09:53.183165+00:00",
     "read_checks": 13,
     "unavailable_reads": [],
     "message": "Available Contra reads saved. Review unavailable_reads for any missing checks. No changes made. Private service drafts may require website review; pagination may leave more results.",
@@ -7273,7 +7285,7 @@
         "tool": "list_job_feed",
         "status": "empty",
         "count": 0,
-        "checked_at": "2026-10-18T23:06:20.325073+00:00",
+        "checked_at": "2026-10-19T03:09:54.047575+00:00",
         "search": "gohighlevel",
         "preset": "ALL",
         "broader_feed": false,
@@ -7285,7 +7297,7 @@
         "tool": "list_job_feed",
         "status": "live",
         "count": 3,
-        "checked_at": "2026-10-18T23:06:21.022272+00:00",
+        "checked_at": "2026-10-19T03:09:54.686252+00:00",
         "search": "",
         "preset": "FOR_YOU",
         "broader_feed": true,
@@ -7317,7 +7329,7 @@
         "tool": "get_job_by_slug",
         "status": "live",
         "count": 1,
-        "checked_at": "2026-10-18T23:06:22.011250+00:00",
+        "checked_at": "2026-10-19T03:09:55.688958+00:00",
         "search": "",
         "preset": null,
         "broader_feed": false,

@@ -5,6 +5,9 @@ on:
     branches: [main, work]
     paths:
       - app.py
+      - cpu_voice.py
+      - voice_worker.py
+      - scripts/fetch_voice_model.py
       - engine.py
       - knowledge_store.py
       - contra_applications.py

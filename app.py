@@ -16,6 +16,8 @@ from chat_service import ChatService
 chat_service=ChatService(engine)
 from contra_applications import ContraApplications
 contra_applications=ContraApplications(engine)
+from cpu_voice import CPUVoice
+cpu_voice=CPUVoice(engine)
 class Handler(BaseHTTPRequestHandler):
     developer_sessions={}
     def log_message(self,*args):pass  # No OAuth codes, inbox content, or credentials in logs.
@@ -23,7 +25,7 @@ class Handler(BaseHTTPRequestHandler):
         if not isinstance(body,bytes):body=json.dumps(body).encode()
         self.send_response(status);self.send_header('Content-Type',ctype);self.send_header('Content-Length',str(len(body)))
         self.send_header('Cache-Control','no-store');self.send_header('X-Content-Type-Options','nosniff');self.send_header('Referrer-Policy','no-referrer')
-        if ctype.startswith('text/html'):self.send_header('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; media-src 'self'; base-uri 'none'; form-action 'self'")
+        if ctype.startswith('text/html'):self.send_header('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; media-src 'self' blob:; base-uri 'none'; form-action 'self'")
         if download:self.send_header('Content-Disposition','attachment; filename="'+download+'"')
         self.end_headers();self.wfile.write(body)
     def voice_sample(self,path,head=False):
@@ -93,7 +95,10 @@ class Handler(BaseHTTPRequestHandler):
                 return self.output({**(engine.setting('contra_sync_summary',{}) or {}),**ContraConnection(engine).inventory_details()})
             if path=='/api/contra/snapshot':return self.output(engine.setting('contra_account_snapshot',{}) or {})
             if path=='/api/contra/tools':return self.output(engine.setting('contra_tool_catalog',[]) or [])
-            if path=='/api/status':return self.output(engine.status())
+            if path=='/api/status':return self.output({**engine.status(),'cpu_voice':cpu_voice.status()})
+            if path=='/api/voice/status':return self.output(cpu_voice.status())
+            if path=='/api/voice/job':return self.output(cpu_voice.record({k:v[0] for k,v in query.items()}))
+            if path=='/api/voice/audio':return self.output(cpu_voice.audio({k:v[0] for k,v in query.items()}),'audio/wav')
             if path=='/api/opportunities':return self.output(engine.list())
             if path=='/api/project-knowledge':return self.output(engine.project_knowledge())
             if path=='/api/developer/requests':return self.output(engine.developer_requests())
@@ -153,6 +158,7 @@ class Handler(BaseHTTPRequestHandler):
             length=int(self.headers.get('Content-Length',0))
             if length<=0 or length>90*1024*1024:raise ValueError('Request size invalid')
             d=json.loads(self.rfile.read(length))
+            if self.path=='/api/voice/prepare':return self.output(cpu_voice.prepare(d))
             if self.path=='/api/research/preview':
                 from research_tools import Research,requested
                 from opportunity_review import intended,resolve,review

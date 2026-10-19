@@ -62,6 +62,22 @@ for attempt in range(48):
                                 prefix=sample.read(16)
                                 report['voice_samples'][voice]={'status':'verified' if sample.status==206 and sample.headers.get('Content-Type')=='audio/mpeg' and prefix.startswith(b'ID3') else 'unverified','http_status':sample.status,'content_range':sample.headers.get('Content-Range','')}
                         except Exception:report['voice_samples'][voice]={'status':'unverified'}
+                    report['cpu_voice']=status.get('cpu_voice',{})
+                    if report['cpu_voice'].get('available'):
+                        try:
+                            started_voice=time.time()
+                            voice_question={'workspace':'assistant','text':'Hi Desmond. Heart is running on our CPU. This is a synthetic voice check.','voice':'heart'}
+                            speech=request('/api/voice/prepare',voice_question)
+                            for voice_attempt in range(80):
+                                if speech.get('status') not in ('queued','running'):break
+                                time.sleep(.5);speech=request('/api/voice/job?workspace=assistant&id='+speech['id'])
+                            if speech.get('status')=='ready':
+                                with urllib.request.urlopen(urllib.request.Request(base+'/api/voice/audio?workspace=assistant&id='+speech['id'],headers=headers),timeout=30) as audio:
+                                    valid_voice=audio.headers.get('Content-Type')=='audio/wav' and audio.read(4)==b'RIFF'
+                                repeat=request('/api/voice/prepare',voice_question)
+                                report['cpu_voice_check']={'status':'verified' if valid_voice else 'unverified','duration':speech.get('duration'),'generation_seconds':speech.get('generation_seconds'),'first_prepare_round_trip_seconds':round(time.time()-started_voice,2),'replay_cached':repeat['id']==speech['id'],'validation':'Short synthetic CPU speech only, no hosted inference, chat notes or platform writes. Not a live-device listening score.'}
+                            else:report['cpu_voice_check']={'status':speech.get('status','unverified')}
+                        except Exception:report['cpu_voice_check']={'status':'unverified; device fallback remains available'}
                     conversation=request('/api/conversation?workspace=assistant')
                     report['acknowledged_chat_requests']='API available' if isinstance(conversation.get('requests'),list) else 'unverified'
                     report['response_actions']='asset available; local browser checks passed separately' if b'responseActions' in source and b'rate-answer' in source else 'unverified'

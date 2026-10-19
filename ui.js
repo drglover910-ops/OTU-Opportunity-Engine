@@ -52,7 +52,7 @@ function friendlyDocument(name){if(name.includes('Master_Career'))return 'Comple
 function empty(text){return `<p class="small">${esc(text)}</p>`}
 async function refresh(){
  [state,leads,documents,drafts,history,messages,packages,careerUpdates,emailCases,workspaces,platforms,contraSummary,developerRequests,knowledge,chatThreads]=await Promise.all(['/api/status','/api/opportunities','/api/documents','/api/drafts','/api/history','/api/messages','/api/packages','/api/career-updates','/api/email-cases','/api/workspaces','/api/platforms','/api/contra/summary','/api/developer/requests','/api/project-knowledge','/api/chat-threads'].map(p=>api(p)));
- $('version').textContent='v'+state.version;$('footer-version').textContent='v'+state.version;
+ renderVoiceEngine();$('version').textContent='v'+state.version;$('footer-version').textContent='v'+state.version;
  $('connection-summary').textContent=`${state.storage.restart_verified?'Your work is saved':state.storage.mount_detected?'Saving is connected':'Saving needs attention'} · Gmail ${state.gmail?'connected':'not connected'}`;
  await loadProjects();renderStatusReport();renderSidebar();renderContraResults();renderToday();renderBoard();renderDrafts();renderLibrary();renderActivity();if(developerKey)renderSettings();renderConnections();renderWorkspaces();renderHelp();renderPlatforms();
  if(!sessionStorage.getItem('otu-onboarding-seen')&&!documents.length){jump('library');sessionStorage.setItem('otu-onboarding-seen','yes')}
@@ -510,7 +510,7 @@ function speechRate(){const value=Number(localStorage.getItem('otu-speech-rate')
 function speechSpeedControl(){return '<label class="speech-speed" hidden>Speed <select data-speech-speed aria-label="Reading speed">'+[0.75,1,1.25,1.5,2].map(n=>'<option value="'+n+'" '+(n===speechRate()?'selected':'')+'>'+n+'×</option>').join('')+'</select></label>'}
 function stopAnswer(exceptSample=null){
  document.querySelectorAll('[data-voice-sample]').forEach(a=>{if(a!==exceptSample)a.pause()});
- const old=audioAnswer;audioAnswer=null;audioUtterance=null;audioSession=null;window.speechSynthesis?.cancel();
+ const old=audioAnswer,session=audioSession;audioAnswer=null;audioUtterance=null;audioSession=null;if(session?.player){session.player.pause();session.player.removeAttribute('src');session.player.load();for(const url of session.urls||[])URL.revokeObjectURL(url)}session?.controller?.abort();window.speechSynthesis?.cancel();
  if(old){old.textContent='🔊 Read aloud';old.setAttribute('aria-pressed','false');const stop=old.parentElement?.querySelector('[data-action=stop-answer]');if(stop)stop.hidden=true;const speed=old.parentElement?.querySelector('.speech-speed');if(speed)speed.hidden=true}
 }
 function applicationSpeechText(){
@@ -529,21 +529,58 @@ function speakCurrentChunk(){
  utterance.onerror=e=>{if(audioUtterance===utterance){stopAnswer();if(!['canceled','interrupted'].includes(e.error))notice('This voice could not finish. Try another voice under Isis’s voice.',true)}};
  try{window.speechSynthesis.speak(utterance)}catch{stopAnswer();notice('Read aloud could not start. Try another device voice.',true)}
 }
+function useCPUVoice(){return !!state.cpu_voice?.available&&localStorage.getItem('otu-voice-engine')!=='device'}
+function speechControls(button){button.setAttribute('aria-pressed','true');const stop=button.parentElement.querySelector('[data-action=stop-answer]');if(stop)stop.hidden=false;const speed=button.parentElement.querySelector('.speech-speed');if(speed){speed.hidden=false;speed.querySelector('select').value=String(speechRate())}}
+function cpuCurrent(session){return audioSession===session&&sameChatScope(session.scope)}
+async function loadCPUChunk(session,index){
+ if(session.promises.has(index))return session.promises.get(index);
+ const promise=(async()=>{
+  if(!cpuCurrent(session))throw Error('Stopped');
+  let job=await api('/api/voice/prepare',{...session.scope,text:session.chunks[index],voice:'heart'});const query=new URLSearchParams(Object.entries({...session.scope,id:job.id}).filter(([k,v])=>v!==null));const started=Date.now();
+  while(['queued','running'].includes(job.status)){
+   if(!cpuCurrent(session)||Date.now()-started>30000)throw Error('Stopped or timed out');
+   await new Promise(resolve=>setTimeout(resolve,300));if(!cpuCurrent(session))throw Error('Stopped');job=await api('/api/voice/job?'+query);
+  }
+  if(job.status!=='ready')throw Error('CPU voice unavailable');
+  const response=await fetch('/api/voice/audio?'+query,{signal:session.controller.signal});if(!response.ok)throw Error('Speech audio unavailable');const blob=await response.blob();if(!cpuCurrent(session))throw Error('Stopped');const url=URL.createObjectURL(blob);session.urls.add(url);return url;
+ })();session.promises.set(index,promise);return promise;
+}
+function deviceFallback(session){
+ if(!cpuCurrent(session))return;const button=audioAnswer,text=session.chunks.slice(session.index).join('');stopAnswer();notice('Heart could not finish. Continuing with your device voice.',true);startSpeech(button,text,false);
+}
+async function playCPUChunk(session){
+ if(!cpuCurrent(session))return;const index=session.index;audioAnswer.textContent='Preparing Heart…';session.phase='loading';
+ try{
+  const url=await loadCPUChunk(session,index);if(!cpuCurrent(session)||session.index!==index)return;
+  const player=session.player;player.src=url;player.playbackRate=speechRate();player.preservesPitch=true;session.phase='ready';
+  player.onended=()=>{if(!cpuCurrent(session))return;URL.revokeObjectURL(url);session.urls.delete(url);session.index++;if(session.index>=session.chunks.length)stopAnswer();else playCPUChunk(session)};
+  player.onerror=()=>deviceFallback(session);
+  try{await player.play();if(cpuCurrent(session)){session.phase='playing';audioAnswer.textContent='⏸ Pause'}}catch(error){if(!cpuCurrent(session))return;if(error.name==='NotAllowedError'){audioAnswer.textContent='▶ Play Heart';notice('Heart is ready. Tap Play Heart to hear it.')}else throw error}
+  if(cpuCurrent(session)&&index+1<session.chunks.length)loadCPUChunk(session,index+1).catch(()=>{});
+ }catch(error){if(cpuCurrent(session))deviceFallback(session)}
+}
+function startSpeech(button,text,cpu){
+ if(!cpu&&(!window.speechSynthesis||!window.SpeechSynthesisUtterance)){notice('Device read-aloud is unavailable in this browser.',true);return}
+ audioAnswer=button;speechControls(button);
+ if(cpu){
+  const session={mode:'cpu',scope:currentChatScope(),chunks:text.match(/.{1,180}(?:\s|$)|.{1,180}/gs)||[text],index:0,player:new Audio(),controller:new AbortController(),promises:new Map(),urls:new Set(),phase:'loading'};audioSession=session;
+  // Unlock this media element on the owner's tap. Safari may still require a second Play tap.
+  const buffer=new ArrayBuffer(46),v=new DataView(buffer);for(const [offset,value] of [[0,'RIFF'],[8,'WAVE'],[12,'fmt '],[36,'data']])for(let i=0;i<value.length;i++)v.setUint8(offset+i,value.charCodeAt(i));v.setUint32(4,38,true);v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,24000,true);v.setUint32(28,48000,true);v.setUint16(32,2,true);v.setUint16(34,16,true);v.setUint32(40,2,true);const unlock=URL.createObjectURL(new Blob([buffer],{type:'audio/wav'}));session.urls.add(unlock);session.player.src=unlock;session.player.play().then(()=>{if(cpuCurrent(session)&&session.phase==='loading')session.player.pause()}).catch(()=>{});playCPUChunk(session);return;
+ }
+ audioSession={mode:'device',chunks:(text.match(/[^.!?\n]+(?:[.!?]+|\n|$)/g)||[text]).flatMap(t=>t.match(/.{1,400}(?:\s|$)|.{1,400}/gs)||[t]).filter(t=>t.trim()),index:0,offset:0};button.textContent='⏸ Pause';speakCurrentChunk();
+}
 function readAnswer(button){
- if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){notice('Read aloud is unavailable in this browser. Use your device’s spoken-content accessibility controls.',true);return}
  speechAccept=false;stopDictation();
+ if(audioAnswer===button&&audioSession?.mode==='cpu'){
+  const session=audioSession;if(session.phase==='loading'){stopAnswer();return}
+  if(session.player.paused){session.player.play().then(()=>{if(cpuCurrent(session))button.textContent='⏸ Pause'}).catch(()=>{if(cpuCurrent(session))notice('Tap Play again or choose Device voice in Isis’s voice settings.',true)})}else{session.player.pause();button.textContent='▶ Resume'}return;
+ }
  const synth=window.speechSynthesis;
  if(audioAnswer===button&&audioUtterance){if(synth.paused){synth.resume();button.textContent='⏸ Pause'}else{synth.pause();button.textContent='▶ Resume'}return}
  stopAnswer();const text=button.dataset.action==='read-application'?applicationSpeechText():button.closest('article').querySelector('.message-text').textContent;
- if(!text.trim()){notice('Open an application or message to read first.');return}
- audioAnswer=button;audioSession={chunks:text.match(/[^.!?\n]+(?:[.!?]+|\n|$)/g)||[text],index:0,offset:0};
- // Bound long paragraphs too: shorter utterances are more reliable on mobile Safari.
- audioSession.chunks=audioSession.chunks.flatMap(t=>t.match(/.{1,400}(?:\s|$)|.{1,400}/gs)||[t]).filter(t=>t.trim());
- button.textContent='⏸ Pause';button.setAttribute('aria-pressed','true');button.parentElement.querySelector('[data-action=stop-answer]').hidden=false;
- const speed=button.parentElement.querySelector('.speech-speed');if(speed){speed.hidden=false;speed.querySelector('select').value=String(speechRate())}
- speakCurrentChunk();
+ if(!text.trim()){notice('Open an application or message to read first.');return}startSpeech(button,text,useCPUVoice());
 }
-document.addEventListener('change',event=>{if(!event.target.matches('[data-speech-speed]'))return;const rate=Number(event.target.value);if(![0.75,1,1.25,1.5,2].includes(rate))return;localStorage.setItem('otu-speech-rate',String(rate));document.querySelectorAll('[data-speech-speed]').forEach(n=>n.value=String(rate));if(audioSession){audioUtterance=null;window.speechSynthesis.cancel();audioAnswer.textContent='⏸ Pause';speakCurrentChunk()}});
+document.addEventListener('change',event=>{if(!event.target.matches('[data-speech-speed]'))return;const rate=Number(event.target.value);if(![0.75,1,1.25,1.5,2].includes(rate))return;localStorage.setItem('otu-speech-rate',String(rate));document.querySelectorAll('[data-speech-speed]').forEach(n=>n.value=String(rate));if(audioSession?.mode==='cpu'){audioSession.player.playbackRate=rate}else if(audioSession){audioUtterance=null;window.speechSynthesis.cancel();audioAnswer.textContent='⏸ Pause';speakCurrentChunk()}});
 document.addEventListener('click',event=>{if(event.target.closest('[data-action=new-chat],[data-action=open-recent],[data-action=conversation],[data-action=workspace-conversation]'))stopAnswer()},true);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAnswer()});
 addEventListener('pagehide',stopAnswer);
@@ -590,10 +627,12 @@ async function openMail(id){const generation=mailGeneration,reading=++mailReadGe
 async function saveMailOrganization(){await api('/api/mail/organize',{thread_id:mailCurrent.id,folder_id:$('mail-folder').value,opportunity_id:$('mail-opportunity').value,followup:$('mail-followup').value});notice('Mail organization saved in OTU. Gmail unchanged.');}
 $('complete-restore-form').onsubmit=async event=>{event.preventDefault();if(!confirm('Merge this complete backup? Existing work stays. A checkpoint will be saved and sending approvals reset.'))return;const button=event.submitter;button.disabled=true;let session;try{const file=$('complete-restore-file').files[0];if(file.size>1024**3)throw Error('This restore uploader supports ZIPs up to 1 GiB. Ask the developer to recover a larger backup.');session=await api('/api/files/start',{...fileScope(),name:file.name,size:file.size});let offset=0;while(offset<file.size){const bytes=new Uint8Array(await file.slice(offset,offset+4*1024**2).arrayBuffer());let binary='';for(let i=0;i<bytes.length;i+=32768)binary+=String.fromCharCode(...bytes.subarray(i,i+32768));offset=(await api('/api/files/chunk',{id:session.id,offset,content:btoa(binary)})).received;notice('Loading recovery copy · '+Math.floor(offset/file.size*100)+'%')}await api('/api/files/finish',{id:session.id});const r=await api('/api/restore-complete',{id:session.id,confirmed:true});notice(r.message);await refresh()}catch(e){notice(e.message,true)}finally{button.disabled=false;if(session)await api('/api/files/remove',{id:session.id,confirmed:true}).catch(()=>{})}};
 
-// Speech uses device/browser voices, never an HF/OpenAI speech API.
-const isisVoicePanel=document.createElement('article');isisVoicePanel.id='isis-voice-panel';isisVoicePanel.className='panel';isisVoicePanel.innerHTML='<h2>Isis’s voice</h2><p>Warm, confident American English. Choose a voice you like, then hear a sample.</p><label for="isis-voice">Read-aloud voice</label><select id="isis-voice"></select><p id="isis-voice-status" class="small" role="status"></p><button type="button" id="isis-voice-preview">Hear Isis</button><button type="button" id="isis-voice-stop" class="secondary">Stop</button><p class="small">Your device supplies these voices. Preview a voice to check its sound. Your choice is saved on this browser. On-device voices keep speech local; other choices may use your browser’s speech service. No AI writing credits are used.</p>';isisVoicePanel.insertAdjacentHTML('beforeend','<h3>Compare natural voice samples</h3><p>Press Play to hear each sample. These are recordings only; they do not change your current voice or use AI credits.</p>'+[['heart','A · Heart'],['bella','B · Bella']].map(([id,label])=>'<div class="voice-sample-card"><strong>Voice '+label+'</strong><audio controls preload="none" data-voice-sample aria-label="Play voice '+label+'"><source src="/voice-samples/'+id+'.mp3" type="audio/mpeg"></audio><a href="/voice-samples/'+id+'.mp3" target="_blank" rel="noopener" download="Isis-'+id+'.mp3">Open or download Voice '+label+'</a></div>').join('')+'<p class="small">If playback fails, try the Open or download link. After listening, tell your developer A, B, or neither.</p>');$('chat-settings').prepend(isisVoicePanel);
+// Heart uses a private CPU worker; device speech remains the fallback. No paid speech API.
+const isisVoicePanel=document.createElement('article');isisVoicePanel.id='isis-voice-panel';isisVoicePanel.className='panel';isisVoicePanel.innerHTML='<h2>Isis’s voice</h2><p>Heart is your selected natural voice. It runs on our CPU and uses no paid speech API.</p><label for="isis-voice-engine">Read-aloud engine</label><select id="isis-voice-engine"><option value="heart">Heart · natural CPU voice</option><option value="device">Device voice · fallback</option></select><p id="cpu-voice-status" class="small"></p><label for="isis-voice">Fallback device voice</label><select id="isis-voice"></select><p id="isis-voice-status" class="small" role="status"></p><button type="button" id="isis-voice-preview">Preview device voice</button><button type="button" id="isis-voice-stop" class="secondary">Stop</button><p class="small">Your device supplies these voices. Preview a voice to check its sound. Your choice is saved on this browser. On-device voices keep speech local; other choices may use your browser’s speech service. No AI writing credits are used.</p>';isisVoicePanel.insertAdjacentHTML('beforeend','<h3>Compare natural voice samples</h3><p>Press Play to hear each sample. These are recordings only; they do not change your current voice or use AI credits.</p>'+[['heart','A · Heart'],['bella','B · Bella']].map(([id,label])=>'<div class="voice-sample-card"><strong>Voice '+label+'</strong><audio controls preload="none" data-voice-sample aria-label="Play voice '+label+'"><source src="/voice-samples/'+id+'.mp3" type="audio/mpeg"></audio><a href="/voice-samples/'+id+'.mp3" target="_blank" rel="noopener" download="Isis-'+id+'.mp3">Open or download Voice '+label+'</a></div>').join('')+'<p class="small">If playback fails, try the Open or download link. After listening, tell your developer A, B, or neither.</p>');$('chat-settings').prepend(isisVoicePanel);
 isisVoicePanel.addEventListener('play',event=>{if(event.target.matches('[data-voice-sample]')){speechAccept=false;stopDictation();stopAnswer(event.target)}},true);
 isisVoicePanel.addEventListener('error',event=>{if(event.target.matches('[data-voice-sample]'))notice('This sample could not play. Try its Open or download link.',true)},true);
+function renderVoiceEngine(){if(!$('isis-voice-engine'))return;const ready=!!state.cpu_voice?.available;$('isis-voice-engine').options[0].disabled=!ready;$('isis-voice-engine').value=useCPUVoice()?'heart':'device';$('cpu-voice-status').textContent=ready?'Heart is ready. Recent audio is reused privately; first playback may take a moment.':'Heart is unavailable here. Device voice remains available.'}
+$('isis-voice-engine').onchange=()=>{stopAnswer();localStorage.setItem('otu-voice-engine',$('isis-voice-engine').value);renderVoiceEngine()};
 function voiceKey(v){return v.voiceURI||[v.name||'Device voice',v.lang].join(':')}
 function femaleUSVoice(v){return /^en[-_]US$/i.test(v.lang)&&/\b(Samantha|Ava|Susan|Allison|Victoria|Zira|Aria|Jenny|Michelle|Joanna|Salli|Kendra|Kimberly)\b/i.test(v.name||'')}
 function isisVoices(){return [...(window.speechSynthesis?.getVoices()||[])].sort((a,b)=>{const score=v=>(femaleUSVoice(v)?100:0)+(/enhanced|premium|natural|neural/i.test(v.name||'')?30:0)+(/^en[-_]US$/i.test(v.lang)?20:0)+(/^en[-_]/i.test(v.lang)?10:0)+(v.localService?5:0);return score(b)-score(a)})}

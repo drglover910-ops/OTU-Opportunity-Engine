@@ -1,3 +1,10 @@
+## v0.19.12
+
+- Make owner-selected Heart the read-aloud default when the local CPU runtime is available. Add a device-engine choice and automatic fallback.
+- Use a standalone, one-thread CPU process with pinned, checksum-verified Kokoro assets; no GPU or hosted inference API. Bound queue/text/time/cache and keep temporary audio isolated by exact conversation scope.
+- Connect real audio playback to response/application controls with pause, resume, preserved-pitch playback speed, next-segment prefetch, replay caching and stopped-session guards. Safari may request a second Play tap.
+- Verify a short synthetic speech generation on the existing Space CPU separately from mocked action tests. Preserve all career, chat and application records.
+
 ## v0.19.11
 
 - Put prerecorded CPU-generated Heart/Bella voice samples in Isis’s voice settings with native audio controls and same-app download links. No model/runtime installation or paid inference.

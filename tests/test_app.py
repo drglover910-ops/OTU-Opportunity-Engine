@@ -98,7 +98,7 @@ class HTTP(unittest.TestCase):
         req=urllib.request.Request(self.base+path,data=json.dumps(data).encode() if data is not None else None,headers={'Content-Type':'application/json',**(headers or {})})
         with urllib.request.urlopen(req) as r:return json.load(r)
     def test_health_and_status(self):
-        self.assertEqual(self.request('/health')['version'],'0.19.11');self.assertIn('storage',self.request('/api/status'))
+        self.assertEqual(self.request('/health')['version'],'0.19.12');self.assertIn('storage',self.request('/api/status'))
     def test_voice_sample_media_ranges(self):
         url=self.base+'/voice-samples/heart.mp3'
         with urllib.request.urlopen(url) as r:
